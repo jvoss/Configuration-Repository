@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: CR</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">CR</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/lib/constants_rb.html">
+                lib/constants.rb
+                </a>
+        <br />
+                <a href="../files/lib/core_rb.html">
+                lib/core.rb
+                </a>
+        <br />
+                <a href="../files/lib/dns_rb.html">
+                lib/dns.rb
+                </a>
+        <br />
+                <a href="../files/lib/host_rb.html">
+                lib/host.rb
+                </a>
+        <br />
+                <a href="../files/lib/hosts/cisco_rb.html">
+                lib/hosts/cisco.rb
+                </a>
+        <br />
+                <a href="../files/lib/options_rb.html">
+                lib/options.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000002">create_hosts</a>&nbsp;&nbsp;
+      <a href="#M000001">parse_cmdline</a>&nbsp;&nbsp;
+      <a href="#M000003">parse_file</a>&nbsp;&nbsp;
+      <a href="#M000004">parse_host_string</a>&nbsp;&nbsp;
+      <a href="#M000005">process</a>&nbsp;&nbsp;
+      <a href="#M000006">validate_repository</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="CR/DNS.html" class="link">CR::DNS</a><br />
+Class <a href="CR/Host.html" class="link">CR::Host</a><br />
+Class <a href="CR/Options.html" class="link">CR::Options</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ARGUMENT_ERROR</td>
+          <td>=</td>
+          <td class="context-item-value">1</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NONFATAL_ERROR</td>
+          <td>=</td>
+          <td class="context-item-value">255</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SNMP_VERSION_MAP</td>
+          <td>=</td>
+          <td class="context-item-value">{ :SNMPv1 =&gt; '1', :SNMPv2c =&gt; '2c' }</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">'1.0.0'</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="#M000002" class="method-signature">
+          <span class="method-name">create_hosts</span><span class="method-args">(host_strings, options, type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+TODO refactor
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000002-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 137</span>
+137:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">create_hosts</span>(<span class="ruby-identifier">host_strings</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">type</span>)
+138:     
+139:     <span class="ruby-identifier">hosts</span> = []
+140:     
+141:     <span class="ruby-identifier">host_strings</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">host</span><span class="ruby-operator">|</span>
+142:       
+143:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:domain</span>
+144:         
+145:         <span class="ruby-identifier">x</span> = <span class="ruby-identifier">parse_host_string</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">options</span>)
+146:         
+147:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+148:         
+149:           <span class="ruby-identifier">domain</span>, <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span> = <span class="ruby-identifier">parse_host_string</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">options</span>)
+150:         
+151:           <span class="ruby-constant">DNS</span>.<span class="ruby-identifier">axfr</span>(<span class="ruby-identifier">domain</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hostname</span><span class="ruby-operator">|</span>
+152:             <span class="ruby-identifier">hosts</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">CR</span><span class="ruby-operator">::</span><span class="ruby-constant">Host</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">hostname</span>, <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>])
+153:           <span class="ruby-keyword kw">end</span>
+154:         
+155:         <span class="ruby-keyword kw">else</span>
+156:           
+157:           <span class="ruby-identifier">hosts</span> = <span class="ruby-identifier">parse_file</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:domain</span>)
+158:         
+159:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># if x.is_a?(Array)</span>
+160:       
+161:       <span class="ruby-keyword kw">else</span>
+162:       
+163:         <span class="ruby-identifier">x</span> = <span class="ruby-identifier">parse_host_string</span>(<span class="ruby-identifier">host</span>, <span class="ruby-identifier">options</span>)
+164:         
+165:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+166:           <span class="ruby-identifier">hostname</span>, <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span> = <span class="ruby-identifier">x</span>[<span class="ruby-value">0</span>], <span class="ruby-identifier">x</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">x</span>[<span class="ruby-value">2</span>]
+167:            
+168:           <span class="ruby-identifier">hosts</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">CR</span><span class="ruby-operator">::</span><span class="ruby-constant">Host</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">hostname</span>, <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>])
+169:         <span class="ruby-keyword kw">else</span>
+170:           
+171:           <span class="ruby-identifier">hosts</span> = <span class="ruby-identifier">parse_file</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:host</span>)
+172:         
+173:         <span class="ruby-keyword kw">end</span>
+174:       
+175:       <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># if type == :domain</span>
+176:       
+177:     <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># host_strings.each</span>
+178:     
+179:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hosts</span>
+180:     
+181:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000001" class="method-detail">
+        <a name="M000001"></a>
+
+        <div class="method-heading">
+          <a href="#M000001" class="method-signature">
+          <span class="method-name">parse_cmdline</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000001-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 12</span>
+ 12:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse_cmdline</span>
+ 13:     
+ 14:     <span class="ruby-identifier">options</span> = {}
+ 15: <span class="ruby-comment cmt">#    options[:blacklist]    = []</span>
+ 16:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:domain</span>]       = []
+ 17:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:host</span>]         = []
+ 18:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:log</span>]          = <span class="ruby-keyword kw">nil</span>
+ 19:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:regex</span>]        = <span class="ruby-regexp re">//</span>
+ 20:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:username</span>]     = <span class="ruby-keyword kw">nil</span>
+ 21:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:password</span>]     = <span class="ruby-keyword kw">nil</span>
+ 22:     <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>] = {}
+ 23:     
+ 24:     <span class="ruby-keyword kw">begin</span>
+ 25:       
+ 26:       <span class="ruby-constant">OptionParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opts</span><span class="ruby-operator">|</span>
+ 27:         
+ 28:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">banner</span> = <span class="ruby-value str">&quot;Usage: cr.rb -r REPOSITORY [OPTIONS]&quot;</span>
+ 29:         
+ 30: <span class="ruby-comment cmt">#        opts.on('-b', '--blacklist ', 'Blacklist file') do |b|</span>
+ 31: <span class="ruby-comment cmt">#          options[:blacklist] = parse_blacklist(b)</span>
+ 32: <span class="ruby-comment cmt">#        end</span>
+ 33:         
+ 34:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-d'</span>, <span class="ruby-value str">'--domain DOMAIN'</span>, <span class="ruby-value str">'Domain or file:&lt;filename&gt; (can be multiple)'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span>
+ 35:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:domain</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">d</span>)
+ 36:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 37:         
+ 38:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">&quot;-l&quot;</span>, <span class="ruby-value str">'--logfile FILENAME'</span>, <span class="ruby-value str">&quot;Log output file&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">l</span><span class="ruby-operator">|</span>
+ 39:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:log</span>] = <span class="ruby-identifier">l</span>
+ 40:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 41:         
+ 42:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-n'</span>, <span class="ruby-value str">'--hostname HOSTNAME'</span>, <span class="ruby-value str">&quot;Hostname or file:&lt;filename&gt; (can be multiple)&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">h</span><span class="ruby-operator">|</span>
+ 43:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:host</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">h</span>)
+ 44:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 45:         
+ 46:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-r'</span>, <span class="ruby-value str">'--repository REPOSITORY'</span>, <span class="ruby-value str">'Repository directory'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+ 47:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:repository</span>] = <span class="ruby-identifier">r</span>
+ 48:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 49:         
+ 50:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-x'</span>, <span class="ruby-value str">'--regex REGEX'</span>, <span class="ruby-constant">Regexp</span>, <span class="ruby-value str">'Regular expression'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">regex</span><span class="ruby-operator">|</span>
+ 51:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:regex</span>] = <span class="ruby-identifier">regex</span>
+ 52:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 53:         
+ 54:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-u'</span>, <span class="ruby-value str">'--username USERNAME'</span>, <span class="ruby-value str">'Default device username'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span>
+ 55:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:username</span>] = <span class="ruby-identifier">u</span>
+ 56:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 57:         
+ 58:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-p'</span>, <span class="ruby-value str">'--password PASSWORD'</span>, <span class="ruby-value str">'Default device password'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span>
+ 59:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:password</span>] = <span class="ruby-identifier">p</span>
+ 60:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 61:         
+ 62:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;&quot;</span>
+ 63:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;SNMP Options:&quot;</span>
+ 64:         
+ 65:         <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;Community string (default: #{Host::SNMP_DEFAULT_COMMUNITY})&quot;</span>
+ 66:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'--snmp-community COMMUNITY'</span>, <span class="ruby-identifier">description</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">com</span><span class="ruby-operator">|</span>
+ 67:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>][<span class="ruby-identifier">:Community</span>] = <span class="ruby-identifier">com</span>
+ 68:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 69:         
+ 70:         <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;Port (default: #{Host::SNMP_DEFAULT_PORT})&quot;</span>
+ 71:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'--snmp-port PORT'</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-identifier">description</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">port</span><span class="ruby-operator">|</span>
+ 72:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>][<span class="ruby-identifier">:Port</span>] = <span class="ruby-identifier">port</span>
+ 73:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 74:         
+ 75:         <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;Retries (default: #{Host::SNMP_DEFAULT_RETRIES})&quot;</span>
+ 76:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'--snmp-retries VALUE'</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-identifier">description</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">retries</span><span class="ruby-operator">|</span>
+ 77:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>][<span class="ruby-identifier">:Retries</span>] = <span class="ruby-identifier">retries</span>
+ 78:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 79:         
+ 80:         <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;Timeout in seconds (default: #{Host::SNMP_DEFAULT_TIMEOUT})&quot;</span>
+ 81:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'--snmp-timeout VALUE'</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-identifier">description</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">timeout</span><span class="ruby-operator">|</span>
+ 82:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>][<span class="ruby-identifier">:Timeout</span>] = <span class="ruby-identifier">timeout</span>
+ 83:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 84:         
+ 85:         <span class="ruby-identifier">description</span> = <span class="ruby-node">&quot;Version (default: #{SNMP_VERSION_MAP[Host::SNMP_DEFAULT_VERSION]})&quot;</span>
+ 86:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'--snmp-version VERSION'</span>, <span class="ruby-constant">String</span>, <span class="ruby-identifier">description</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">version</span><span class="ruby-operator">|</span>
+ 87:           
+ 88:           <span class="ruby-identifier">x</span> = <span class="ruby-constant">SNMP_VERSION_MAP</span>.<span class="ruby-identifier">invert</span>[<span class="ruby-identifier">version</span>]
+ 89:           
+ 90:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">nil?</span>
+ 91:             <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Unsupported SNMP version -- #{version}&quot;</span>
+ 92:             <span class="ruby-identifier">exit</span> <span class="ruby-constant">ARGUMENT_ERROR</span>
+ 93:           <span class="ruby-keyword kw">end</span>
+ 94:           
+ 95:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>][<span class="ruby-identifier">:Version</span>] = <span class="ruby-identifier">x</span>
+ 96:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on</span>
+ 97:         
+ 98:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;&quot;</span>
+ 99:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;Other:&quot;</span>
+100:         
+101:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on_tail</span>(<span class="ruby-value str">'-h'</span>, <span class="ruby-value str">'--help'</span>, <span class="ruby-value str">'Show this message'</span>) <span class="ruby-keyword kw">do</span>
+102:           <span class="ruby-identifier">puts</span> <span class="ruby-identifier">opts</span>
+103:           <span class="ruby-identifier">exit</span> <span class="ruby-constant">NONFATAL_ERROR</span>
+104:         <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># opts.on_tail</span>
+105:         
+106:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on_tail</span>(<span class="ruby-value str">'-v'</span>, <span class="ruby-value str">'--version'</span>, <span class="ruby-value str">'Show version'</span>) <span class="ruby-keyword kw">do</span>
+107:           <span class="ruby-identifier">puts</span> <span class="ruby-constant">VERSION</span>
+108:           <span class="ruby-identifier">exit</span> <span class="ruby-constant">NONFATAL_ERROR</span>
+109:         <span class="ruby-keyword kw">end</span>
+110:         
+111:       <span class="ruby-keyword kw">end</span>.<span class="ruby-identifier">parse!</span> <span class="ruby-comment cmt"># OptionParser.new</span>
+112:       
+113:       <span class="ruby-identifier">validate_repository</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:repository</span>])
+114:       
+115:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">OptionParser</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+116:       
+117:       <span class="ruby-identifier">puts</span> <span class="ruby-identifier">e</span>
+118:       <span class="ruby-identifier">exit</span> <span class="ruby-constant">ARGUMENT_ERROR</span>
+119:       
+120:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">OptionParser</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+121:       
+122:       <span class="ruby-identifier">puts</span> <span class="ruby-identifier">e</span>
+123:       <span class="ruby-identifier">exit</span> <span class="ruby-constant">ARGUMENT_ERROR</span>
+124:       
+125:     <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># begin</span>
+126:     
+127:     <span class="ruby-comment cmt"># TODO fix this</span>
+128:     <span class="ruby-identifier">hosts</span> = <span class="ruby-identifier">create_hosts</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:host</span>], <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:host</span>)
+129:     <span class="ruby-identifier">hosts</span> = <span class="ruby-identifier">hosts</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">create_hosts</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:domain</span>], <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:domain</span>)
+130:     
+131:     <span class="ruby-identifier">options</span> = <span class="ruby-constant">CR</span><span class="ruby-operator">::</span><span class="ruby-constant">Options</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:log</span>], <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:repository</span>], <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:regex</span>])
+132:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hosts</span>, <span class="ruby-identifier">options</span>
+133:     
+134:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="#M000003" class="method-signature">
+          <span class="method-name">parse_file</span><span class="method-args">(filename, options, type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 183</span>
+183:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse_file</span>(<span class="ruby-identifier">filename</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">type</span>)
+184:     
+185:     <span class="ruby-identifier">host_strings</span> = []
+186:     <span class="ruby-identifier">options</span>      = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">dup</span>
+187:     
+188:     <span class="ruby-keyword kw">begin</span>
+189:       <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">extname</span>(<span class="ruby-identifier">filename</span>) <span class="ruby-operator">==</span> <span class="ruby-value str">'.csv'</span>
+190:         
+191:         <span class="ruby-comment cmt"># FIXME use CSV library for parsing CSV files</span>
+192:         <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">filename</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+193:           <span class="ruby-identifier">values</span> = <span class="ruby-identifier">line</span>.<span class="ruby-identifier">chomp</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">','</span>)
+194:           
+195:           <span class="ruby-identifier">host_string</span> = <span class="ruby-identifier">values</span>[<span class="ruby-value">0</span>]
+196:           
+197:           <span class="ruby-identifier">snmp_options</span> = { <span class="ruby-identifier">:Community</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">values</span>[<span class="ruby-value">1</span>],
+198:                            <span class="ruby-identifier">:Version</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">SNMP_VERSION_MAP</span>.<span class="ruby-identifier">invert</span>[<span class="ruby-identifier">values</span>[<span class="ruby-value">2</span>]],
+199:                            <span class="ruby-identifier">:Port</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">values</span>[<span class="ruby-value">3</span>].<span class="ruby-identifier">to_i</span>,
+200:                            <span class="ruby-identifier">:Timeout</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">values</span>[<span class="ruby-value">4</span>].<span class="ruby-identifier">to_i</span>,
+201:                            <span class="ruby-identifier">:Retries</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">values</span>[<span class="ruby-value">5</span>].<span class="ruby-identifier">to_i</span> }
+202:                            
+203:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>] = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:snmp_options</span>].<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">snmp_options</span>)
+204:           
+205:           <span class="ruby-identifier">host_strings</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">host_string</span>)
+206:         <span class="ruby-keyword kw">end</span>
+207:         
+208:       <span class="ruby-keyword kw">else</span>
+209:       
+210:         <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">filename</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+211:           <span class="ruby-comment cmt"># ignore comment lines that start with '#'</span>
+212:           <span class="ruby-identifier">host_strings</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">line</span>.<span class="ruby-identifier">chomp</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[#|\n]/</span>
+213:         <span class="ruby-keyword kw">end</span>
+214:       
+215:       <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># if File.extname(filename)</span>
+216:       
+217:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+218:       
+219:       <span class="ruby-identifier">puts</span> <span class="ruby-identifier">e</span>
+220:       <span class="ruby-identifier">exit</span> <span class="ruby-constant">ARGUMENT_ERROR</span>
+221:       
+222:     <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># begin</span>
+223:     
+224:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">create_hosts</span>(<span class="ruby-identifier">host_strings</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">type</span>)
+225:     
+226:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="#M000004" class="method-signature">
+          <span class="method-name">parse_host_string</span><span class="method-args">(host_string, options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 228</span>
+228:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse_host_string</span>(<span class="ruby-identifier">host_string</span>, <span class="ruby-identifier">options</span>)
+229:     
+230:     <span class="ruby-identifier">filename</span> = <span class="ruby-keyword kw">nil</span>
+231:     <span class="ruby-identifier">hostname</span> = <span class="ruby-keyword kw">nil</span>
+232:     <span class="ruby-identifier">username</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:username</span>]
+233:     <span class="ruby-identifier">password</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:password</span>]
+234:     
+235:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">host_string</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'file:'</span>)
+236:       
+237:       <span class="ruby-identifier">filename</span> = <span class="ruby-identifier">host_string</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'file:'</span>)[<span class="ruby-value">1</span>]
+238:       
+239:     <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># if host.string.include('file:')</span>
+240:     
+241:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">host_string</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'@'</span>)
+242:       <span class="ruby-identifier">userpass</span>, <span class="ruby-identifier">hostname</span> = <span class="ruby-identifier">host_string</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/(.*)@(.*)$/</span>)[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">2</span>]
+243:       <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span> = <span class="ruby-identifier">userpass</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/^(\w+):(.*)/</span>)[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">2</span>]
+244:       
+245:       <span class="ruby-comment cmt"># userpass split fails when no password is supplied but a user is</span>
+246:       <span class="ruby-comment cmt"># example: user@host.domain.tld</span>
+247:       <span class="ruby-comment cmt"># this will resplit userpass in this condition to take the username only</span>
+248:       <span class="ruby-identifier">username</span> = <span class="ruby-identifier">userpass</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/^(\w+):(.*)/</span>)[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">username</span>.<span class="ruby-identifier">nil?</span>
+249:     <span class="ruby-keyword kw">else</span>
+250:       <span class="ruby-identifier">hostname</span> = <span class="ruby-identifier">host_string</span>
+251:     <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># host_string.include?('@')</span>
+252:     
+253:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">filename</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">filename</span> <span class="ruby-operator">:</span> [<span class="ruby-identifier">hostname</span>, <span class="ruby-identifier">username</span>, <span class="ruby-identifier">password</span>]
+254:     
+255:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="#M000005" class="method-signature">
+          <span class="method-name">process</span><span class="method-args">(hosts, options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 257</span>
+257:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">process</span>(<span class="ruby-identifier">hosts</span>, <span class="ruby-identifier">options</span>)
+258:     <span class="ruby-comment cmt"># stub</span>
+259:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="#M000006" class="method-signature">
+          <span class="method-name">validate_repository</span><span class="method-args">(repository)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/core.rb, line 261</span>
+261:   <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">validate_repository</span>(<span class="ruby-identifier">repository</span>)
+262:     
+263:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">repository</span>.<span class="ruby-identifier">nil?</span>
+264:       <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;missing repository&quot;</span>
+265:       <span class="ruby-identifier">exit</span> <span class="ruby-constant">ARGUMENT_ERROR</span>
+266:     <span class="ruby-keyword kw">end</span>
+267:     
+268:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

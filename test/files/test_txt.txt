@@ -1,0 +1,6 @@
+host1.domain1.tld1
+user2@host2.domain2.tld2
+
+user3:pass3@host3.domain3.tld3
+# Comment 1
+user4:pa:s@s4@host4.domain4.tld4
