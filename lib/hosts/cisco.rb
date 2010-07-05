@@ -22,6 +22,7 @@ module CR
         end
         
         startup_config.shift until startup_config[0] =~ /^version/
+        startup_config.unshift('!') # add back beginning '!' on configuration
         
         return startup_config
         
