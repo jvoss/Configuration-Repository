@@ -15,14 +15,14 @@ module CR
         
         Net::SSH.start(@hostname, @username, :password => @password) do |ssh|
           ssh.exec!('show startup-config').each_line do |line|
-           startup_config.push(line.chomp)
+           startup_config.push(line)
           end
           
           ssh.loop
         end
         
         startup_config.shift until startup_config[0] =~ /^version/
-        startup_config.unshift('!') # add back beginning '!' on configuration
+        startup_config.unshift("!\r\n") # add back beginning '!' on configuration
         
         return startup_config
         
