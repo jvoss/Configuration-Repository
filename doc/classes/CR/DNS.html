@@ -119,20 +119,20 @@ Return an array of hostnames from an AXFR request for a domain
             onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000007-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/dns.rb, line 9</span>
- 9:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">axfr</span>(<span class="ruby-identifier">domain</span>)
-10:       <span class="ruby-identifier">hosts</span> = []
-11:       
-12:       <span class="ruby-identifier">resolver</span> = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolver</span>.<span class="ruby-identifier">new</span>
-13: <span class="ruby-comment cmt">#      resolver.logger = $LOG</span>
-14:       
-15:       <span class="ruby-identifier">resolver</span>.<span class="ruby-identifier">axfr</span>(<span class="ruby-identifier">domain</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
-16:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">RR</span><span class="ruby-operator">::</span><span class="ruby-constant">A</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">RR</span><span class="ruby-operator">::</span><span class="ruby-constant">AAAA</span>)
-17:         <span class="ruby-identifier">hosts</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">chop</span> <span class="ruby-comment cmt"># chop removes trailing period from answer</span>
-18:       <span class="ruby-keyword kw">end</span>
-19:       
-20:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hosts</span>
-21:     <span class="ruby-keyword kw">end</span>
+<span class="ruby-comment cmt"># File lib/dns.rb, line 9</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">axfr</span>(<span class="ruby-identifier">domain</span>)
+      <span class="ruby-identifier">hosts</span> = []
+      
+      <span class="ruby-identifier">resolver</span> = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">Resolver</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-comment cmt">#      resolver.logger = $LOG</span>
+      
+      <span class="ruby-identifier">resolver</span>.<span class="ruby-identifier">axfr</span>(<span class="ruby-identifier">domain</span>.<span class="ruby-identifier">to_s</span>).<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">record</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">RR</span><span class="ruby-operator">::</span><span class="ruby-constant">A</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">RR</span><span class="ruby-operator">::</span><span class="ruby-constant">AAAA</span>)
+        <span class="ruby-identifier">hosts</span>.<span class="ruby-identifier">push</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">chop</span> <span class="ruby-comment cmt"># chop removes trailing period from answer</span>
+      <span class="ruby-keyword kw">end</span>
+      
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hosts</span>
+    <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

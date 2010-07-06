@@ -86,9 +86,6 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000009">_validate_log</a>&nbsp;&nbsp;
-      <a href="#M000010">_validate_regex</a>&nbsp;&nbsp;
-      <a href="#M000011">_validate_repository</a>&nbsp;&nbsp;
       <a href="#M000008">new</a>&nbsp;&nbsp;
       </div>
     </div>
@@ -154,96 +151,18 @@
             onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000008-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/options.rb, line 9</span>
- 9:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">log</span>, <span class="ruby-identifier">repository</span>, <span class="ruby-identifier">regex</span> = <span class="ruby-regexp re">//</span>)
-10: 
-11:       <span class="ruby-ivar">@log</span>        = <span class="ruby-identifier">log</span>
-12:       <span class="ruby-ivar">@regex</span>      = <span class="ruby-identifier">regex</span>
-13:       <span class="ruby-ivar">@repository</span> = <span class="ruby-identifier">repository</span>
-14:       
-15:       <span class="ruby-identifier">_validate_log</span>
-16:       <span class="ruby-identifier">_validate_regex</span>
-17:       <span class="ruby-identifier">_validate_repository</span>
-18:     
-19:     <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
+<span class="ruby-comment cmt"># File lib/options.rb, line 9</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">log</span>, <span class="ruby-identifier">repository</span>, <span class="ruby-identifier">regex</span> = <span class="ruby-regexp re">//</span>)
 
-      <h3 class="section-bar">Private Instance methods</h3>
-
-      <div id="method-M000009" class="method-detail">
-        <a name="M000009"></a>
-
-        <div class="method-heading">
-          <a href="#M000009" class="method-signature">
-          <span class="method-name">_validate_log</span><span class="method-args">()</span>
-          </a>
-        </div>
+      <span class="ruby-ivar">@log</span>        = <span class="ruby-identifier">log</span>
+      <span class="ruby-ivar">@regex</span>      = <span class="ruby-identifier">regex</span>
+      <span class="ruby-ivar">@repository</span> = <span class="ruby-identifier">repository</span>
       
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000009-source">
-<pre>
-    <span class="ruby-comment cmt"># File lib/options.rb, line 23</span>
-23:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate_log</span>
-24:       
-25:       <span class="ruby-ivar">@log</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">:STDOUT</span>
-26:       
-27:     <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000010" class="method-detail">
-        <a name="M000010"></a>
-
-        <div class="method-heading">
-          <a href="#M000010" class="method-signature">
-          <span class="method-name">_validate_regex</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000010-source">
-<pre>
-    <span class="ruby-comment cmt"># File lib/options.rb, line 29</span>
-29:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate_regex</span>
-30:       
-31:       <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;Invalid Regular Expression -- #{@regex}&quot;</span>
-32:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-identifier">msg</span>, <span class="ruby-identifier">caller</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@regex</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>)
-33:       
-34:     <span class="ruby-keyword kw">end</span>
-</pre>
-          </div>
-        </div>
-      </div>
-
-      <div id="method-M000011" class="method-detail">
-        <a name="M000011"></a>
-
-        <div class="method-heading">
-          <a href="#M000011" class="method-signature">
-          <span class="method-name">_validate_repository</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-          <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000011-source">
-<pre>
-    <span class="ruby-comment cmt"># File lib/options.rb, line 36</span>
-36:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">_validate_repository</span>
-37:       
-38:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@repository</span>.<span class="ruby-identifier">nil?</span>
-39:       
-40:     <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">_validate_log</span>
+      <span class="ruby-identifier">_validate_regex</span>
+      <span class="ruby-identifier">_validate_repository</span>
+    
+    <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>
