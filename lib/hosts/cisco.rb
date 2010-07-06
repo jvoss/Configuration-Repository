@@ -1,5 +1,8 @@
-require 'net/ssh' # TODO require SSH library >= 2.0.23
+require 'rubygems'
+require 'net/ssh'
 require 'lib/host'
+
+gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
 module CR
   
