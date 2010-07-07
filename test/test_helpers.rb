@@ -1,10 +1,11 @@
 require 'lib/host'
+require 'tmpdir'
 
 module CRTest
   
   TEST_OPTIONS = { :log          => 'test.log',
                    :regex        => //,
-                   :repository   => 'repo',
+                   :repository   => "#{Dir.tmpdir}/CRtestrepo",
                    :username     => nil,
                    :password     => nil,
                    :snmp_options => { :Port      => CR::Host::SNMP_DEFAULT_PORT,
