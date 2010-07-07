@@ -11,6 +11,8 @@ module CR
     SNMP_DEFAULT_RETRIES   = 2
     SNMP_DEFAULT_VERSION   = :SNMPv2c
     
+    attr_reader :hostname
+    
     def initialize(hostname, username, password, snmp_options = {})
       
       @hostname     = hostname
