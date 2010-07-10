@@ -149,8 +149,12 @@ module CR
           domain, username, password = parse_host_string(host, options)
         
           DNS.axfr(domain).each do |hostname|
+            
+            next unless hostname.match(options[:regex])
+            
             hosts.push CR::Host.new(hostname, username, password, options[:snmp_options])
-          end
+          
+          end # DNS.axfr
         
         else
           
