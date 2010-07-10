@@ -1,0 +1,9 @@
+The following gems are required:
+
+net-dns
+net-ssh (at least 2.0.23)
+snmp
+
+Notes:
+
+libopenssl-ruby (Ubuntu) - OpenSSL must be installed on the machine for net-ssh to work
