@@ -13,6 +13,10 @@ module CR
     
     attr_reader :hostname
     
+    # Initializes a new host object:
+    # Example: host = Host.new('host.domain.tld', 'user', 'pass')
+    # snmp_options can contain any options available from the 'snmp' gem
+    #
     def initialize(hostname, username, password, snmp_options = {})
       
       @hostname     = hostname
@@ -24,6 +28,9 @@ module CR
     
     end # def initialize
     
+    # Returns the devices configuration in an array as specified in 
+    # lib/hosts/<type> as extended by finger printing
+    # 
     def config
       _snmp_fingerprint
       config
@@ -31,6 +38,9 @@ module CR
     
     private
     
+    # Detects which type of host to load based on the SNMP repsponce of 
+    # 'sysDescr'. Extends the proper module from lib/hosts
+    #
     def _snmp_fingerprint
       
       sysDescr = nil
@@ -53,6 +63,9 @@ module CR
       
     end # def _snmp_fingerprint
     
+    # Initialize SNMP options by using any specifics the user specified
+    # and fill in the blanks with default options
+    #
     def _snmp_initialize
       
       # SNMP defaults
