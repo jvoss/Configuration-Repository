@@ -83,6 +83,8 @@ module CR
       
     end # def _snmp_initialize
     
+    class NonFatalError < StandardError; end # TODO consider renaming the error handling for Host
+    
   end # class Host
   
 end # module CR

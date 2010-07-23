@@ -312,8 +312,9 @@ module CR
       rescue SNMP::RequestTimeout
         @@log.warn "SNMP timeout: #{host.hostname} -- skipping"
         next
-      rescue SSH  
-        @@log.error "SSH Error: #{host.hostname} -- skipping"
+      rescue Host::NonFatalError
+        @@log.error "NonFatalError: #{host.hostname} -- skipping"
+        next
       end
       
       if repository.read(host, options) != current_config

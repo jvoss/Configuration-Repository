@@ -17,6 +17,7 @@ module CR
         startup_config = []
         
         begin
+          
           Net::SSH.start(@hostname, @username, :password => @password) do |ssh|
             ssh.exec!('show startup-config').each_line do |line|
              startup_config.push(line)
@@ -24,12 +25,16 @@ module CR
             
             ssh.loop
           end
+          
         rescue # TODO  figure out how to catch more specific RuntimeErrors from SSH
           # catches stuff like:
           # /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/session.rb:322:in `exec': 
           # could not execute command: "show startup-config" (RuntimeError)
           # from /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/channel.rb:597:in `call'
-        end
+          
+          raise Host::NonFatalError
+          
+        end # begin
         
         startup_config.shift until startup_config[0] =~ /^version/
         startup_config.unshift("!\r\n") # add back beginning '!' on configuration
@@ -37,6 +42,8 @@ module CR
         return startup_config
         
       end # config
+      
+      class SSHError < RuntimeError; end # Catch SSH errors and name them
       
     end # module Cisco
     
