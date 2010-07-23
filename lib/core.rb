@@ -10,6 +10,8 @@ module CR
   
   VERSION = '1.0.0'
   
+  @@log   = Logger.new(STDOUT)
+  
   def self.parse_cmdline
     
     options = {}
@@ -37,7 +39,8 @@ module CR
         end # opts.on
         
         opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
-          options[:log] = l
+#          options[:log] = l
+          @@log = Logger.new(l.to_s)
         end # opts.on
         
         opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
@@ -58,6 +61,25 @@ module CR
         
         opts.on('-p', '--password PASSWORD', 'Default device password') do |p|
           options[:password] = p
+        end # opts.on
+        
+        opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
+          # TODO deal with verbosity level in log
+          case verbose
+            when 'fatal'
+              @@log.level = Logger::FATAL
+            when 'error'
+              @@log.level = Logger::ERROR
+            when 'warn'
+              @@log.level = Logger::WARN
+            when 'info'
+              @@log.level = Logger::INFO
+            when 'debug'
+              @@log.level = Logger::DEBUG
+            else
+              puts "Unsupported verbose level -- #{verbose}"
+              exit ARGUMENT_ERROR
+          end
         end # opts.on
         
         opts.separator ""
@@ -184,6 +206,14 @@ module CR
     return hosts
     
   end # def self.create_hosts
+  
+  # Provides access to Logger for CR
+  #
+  def self.log
+    
+    @@log
+    
+  end # def self.log
     
   def self.parse_file(filename, options, type)
     
@@ -261,14 +291,14 @@ module CR
   
   def self.process(hosts, options)
     
-    puts "Opening repository: #{options[:repository]}"
+    @@log.info "Opening repository: #{options[:repository]}"
     
     # initialize the repository
     repository = Repository.new(options[:repository], :git)
     
     hosts.each do |host|
       
-      puts "Processing: #{host.hostname}"
+      @@log.info "Processing: #{host.hostname}"
       
       current_config = host.config
       
