@@ -4,6 +4,7 @@ require 'lib/constants'
 require 'lib/dns'
 require 'lib/host'
 require 'lib/options'
+require 'lib/repository'
 
 module CR
   
@@ -128,7 +129,7 @@ module CR
     hosts = create_hosts(options[:host], options, :host)
     hosts = hosts + create_hosts(options[:domain], options, :domain)
     
-    options = CR::Options.new(options[:log], options[:repository], options[:regex])
+#    options = CR::Options.new(options[:log], options[:repository], options[:regex])
     return hosts, options
     
   end # def self.parse_cmdline
@@ -259,7 +260,28 @@ module CR
   end # def self.parse_host_string
   
   def self.process(hosts, options)
-    # stub
+    
+    puts "Opening repository: #{options[:repository]}"
+    
+    # initialize the repository
+    repository = Repository.new(options[:repository], :git)
+    
+    hosts.each do |host|
+      
+      puts "Processing: #{host.hostname}"
+      
+      current_config = host.config
+      
+      if repository.read(host, options) != current_config
+        repository.save(host, options)
+      end
+      
+    end # hosts.each
+    
+    # add any new files and commit all changes
+    repository.add_all
+    repository.commit_all('CR Commit')
+    
   end # def self.process
   
   def self.validate_repository(repository)

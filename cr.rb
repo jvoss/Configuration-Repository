@@ -41,11 +41,14 @@ require 'pp'
 
 #options, hosts = CR.parse_cmdline         
 hosts, options = CR.parse_cmdline
-pp hosts
-pp options
 
-hosts.each do |host|
-  pp host.config
-end
+CR.process(hosts, options)
+
+#pp hosts
+#pp options
+
+#hosts.each do |host|
+#  pp host.config
+#end
 
 #ConfigRepo.process(hosts, options)

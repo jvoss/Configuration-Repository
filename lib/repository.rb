@@ -54,6 +54,7 @@ module CR
       
       # TODO Allow options to change these settings:
       @repo.config('user.name', 'Configuration Repository')
+      @repo.config('user.email', 'nobody@nowhere.com')
       
     end # def init
     

@@ -29,6 +29,17 @@ module CR
         super '.', git_options
         
       end # def self.init
+      
+      def commit_all(message)
+        
+        begin
+          super message
+        rescue ::Git::GitExecuteError
+          # TODO provide some useful information about why commit was not needed
+          # stub - catches when a commit is not necessary
+        end
+        
+      end # self.commit_all
   
       # Check to see if a valid repository exists
       #
