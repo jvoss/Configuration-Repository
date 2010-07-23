@@ -36,7 +36,9 @@ module CR
           super message
         rescue ::Git::GitExecuteError
           # TODO provide some useful information about why commit was not needed
-          # stub - catches when a commit is not necessary
+          # stub - catches when a commit is not necessary (need to confirm that
+          # it will still catch other errors
+          puts "no commit needed"
         end
         
       end # self.commit_all

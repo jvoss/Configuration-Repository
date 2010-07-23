@@ -3,8 +3,6 @@ require 'lib/vcs/git'
 
 module CR
   
-  # TODO Reconsider how this class works to be able to support multiple VCS's
-  
   class Repository
     
     # Create a new repository object
@@ -136,7 +134,7 @@ module CR
     #
     def _filename(hostobj, options)
       
-      path = hostobj.hostname.match(options[:regex]).to_a
+      path = hostobj.hostname.match(options[:regex]).captures
       path.push hostobj.hostname
       
     end # def _filename
