@@ -8,7 +8,7 @@ module CR
   class Repository
     
     # Create a new repository object
-    # VCS is the versioning system to use, example :git
+    # VCS is the version control system to use, example :git
     #    
     def initialize(directory, type)
       
@@ -48,7 +48,7 @@ module CR
     #
     def init
       
-      raise "Repository already initialized -- #{@directory}" if self.exist?
+#      raise "Repository already initialized -- #{@directory}" if self.exist?
      
       @repo = @vcs.init(@directory)
       
@@ -66,42 +66,45 @@ module CR
       
     end # def open
     
-    # Reads contents of a file from the repository directory into an array
-    # TODO Consider moving file operations to another class
+    # Reads contents of hostObject.config from the repository into an array
     #
-    def read(filename)
+    def read(hostobj, options)
       
       contents = []
       
-      File.open("#{@directory}/#{filename}", 'r') do |file|
-        file.each_line do |line|
-          contents.push(line)
-        end
-      end # File.open
+      filename = _filename(hostobj, options).join('/')
+      
+      begin
+        File.open("#{@directory}/#{filename}", 'r') do |file|
+          file.each_line do |line|
+            contents.push(line)
+          end
+        end # File.open
+      rescue Errno::ENOENT # Catch missing files
+        contents = []
+      end
       
       return contents
       
     end # def read
     
     # Saves contents to a file to the repository
-    # TODO Consider moving file operations to another class
     #
-    def save(filename, contents)
+    def save(hostobj, options)
       
       raise "Repository not initialized" unless self.exist?
       
-      # TODO Clean up finding the filename vs directory
-      directory = filename.to_s.split('/')
-      directory.pop
-      directory.join('/')
+      path     = _filename(hostobj, options)
+      sub_dir  = path[0...-1].join('/') if path.size > 1
+      filename = path.pop
       
       # Make directories if they do not exist
-      File.makedirs("#{@directory}/#{directory}")
+      File.makedirs("#{@directory}/#{sub_dir}") unless sub_dir.nil?
       
-      file = File.open("#{@directory}/#{filename}", 'w')
+      file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
     
-      contents.each do |line|
-        file.print line
+      hostobj.config.each do |line|
+        file.syswrite line
       end # contents.each
       
     end # def save
@@ -118,10 +121,24 @@ module CR
           raise ArgumentError, "VCS unsupported -- #{@type}"
       end # case
       
-      # Open the repository if it exists
-      open if exist? 
+      # Open the repository if it exists or initialize a new one
+      if exist?
+        open
+      else
+        init
+      end
       
     end # _initialize_vcs
+    
+    # Determines what the repository internal path structure and file name 
+    # should be based off the regex option. Returns as an array.
+    #
+    def _filename(hostobj, options)
+      
+      path = hostobj.hostname.match(options[:regex]).to_a
+      path.push hostobj.hostname
+      
+    end # def _filename
     
   end # class Repository
   
