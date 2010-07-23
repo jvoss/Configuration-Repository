@@ -10,7 +10,10 @@ module CR
   
   VERSION = '1.0.0'
   
-  @@log   = Logger.new(STDOUT)
+  # Default logging configuration
+  @@log                 = Logger.new(STDOUT)
+  @@log.level           = Logger::INFO
+  @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
   
   def self.parse_cmdline
     
@@ -18,7 +21,7 @@ module CR
 #    options[:blacklist]    = []
     options[:domain]       = []
     options[:host]         = []
-    options[:log]          = nil
+#    options[:log]          = nil # TODO - remove - no longer needed
     options[:regex]        = //
     options[:username]     = nil
     options[:password]     = nil
@@ -175,6 +178,8 @@ module CR
             
             next unless hostname.match(options[:regex])
             
+            @@log.debug "Adding host: #{hostname}"
+            
             hosts.push CR::Host.new(hostname, username, password, options[:snmp_options])
           
           end # DNS.axfr
@@ -191,6 +196,8 @@ module CR
         
         if x.is_a?(Array)
           hostname, username, password = x[0], x[1], x[2]
+          
+          @@log.debug "Adding host: #{hostname}"
            
           hosts.push CR::Host.new(hostname, username, password, options[:snmp_options])
         else
@@ -300,10 +307,18 @@ module CR
       
       @@log.info "Processing: #{host.hostname}"
       
-      current_config = host.config
+      begin
+        current_config = host.config
+      rescue SNMP::RequestTimeout
+        @@log.warn "SNMP timeout: #{host.hostname} -- skipping"
+        next
+      end
       
       if repository.read(host, options) != current_config
         repository.save(host, options)
+        @@log.debug "Saving: #{host.hostname}"
+      else  
+        @@log.debug "No change: #{host.hostname}"
       end
       
     end # hosts.each
@@ -311,6 +326,8 @@ module CR
     # add any new files and commit all changes
     repository.add_all
     repository.commit_all('CR Commit')
+    
+    @@log.info "Processing complete"
     
   end # def self.process
   

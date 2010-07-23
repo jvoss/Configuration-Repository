@@ -10,7 +10,7 @@ module CR
       hosts = []
       
       resolver = Net::DNS::Resolver.new
-#      resolver.logger = $LOG
+#      resolver.logger = CR.log
       
       resolver.axfr(domain.to_s).answer.each do |record|
         next unless record.is_a?(Net::DNS::RR::A) or record.is_a?(Net::DNS::RR::AAAA)
