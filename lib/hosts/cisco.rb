@@ -13,7 +13,7 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+# along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
@@ -61,7 +61,9 @@ module CR
         
       end # config
       
-      class SSHError < RuntimeError; end # Catch SSH errors and name them
+      # Error class for catching non-fatal SSH errors
+      #
+      class SSHError < RuntimeError; end
       
     end # module Cisco
     
