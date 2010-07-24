@@ -62,7 +62,7 @@ module CR
   #
   # ===Examples
   #
-  # Run against single host:
+  # Run against a single host:
   #     cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
   #
   # Run against multiple hosts with the same credentials:
