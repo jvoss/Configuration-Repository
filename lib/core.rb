@@ -1,3 +1,5 @@
+require "csv"
+require "logger"
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
 # This file is part of Configuration Repository (CR)
@@ -33,6 +35,54 @@ module CR
   @@log.level           = Logger::INFO
   @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
   
+  # Parses command-line options using OptionParser and returns an array of
+  # host objects and an options hash used throughout CR.
+  #
+  # ===Command line options:
+  #   Usage: cr.rb -r REPOSITORY [OPTIONS]
+  #     -d, --domain DOMAIN              Domain or file:<filename> (can be multiple)
+  #     -l, --logfile FILENAME           Log output file
+  #     -n, --hostname HOSTNAME          Hostname or file:<filename> (can be multiple)
+  #     -r, --repository REPOSITORY      Repository directory
+  #     -x, --regex REGEX                Regular expression
+  #     -u, --username USERNAME          Default device username
+  #     -p, --password PASSWORD          Default device password
+  #         --verbosity LEVEL            Verbose level [fatal|error|warn|info|debug]
+  #
+  #     SNMP Options:
+  #         --snmp-community COMMUNITY   Community string (default: public)
+  #         --snmp-port PORT             Port (default: 161)
+  #         --snmp-retries VALUE         Retries (default: 2)
+  #         --snmp-timeout VALUE         Timeout in seconds (default: 3)
+  #         --snmp-version VERSION       Version (default: 2c)
+  #
+  #     Other:
+  #     -h, --help                       Show this message
+  #     -v, --version                    Show version
+  #
+  # ===Examples
+  #
+  # Run against single host:
+  #     cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
+  #
+  # Run against multiple hosts with the same credentials:
+  #     cr.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld
+  #       -u username -p password
+  #
+  # Run against domains with different credentials:
+  #     cr.rb -r /path/to/repository -d user1:pass1@domain1.tld
+  #       -d user2:pass2@domain2.tld
+  # 
+  # Run against a txt file of host strings containing hosts:
+  #     cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
+  #
+  # Run against a CSV file of host strings containing domains:
+  #     cr.rb -r /path/to/repository -n file:domainfile.csv -u user -p pass
+  #
+  # Usernames and passwords can also be specified as part of the host string
+  # within either file type allowing for greater flexiblility in environments
+  # with varying credentials.
+  #
   def self.parse_cmdline
     
     options = {}
@@ -177,7 +227,16 @@ module CR
     
   end # def self.parse_cmdline
   
-  # TODO refactor
+  # Creates an array of CR::Host objects from an array of host_strings.
+  #
+  # A list of host_strings can contain hostnames (type = :host) or a list
+  # of domain names (type = :domain).
+  #
+  # See parse_host_string for information about host_string formatting.
+  #--
+  # TODO: refactor this method
+  #++
+  #
   def self.create_hosts(host_strings, options, type)
     
     hosts = []
@@ -232,14 +291,26 @@ module CR
     
   end # def self.create_hosts
   
-  # Provides access to Logger for CR
+  # Provides access to Logger. 
+  #
+  # By default Logger is initialized to direct messages to STDOUT with a
+  # level set to INFO. Command line options are also available to customize
+  # logging information at runtime.
   #
   def self.log
     
     @@log
     
   end # def self.log
-    
+  
+  # Parses filename and returns an array of CR::Host objects. Files accepted
+  # are text files with each line containing a valid host string or a CSV
+  # in the following format:
+  #
+  # host_string,snmp_community,snmp_version,snmp_port,snmp_timeout,snmp_retries
+  #
+  # See parse_host_string for more information about host string formatting.
+  #
   def self.parse_file(filename, options, type)
     
     host_strings = []
@@ -285,6 +356,21 @@ module CR
     
   end # def self.parse_file
   
+  # Parses a host string into hostname, username, and password.
+  # 
+  # Valid host strings are:
+  #   hostname.domain.tld
+  #   user@hostname.domain.tld
+  #   user:pass@hostname.domain.tld
+  #
+  #   file:filename.txt
+  #
+  # Domains can also be valid host strings: user:pass@domain.tld
+  #
+  # If a filename is specified with file: before the name, the filename
+  # will be returned. This is done for filename detection on the command-line
+  # and further file processing is done in the caller. 
+  #
   def self.parse_host_string(host_string, options)
     
     filename = nil
@@ -314,6 +400,15 @@ module CR
     
   end # def self.parse_host_string
   
+  # Processes an array of host objects by calling the .config method on
+  # each CR::Host object. 
+  # 
+  # It expects the method to retrieve the desired configuration as an array.
+  # Then it compares it to what was previously saved to the repository 
+  # (if it exists) then saves it if there was a change (of if it is a new file). 
+  # Any new files will be added to the repository then committed at the end of 
+  # this method.
+  #
   def self.process(hosts, options)
     
     @@log.info "Opening repository: #{options[:repository]}"
@@ -352,6 +447,9 @@ module CR
     
   end # def self.process
   
+  # Validates that a repository directory was specified on the command-line when
+  # CR is ran as an application. The application will exit when missing.
+  #
   def self.validate_repository(repository)
     
     if repository.nil?

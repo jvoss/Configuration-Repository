@@ -1,0 +1,36 @@
+= Configuration Repository (CR)
+
+== Description
+
+Configuration Repository is a utility designed to help automate
+backing up device configurations. CR first queries the sysDescr 
+string via SNMP to determine which type of host the device
+is, then loads a dedicated class for pulling the correct configuration.
+This allows for extensions to be written to support any type of device
+or platform that supports SNMP and any mechanism for dealing with 
+desired information from the host.
+
+== Features
+
+* Host list support via DNS, CSV, TXT, or command line
+* Repository file structure determined by custom Regex
+* Detect device type (Cisco, etc) via SNMP
+* Extendable with additional host type classes
+* Planned support for multiple version control systems (currently using Git)
+
+== Requirements
+
+The following gems are required to use Configuration Repository:
+
+* git
+* net-dns
+* net-ssh >= 2.0.23
+* shoulda
+* snmp
+
+Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
+be installed in order for net-ssh to function properly.
+
+== Copyright
+
+Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
