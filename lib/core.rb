@@ -1,5 +1,3 @@
-require "csv"
-require "logger"
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
 # This file is part of Configuration Repository (CR)
@@ -18,6 +16,8 @@ require "logger"
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require "csv"
+require "logger"
 require 'optparse'
 require 'rubygems'
 require 'lib/constants'
