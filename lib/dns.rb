@@ -24,6 +24,7 @@ module CR
   module DNS
     
     # Return an array of hostnames from an AXFR request for a domain
+    #
     def self.axfr(domain)
       hosts = []
       
