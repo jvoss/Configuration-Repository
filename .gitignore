@@ -1,5 +1,7 @@
 # Ignore generated RDoc
 doc/
 
-# Ignore apatana project file
+# Ignore Apatana project files
+.loadpath
 .project
+
