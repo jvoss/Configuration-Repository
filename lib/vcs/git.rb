@@ -26,7 +26,9 @@ module CR
   
     class Git < Git::Base 
   
-      # Initialize repository
+      # Initializes a new Git repository. If the directory does not exist
+      # it will be created. git_options hash is passed through to the 
+      # Git::Base library.
       #
       def self.init(repository, git_options = {})
         
@@ -48,6 +50,9 @@ module CR
         
       end # def self.init
       
+      # Commits all files in the repository and adds the message string 
+      # supplied to the log.
+      #
       def commit_all(message)
         
         begin
@@ -61,7 +66,7 @@ module CR
         
       end # self.commit_all
   
-      # Check to see if a valid repository exists
+      # Checks to see if a valid repository exists
       #
       def self.exist?(repository)
         

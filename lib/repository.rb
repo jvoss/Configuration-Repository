@@ -23,8 +23,8 @@ module CR
   
   class Repository
     
-    # Create a new repository object
-    # VCS is the version control system to use, example :git
+    # Create a new repository object. VCS is the version control system 
+    # to use, example :git
     #    
     def initialize(directory, type)
       
@@ -35,7 +35,7 @@ module CR
       
     end # def initialize
     
-    # Adds all files in the repository directory to the repository
+    # Adds all files in the repository directory to tracking.
     #
     def add_all
       
@@ -43,7 +43,8 @@ module CR
       
     end # def add_all
     
-    # Commits all files in the repository
+    # Commits all files in the repository with the commit message applied
+    # to the log.
     #
     def commit_all(message)
       
@@ -51,8 +52,8 @@ module CR
       
     end # def commit_all
     
-    # Checks to see if a repository exists at the directory 
-    # specified during object creation
+    # Checks to see if a repository exists at the directory specified 
+    # during object creation.
     #
     def exist?
       
@@ -60,7 +61,8 @@ module CR
       
     end # def exist?
     
-    # Initializes a new empty repository
+    # Initializes a new empty repository in the directory specified during
+    # CR::Repository initialization.
     #
     def init
       
@@ -74,7 +76,7 @@ module CR
       
     end # def init
     
-    # Opens the repository
+    # Opens the repository for operations.
     #
     def open
      
@@ -105,7 +107,8 @@ module CR
       
     end # def read
     
-    # Saves contents to a file to the repository
+    # Saves contents of CR::Host.config to file named by the object's
+    # hostname.
     #
     def save(hostobj, options)
       
