@@ -421,27 +421,39 @@ module CR
       @@log.info "Processing: #{host.hostname}"
       
       begin
+        
         current_config = host.config
+      
       rescue SNMP::RequestTimeout
-        @@log.warn "SNMP timeout: #{host.hostname} -- skipping"
+        
+        @@log.error "SNMP timeout: #{host.hostname} -- skipping"
         next
+        
       rescue Host::NonFatalError
+        
         @@log.error "NonFatalError: #{host.hostname} -- skipping"
         next
+        
       end
       
       if repository.read(host, options) != current_config
+        
         repository.save(host, options)
         @@log.debug "Saving: #{host.hostname}"
+        
       else  
+        
         @@log.debug "No change: #{host.hostname}"
       end
       
+      
     end # hosts.each
+    
+    commit_message = "CR Commit: Processed #{hosts.size} hosts."
     
     # add any new files and commit all changes
     repository.add_all
-    repository.commit_all('CR Commit')
+    repository.commit_all(commit_message)
     
     @@log.info "Processing complete"
     
