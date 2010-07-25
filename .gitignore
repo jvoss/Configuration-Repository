@@ -1,2 +1,5 @@
 # Ignore generated RDoc
 doc/
+
+# Ignore apatana project file
+.project
