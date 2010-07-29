@@ -16,8 +16,7 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'net/dns/resolver'
-require 'net/dns/rr/srv'
+require 'dnsruby'
 
 module CR
   
@@ -28,12 +27,11 @@ module CR
     def self.axfr(domain)
       hosts = []
       
-      resolver = Net::DNS::Resolver.new
-#      resolver.logger = CR.log
+      zone = Dnsruby::ZoneTransfer.new
       
-      resolver.axfr(domain.to_s).answer.each do |record|
-        next unless record.is_a?(Net::DNS::RR::A) or record.is_a?(Net::DNS::RR::AAAA)
-        hosts.push record.name.chop # chop removes trailing period from answer
+      zone.transfer(domain.to_s).each do |record|
+        next unless record.type == Dnsruby::Types::A or record.type == Dnsruby::Types::AAAA
+        hosts.push record.name.to_s
       end
       
       return hosts
