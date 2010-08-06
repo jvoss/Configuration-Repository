@@ -77,7 +77,7 @@ module CR
   #     cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
   #
   # Run against a CSV file of host strings containing domains:
-  #     cr.rb -r /path/to/repository -n file:domainfile.csv -u user -p pass
+  #     cr.rb -r /path/to/repository -d file:domainfile.csv -u user -p pass
   #
   # Usernames and passwords can also be specified as part of the host string
   # within either file type allowing for greater flexiblility in environments
