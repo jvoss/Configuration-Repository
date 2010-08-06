@@ -22,8 +22,8 @@ desired information from the host.
 
 The following gems are required to use Configuration Repository:
 
-* git
 * dnsruby
+* git
 * net-ssh >= 2.0.23
 * shoulda
 * snmp
