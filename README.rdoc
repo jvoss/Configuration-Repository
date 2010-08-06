@@ -25,9 +25,9 @@ The following gems are required to use Configuration Repository:
 * dnsruby
 * git
 * net-ssh >= 2.0.23
+* rake
 * shoulda
 * snmp
-* rake
 
 Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
 be installed in order for net-ssh to function properly.
