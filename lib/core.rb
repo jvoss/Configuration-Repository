@@ -99,7 +99,7 @@ module CR
       
       OptionParser.new do |opts|
         
-        opts.banner = "Usage: cr.rb -r REPOSITORY [OPTIONS]"
+        opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
         
 #        opts.on('-b', '--blacklist ', 'Blacklist file') do |b|
 #          options[:blacklist] = parse_blacklist(b)
