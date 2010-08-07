@@ -233,25 +233,26 @@ module CR
   # of domain names (type = :domain).
   #
   # See parse_host_string for information about host_string formatting.
-  #--
-  # TODO: refactor this method
-  #++
   #
   def self.create_hosts(host_strings, options, type)
     
     hosts = []
     
     host_strings.each do |host|
+        
+      host_info = parse_host_string(host, options)
+        
+      if host_info.is_a?(Array)
       
-      if type == :domain
-        
-        x = parse_host_string(host, options)
-        
-        if x.is_a?(Array)
-        
-          domain, username, password = parse_host_string(host, options)
-        
-          DNS.axfr(domain).each do |hostname|
+        target, username, password = parse_host_string(host, options)
+      
+        if type.to_sym == :host
+          
+          hosts.push CR::Host.new(target, username, password, options[:snmp_options])
+          
+        elsif type.to_sym == :domain
+      
+          DNS.axfr(target).each do |hostname|
             
             next unless hostname.match(options[:regex])
             
@@ -262,28 +263,16 @@ module CR
           end # DNS.axfr
         
         else
-          
-          hosts = parse_file(x, options, :domain)
         
-        end # if x.is_a?(Array)
-      
-      else
-      
-        x = parse_host_string(host, options)
+          raise "Invalid host string type -- #{type}"
         
-        if x.is_a?(Array)
-          hostname, username, password = x[0], x[1], x[2]
-          
-          @@log.debug "Adding host: #{hostname}"
-           
-          hosts.push CR::Host.new(hostname, username, password, options[:snmp_options])
-        else
-          
-          hosts = parse_file(x, options, :host)
-        
-        end
+        end # if type
       
-      end # if type == :domain
+      else # host_info must be a filename
+        
+        hosts = parse_file(host_info, options, type)
+      
+      end # if host_options.is_a?(Array)
       
     end # host_strings.each
     
