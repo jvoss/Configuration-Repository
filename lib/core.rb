@@ -40,6 +40,7 @@ module CR
   #
   # ===Command line options:
   #   Usage: cr.rb -r REPOSITORY [OPTIONS]
+  #     -b, --blacklist FILENAME         
   #     -d, --domain DOMAIN              Domain or file:<filename> (can be multiple)
   #     -l, --logfile FILENAME           Log output file
   #     -n, --hostname HOSTNAME          Hostname or file:<filename> (can be multiple)
@@ -86,7 +87,7 @@ module CR
   def self.parse_cmdline
     
     options = {}
-#    options[:blacklist]    = []
+    options[:blacklist]    = []
     options[:domain]       = []
     options[:host]         = []
 #    options[:log]          = nil # TODO - remove - no longer needed
@@ -101,9 +102,9 @@ module CR
         
         opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
         
-#        opts.on('-b', '--blacklist ', 'Blacklist file') do |b|
-#          options[:blacklist] = parse_blacklist(b)
-#        end
+        opts.on('-b', '--blacklist FILENAME', 'File containing blacklisted hosts') do |b|
+          options[:blacklist] = parse_blacklist(b)
+        end
         
         opts.on('-d', '--domain DOMAIN', 'Domain or file:<filename> (can be multiple)') do |d|
           options[:domain].push(d)
@@ -234,9 +235,15 @@ module CR
   #
   # See parse_host_string for information about host_string formatting.
   #
+  #---
+  #TODO: Refactor
+  #+++
+  #
   def self.create_hosts(host_strings, options, type)
     
     hosts = []
+    
+    host_objects = []
     
     host_strings.each do |host|
         
@@ -245,22 +252,18 @@ module CR
       if host_info.is_a?(Array)
       
         target, username, password = parse_host_string(host, options)
-      
-        if type.to_sym == :host
-          
-          hosts.push CR::Host.new(target, username, password, options[:snmp_options])
-          
-        elsif type.to_sym == :domain
+        
+        if type.to_sym == :domain
       
           DNS.axfr(target).each do |hostname|
             
-            next unless hostname.match(options[:regex])
-            
-            @@log.debug "Adding host: #{hostname}"
-            
-            hosts.push CR::Host.new(hostname, username, password, options[:snmp_options])
+            hosts.push [hostname, username, password, options[:snmp_options]]
           
           end # DNS.axfr
+        
+        elsif type.to_sym == :host
+          
+          hosts.push [target, username, password, options[:snmp_options]]
         
         else
         
@@ -268,15 +271,33 @@ module CR
         
         end # if type
       
+        hosts.each do |host|
+          
+          unless host[0].match(options[:regex])
+            @@log.debug "Ignoring host (Regex): #{host[0]}"
+            next
+          end 
+          
+          if options[:blacklist].include?(host[0])
+            @@log.debug "Ignoring host (Blacklist): #{host[0]}"
+            next
+          end
+          
+          @@log.debug "Adding host: #{host[0]}"
+          
+          host_objects.push CR::Host.new(host[0], host[1], host[2], host[3])
+          
+        end # hosts.each
+      
       else # host_info must be a filename
         
-        hosts = parse_file(host_info, options, type)
+        host_objects = parse_file(host_info, options, type)
       
       end # if host_options.is_a?(Array)
       
     end # host_strings.each
     
-    return hosts
+    return host_objects
     
   end # def self.create_hosts
   
@@ -291,6 +312,22 @@ module CR
     @@log
     
   end # def self.log
+  
+  # Parses file and returns an array of blacklisted hostnames. Text files are
+  # the only file types currently supported.
+  #
+  def self.parse_blacklist(filename)
+    
+    blacklist = []
+    
+    File.open(filename).each do |line|
+      # ignore comment lines that start with '#'
+      blacklist.push(line.chomp) unless line =~ /^[#|\n]/
+    end # File.open
+    
+    return blacklist
+    
+  end # def self.parse_blacklist
   
   # Parses filename and returns an array of CR::Host objects. Files accepted
   # are text files with each line containing a valid host string or a CSV

@@ -94,6 +94,24 @@ module CRTest
     
     end # context "Creating hosts with an array of host strings"
     
+    # test self.parse_blacklist(filename)
+    #
+    context "Parsing a file of blacklisted hostnames" do
+      
+      should "return an array of blacklisted hosts from a txt file with comments" do
+          
+        test_blacklist = [ 'hostA.domain.tld', 
+                           'hostB.domain.tld', 
+                           'hostC.domain.tld']
+                           
+        test_blacklist_file = 'test/files/test_blacklist.txt'
+          
+        assert_equal test_blacklist, CR.parse_blacklist(test_blacklist_file)
+        
+      end # should
+      
+    end # context
+    
     # test self.parse_file(filename, options, type)
     #
     context "Parsing a file of host strings" do

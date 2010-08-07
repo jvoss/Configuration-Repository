@@ -1,0 +1,3 @@
+hostA.domain.tld
+hostB.domain.tld
+hostC.domain.tld

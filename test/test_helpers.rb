@@ -21,7 +21,8 @@ require 'tmpdir'
 
 module CRTest
   
-  TEST_OPTIONS = { :log          => 'test.log',
+  TEST_OPTIONS = { :blacklist    => [],
+                   :log          => 'test.log',
                    :regex        => //,
                    :repository   => "#{Dir.tmpdir}/CRtestrepo",
                    :username     => nil,
