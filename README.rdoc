@@ -32,6 +32,31 @@ The following gems are required to use Configuration Repository:
 Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
 be installed in order for net-ssh to function properly.
 
+== Installing Configuration Repository
+
+==Examples
+
+Run against a single host:
+    cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
+
+Run against multiple hosts with the same credentials:
+    cr.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld -u username -p password
+
+Run against domains with different credentials:
+    cr.rb -r /path/to/repository -d user1:pass1@domain1.tld -d user2:pass2@domain2.tld
+ 
+Run against a txt file of host strings containing hosts:
+    cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
+
+Run against a CSV file of host strings containing domains:
+    cr.rb -r /path/to/repository -d file:domainfile.csv -u user -p pass
+
+Usernames and passwords can also be specified as part of the host string
+within either file type allowing for greater flexiblility in environments
+with varying credentials.
+
+
+
 == Copyright
 
 Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss

@@ -21,14 +21,33 @@ require 'rake'
 require 'rake/clean'
 require 'lib/core'
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
+desc "Open an irb session preloaded with this library"
+task :console do
   
-  test.libs   << 'test'
-  test.pattern = ['test/tc_*.rb', 'test/vcs/tc_*']
-  test.verbose = true
-  
-end # Rake::TestTask.new
+  sh "irb -rubygems -I lib -r core.rb"
+
+end # task :console
+
+# Jeweler Tasks
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |s|
+    s.name          = "CR"
+    s.summary       = "Archive network device configuration into version control"
+    s.email         = "jvoss@onvox.net"
+    s.homepage      = "http://onvox.net/"
+    s.description   = "Simplify managing device configuration backups in version control"
+    s.authors       = ["Andrew Greenwood","Jonathan Voss"]
+    s.files         =  FileList["[A-Z]*", "{lib,test}/**/*", '.gitignore']
+    s.add_dependency 'dnsruby'
+    s.add_dependency 'git'
+    s.add_dependency 'net-ssh', '>= 2.0.23'
+    s.add_dependency 'snmp'
+  end
+
+rescue LoadError
+  puts "Jeweler, or one of its dependencies, is not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+end # begin
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
@@ -40,6 +59,15 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
   
 end # Rake::RDocTask.new
+
+require 'rake/testtask'
+Rake::TestTask.new(:test) do |test|
+  
+  test.libs   << 'test'
+  test.pattern = ['test/tc_*.rb', 'test/vcs/tc_*']
+  test.verbose = true
+  
+end # Rake::TestTask.new
 
 desc "Look for TODO and FIXME tags in the code"
 task :todo do
@@ -74,10 +102,3 @@ task :todo do
   egrep /(FIXME|TODO|TBD)/
   
 end # task :todo
-
-desc "Open an irb session preloaded with this library"
-task :console do
-  
-  sh "irb -rubygems -I lib -r core.rb"
-
-end # task :console
