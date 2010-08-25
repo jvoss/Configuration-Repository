@@ -1,7 +1,11 @@
 # Ignore generated RDoc
 doc/
+# Ignore Jeweler directory for dumping Gem's
+pkg/
 
 # Ignore Apatana project files
 .loadpath
 .project
 
+# Ignore Gemspec (it can be generated with rake task)
+CR.gemspec
