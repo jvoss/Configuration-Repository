@@ -39,6 +39,7 @@ begin
     s.description   = "Simplify managing device configuration backups in version control"
     s.authors       = ["Andrew Greenwood","Jonathan Voss"]
     s.files         =  FileList["[A-Z]*", "{lib,test}/**/*", '.gitignore']
+    s.executables  << 'crepo'
     s.add_dependency 'dnsruby'
     s.add_dependency 'git'
     s.add_dependency 'net-ssh', '>= 2.0.23'

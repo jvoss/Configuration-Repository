@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+#
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
 # This file is part of Configuration Repository (CR)
@@ -16,6 +18,7 @@
 # along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'rubygems'
 require 'lib/core'
       
 hosts, options = CR.parse_cmdline
