@@ -33,9 +33,9 @@ begin
     s.name          = "CR"
     s.summary       = "Archive network device configuration into version control"
     s.email         = "jvoss@onvox.net"
-    s.homepage      = "http://onvox.net/"
+    s.homepage      = "http://github.com/jvoss/Configuration-Repository"
     s.description   = "Simplify managing device configuration backups in version control"
-    s.authors       = ["Andrew Greenwood","Jonathan Voss"]
+    s.authors       = ["Andrew R. Greenwood", "Jonathan P. Voss"]
     s.files         =  FileList["[A-Z]*", "{lib,test}/**/*", '.gitignore']
     s.add_dependency 'dnsruby'
     s.add_dependency 'git'
