@@ -49,7 +49,7 @@ have installed the required lib OpenSSL package (if required, see above).
 If you are developing for Configuration Repository and would like to run from
 the source tree, run executables with:
 
-	$ ruby -rrubygems -I lib bin/crepo
+	$ ruby -rubygems -I lib bin/crepo
 
 ==Examples
 
