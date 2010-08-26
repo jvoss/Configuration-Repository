@@ -16,7 +16,7 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'lib/host'
+require 'cr/host'
 require 'tmpdir'
 
 module CRTest

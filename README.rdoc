@@ -26,7 +26,7 @@ The following gems are required to use Configuration Repository:
 * git
 * net-ssh >= 2.0.23
 * rake
-* shoulda
+* shoulda (for testing)
 * snmp
 
 Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
@@ -39,7 +39,17 @@ It is intended to be installed via the RubyGems[http://rubyforge.org/projects/ru
 system. To get the latest version, simply enter the following int your command 
 prompt:
 
-	$ sudo gem install CR
+	$ sudo gem install CR-<version>.gem
+
+Prior to using CR, please make sure 'git' is available in your path and you
+have installed the required lib OpenSSL package (if required, see above).
+
+== Running from source
+
+If you are developing for Configuration Repository and would like to run from
+the source tree, run executables with:
+
+	$ ruby -rrubygems -I lib bin/crepo
 
 ==Examples
 

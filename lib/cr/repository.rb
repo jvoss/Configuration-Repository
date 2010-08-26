@@ -17,7 +17,7 @@
 #
 
 require 'ftools'
-require 'lib/vcs/git'
+require 'cr/vcs/git'
 
 module CR
   

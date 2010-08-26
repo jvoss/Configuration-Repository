@@ -20,15 +20,15 @@ require "csv"
 require "logger"
 require 'optparse'
 require 'rubygems'
-require 'lib/constants'
-require 'lib/dns'
-require 'lib/host'
-require 'lib/options'
-require 'lib/repository'
+require 'cr/constants'
+require 'cr/dns'
+require 'cr/host'
+require 'cr/options'
+require 'cr/repository'
 
 module CR
   
-  VERSION = '1.0.0'
+  VERSION = '0.1.0'
   
   # Default logging configuration
   @@log                 = Logger.new(STDOUT)

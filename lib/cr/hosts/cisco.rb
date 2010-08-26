@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'net/ssh'
-require 'lib/host'
+require 'cr/host'
 
 gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 

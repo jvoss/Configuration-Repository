@@ -21,7 +21,7 @@ require 'test/unit'
 require 'shoulda'
 require 'fileutils'
 require 'test/test_helpers'
-require 'lib/vcs/git'
+require 'cr/vcs/git'
 
 module CRTest
   

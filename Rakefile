@@ -16,15 +16,13 @@
 # along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'rubygems'
 require 'rake'
 require 'rake/clean'
-require 'lib/core'
 
 desc "Open an irb session preloaded with this library"
 task :console do
   
-  sh "irb -rubygems -I lib -r core.rb"
+  sh "irb -rubygems -I lib -r cr.rb"
 
 end # task :console
 
@@ -39,7 +37,6 @@ begin
     s.description   = "Simplify managing device configuration backups in version control"
     s.authors       = ["Andrew Greenwood","Jonathan Voss"]
     s.files         =  FileList["[A-Z]*", "{lib,test}/**/*", '.gitignore']
-    s.executables  << 'crepo'
     s.add_dependency 'dnsruby'
     s.add_dependency 'git'
     s.add_dependency 'net-ssh', '>= 2.0.23'
@@ -54,7 +51,7 @@ require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
   
   rdoc.rdoc_dir = 'doc'
-  rdoc.title    = "ConfigurationRepository #{CR::VERSION}"
+  rdoc.title    = "ConfigurationRepository"
   rdoc.main     = 'README.rdoc'
   rdoc.rdoc_files.include('*.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')

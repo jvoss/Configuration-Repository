@@ -17,7 +17,7 @@
 #
 
 require 'snmp'
-require 'lib/hosts/cisco'
+require 'cr/hosts/cisco'
 
 module CR
   

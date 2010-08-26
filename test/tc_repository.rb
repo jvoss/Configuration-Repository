@@ -22,7 +22,7 @@ require 'shoulda'
 require 'fileutils'
 require 'tmpdir'
 require 'test/test_helpers'
-require 'lib/repository'
+require 'cr/repository'
 
 module CRTest
   

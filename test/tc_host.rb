@@ -20,7 +20,7 @@ require 'rubygems'
 require 'test/unit'
 require 'shoulda'
 require 'test/test_helpers'
-require 'lib/host'
+require 'cr/host'
 
 module CRTest
   
