@@ -72,8 +72,6 @@ Usernames and passwords can also be specified as part of the host string
 within either file type allowing for greater flexiblility in environments
 with varying credentials.
 
-
-
 == Copyright
 
 Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
