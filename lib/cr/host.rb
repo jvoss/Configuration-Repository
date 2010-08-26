@@ -73,8 +73,6 @@ module CR
         end
       end
       
-      sysDescr = 'Cisco'
-      
       case sysDescr
         when /Cisco/    then extend Cisco
         #when /Foundry/  then 'foundry'
