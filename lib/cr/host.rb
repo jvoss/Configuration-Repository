@@ -18,6 +18,7 @@
 
 require 'snmp'
 require 'cr/hosts/cisco'
+require 'cr/hosts/screenos'
 
 module CR
   
@@ -75,6 +76,7 @@ module CR
       
       case sysDescr
         when /Cisco/    then extend Cisco
+        when /SSG/ then extend ScreenOS
         #when /Foundry/  then 'foundry'
         #when /Force10/  then 'force10'
         else self
