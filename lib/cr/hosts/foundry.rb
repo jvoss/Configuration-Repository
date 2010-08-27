@@ -30,8 +30,6 @@ module CR
       # Retrieve a device's startup configuration as an array via SSH
       #
       def config
-        
-        CR::log.debug "Loaded Foundry driver"
       
         running_config = []
         
