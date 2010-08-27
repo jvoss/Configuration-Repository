@@ -18,6 +18,7 @@
 
 require 'snmp'
 require 'cr/hosts/cisco'
+require 'cr/hosts/foundry'
 
 module CR
   
@@ -75,7 +76,7 @@ module CR
       
       case sysDescr
         when /Cisco/    then extend Cisco
-        #when /Foundry/  then 'foundry'
+        when /Foundry/  then extend Foundry
         #when /Force10/  then 'force10'
         else self
       end
