@@ -56,13 +56,14 @@ module CR
     # This method gets overwritten from loaded drivers by extend.
     # Defaults to nil in the event the driver is not loaded properly
     # and a call is made to retrieve a configuration.
+    #
     def config
       nil
     end # def config
     
     # Returns the devices configuration in an array as specified in 
     # lib/hosts/<type> as extended by finger printing.
-    # 
+    #
     def process
       _snmp_fingerprint
       config
@@ -71,6 +72,7 @@ module CR
     private
     
     # Loads the specified driver class by extending its functionality into self
+    #
     def _load_driver(klass)
       
       CR::log.debug "Loading \"#{klass}\" driver"
@@ -87,10 +89,13 @@ module CR
       sysDescr = nil
       
       SNMP::Manager.open(@snmp_options) do |manager|
+
         response = manager.get(['sysDescr.0'])
-        response.each_varbind do |vb|
-          sysDescr = vb.value.to_s
-        end
+
+        response.each_varbind do |var|
+          sysDescr = var.value.to_s
+        end # response.each_varbind
+
       end
       
       case sysDescr
