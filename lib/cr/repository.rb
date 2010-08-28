@@ -66,8 +66,8 @@ module CR
     #
     def init
       
-#      raise "Repository already initialized -- #{@directory}" if self.exist?
-     
+      #raise "Repository already initialized -- #{@directory}" if self.exist?
+      
       @repo = @vcs.init(@directory)
       
       # TODO Allow options to change these settings:
@@ -79,7 +79,7 @@ module CR
     # Opens the repository for operations.
     #
     def open
-     
+      
       # TODO Add logging support with Git here
       @repo = @vcs.open(@directory)
       
@@ -130,7 +130,7 @@ module CR
         File.makedirs("#{@directory}/#{sub_dir}") unless sub_dir.nil?
         
         file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
-      
+        
         contents.each do |line|
           file.syswrite line
         end # contents.each
@@ -152,11 +152,7 @@ module CR
       end # case
       
       # Open the repository if it exists or initialize a new one
-      if exist?
-        open
-      else
-        init
-      end
+      exist? ? open : init
       
     end # _initialize_vcs
     
@@ -166,6 +162,7 @@ module CR
     def _filename(hostobj, options)
       
       path = hostobj.hostname.match(options[:regex]).captures
+      
       path.push hostobj.hostname
       
     end # def _filename

@@ -28,6 +28,10 @@ module CR
     
     module Cisco
       
+      # Error class for catching non-fatal SSH errors
+      #
+      class SSHError < RuntimeError; end
+      
       # Retrieve a device's startup configuration as an array via SSH
       #
       def config
@@ -37,12 +41,14 @@ module CR
         begin
           
           Net::SSH.start(@hostname, @username, :password => @password) do |ssh|
+            
             ssh.exec!('show startup-config').each_line do |line|
              startup_config.push(line)
-            end
+            end # ssh.exec!
             
             ssh.loop
-          end
+            
+          end # Net::SSH.start
           
         rescue # TODO  figure out how to catch more specific RuntimeErrors from SSH
           # catches stuff like:
@@ -60,11 +66,7 @@ module CR
         return startup_config
         
       end # config
-      
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
-      
+            
     end # module Cisco
     
   end # class Host

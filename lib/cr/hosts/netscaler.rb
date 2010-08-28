@@ -25,6 +25,10 @@ module CR
     
     module Netscaler
       
+      # Error class for catching non-fatal SSH errors
+      #
+      class SSHError < RuntimeError; end
+      
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
@@ -42,10 +46,6 @@ module CR
         return startup_config
         
       end # config
-      
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
       
     end # module Netscalar
     

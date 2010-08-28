@@ -27,6 +27,10 @@ module CR
     
     module Foundry
       
+      # Error class for catching non-fatal SSH errors
+      #
+      class SSHError < RuntimeError; end
+      
       # Retrieve a device's startup configuration as an array via SSH
       #
       def config
@@ -82,12 +86,12 @@ module CR
           raise Host::NonFatalError
           
         end # begin       
-
+        
         CR::log.debug "Parsing configuration file"        
-
+        
         # Shift out MOTD and other output messages until the configuration starts
         running_config.shift until running_config[0] =~ /^!/ or running_config.empty?
-
+        
         # Pop off trailing output until the end of the configuration where 'end' is seen
         running_config.pop until running_config.last =~ /^end\r\n$/ or running_config.empty?
         
@@ -97,10 +101,6 @@ module CR
         return running_config
         
       end # config
-      
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
       
     end # module Foundry
     
