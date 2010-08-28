@@ -18,7 +18,9 @@
 
 require 'snmp'
 require 'cr/hosts/cisco'
+require 'cr/hosts/extremexos'
 require 'cr/hosts/screenos'
+require 'cr/hosts/netscaler'
 
 module CR
   
@@ -77,6 +79,8 @@ module CR
       case sysDescr
         when /Cisco/    then extend Cisco
         when /SSG/ then extend ScreenOS
+        when /NetScaler/ then extend Netscaler
+        when /ExtremeXOS/ then extend ExtremeXOS
         #when /Foundry/  then 'foundry'
         #when /Force10/  then 'force10'
         else self
