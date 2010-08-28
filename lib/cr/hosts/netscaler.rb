@@ -16,11 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'rubygems'
 require 'net/scp'
 require 'cr/host'
-
-#gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
 module CR
   
@@ -35,24 +32,12 @@ module CR
         startup_config = []
         startup_config_tmp = ""
         
-        begin
-
-           Net::SCP.start(@hostname, @username, :password => @password) do |scp|
-             startup_config_tmp = scp.download!("/nsconfig/ns.conf")
-           end
+        Net::SCP.start(@hostname, @username, :password => @password) do |scp|
+          startup_config_tmp = scp.download!("/nsconfig/ns.conf")
+        end # Net::SCP.start
           
-#        rescue # TODO  figure out how to catch more specific RuntimeErrors from SSH
-          # catches stuff like:
-          # /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/session.rb:322:in `exec': 
-          # could not execute command: "show startup-config" (RuntimeError)
-          # from /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/channel.rb:597:in `call'
-          
-#          raise Host::NonFatalError
-         
-        end # begin
-
-         startup_config = startup_config_tmp.split(//) # Split on  newlines.
-#         startup_config.shift # Remove header comment
+        startup_config = startup_config_tmp.split(/
+/) # Split on newlines.
         
         return startup_config
         
@@ -62,7 +47,7 @@ module CR
       #
       class SSHError < RuntimeError; end
       
-    end # module Cisco
+    end # module Netscalar
     
   end # class Host
   

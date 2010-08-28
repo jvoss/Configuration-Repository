@@ -16,11 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'rubygems'
 require 'net/scp'
 require 'cr/host'
-
-#gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
 module CR
   
@@ -51,7 +48,8 @@ module CR
          
         end # begin
 
-         startup_config = startup_config_tmp.split(//) # Split on  newlines.
+         startup_config = startup_config_tmp.split(/
+/) # Split on newlines.
          startup_config.shift # Remove header comment
         
         return startup_config
@@ -62,7 +60,7 @@ module CR
       #
       class SSHError < RuntimeError; end
       
-    end # module Cisco
+    end # module ScreenOS
     
   end # class Host
   

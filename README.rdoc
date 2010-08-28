@@ -24,8 +24,8 @@ The following gems are required to use Configuration Repository:
 
 * dnsruby
 * git
-* net-ssh >= 2.0.23
 * net-scp
+* net-ssh >= 2.0.23
 * rake
 * shoulda (for testing)
 * snmp
