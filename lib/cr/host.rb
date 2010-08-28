@@ -19,8 +19,9 @@
 require 'snmp'
 require 'cr/hosts/cisco'
 require 'cr/hosts/extremexos'
-require 'cr/hosts/screenos'
+require 'cr/hosts/foundry'
 require 'cr/hosts/netscaler'
+require 'cr/hosts/screenos'
 
 module CR
   
@@ -52,15 +53,31 @@ module CR
     
     end # def initialize
     
+    # This method gets overwritten from loaded drivers by extend.
+    # Defaults to nil in the event the driver is not loaded properly
+    # and a call is made to retrieve a configuration.
+    def config
+      nil
+    end # def config
+    
     # Returns the devices configuration in an array as specified in 
     # lib/hosts/<type> as extended by finger printing.
     # 
-    def config
+    def process
       _snmp_fingerprint
       config
     end # def config
     
     private
+    
+    # Loads the specified driver class by extending its functionality into self
+    def _load_driver(klass)
+      
+      CR::log.debug "Loading \"#{klass}\" driver"
+      
+      extend klass
+      
+    end # def _load_driver
     
     # Detects which type of host to load based on the SNMP repsponce of 
     # 'sysDescr'. Extends the proper module from lib/hosts.
@@ -77,13 +94,13 @@ module CR
       end
       
       case sysDescr
-        when /Cisco/    then extend Cisco
-        when /SSG/ then extend ScreenOS
-        when /NetScaler/ then extend Netscaler
-        when /ExtremeXOS/ then extend ExtremeXOS
-        #when /Foundry/  then 'foundry'
+        when /Cisco/      then _load_driver(Cisco)
+        when /ExtremeXOS/ then _load_driver(ExtremeXOS)
+        when /Foundry/    then _load_driver(Foundry)
+        when /NetScaler/  then _load_driver(Netscaler)
+        when /SSG/        then _load_driver(ScreenOS)
         #when /Force10/  then 'force10'
-        else self
+        else CR::log.warn "No suitable driver for #{@hostname}"
       end
       
     end # def _snmp_fingerprint
