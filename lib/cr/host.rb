@@ -50,10 +50,17 @@ module CR
     
     end # def initialize
     
+    # This method gets overwritten from loaded drivers by extend.
+    # Defaults to nil in the event the driver is not loaded properly
+    # and a call is made to retrieve a configuration.
+    def config
+      nil
+    end # def config
+    
     # Returns the devices configuration in an array as specified in 
     # lib/hosts/<type> as extended by finger printing.
     # 
-    def config
+    def process
       _snmp_fingerprint
       config
     end # def config

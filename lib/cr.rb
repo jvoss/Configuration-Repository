@@ -448,7 +448,7 @@ module CR
       
       begin
         
-        current_config = host.config
+        current_config = host.process
       
       rescue SNMP::RequestTimeout
         
@@ -464,8 +464,8 @@ module CR
       
       if repository.read(host, options) != current_config
         
-        repository.save(host, options)
-        @@log.debug "Saving: #{host.hostname}"
+        repository.save(host, options, current_config)
+#        @@log.debug "Saving: #{host.hostname}"
         
       else  
         

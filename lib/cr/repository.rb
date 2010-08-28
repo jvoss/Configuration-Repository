@@ -110,22 +110,32 @@ module CR
     # Saves contents of CR::Host.config to file named by the object's
     # hostname.
     #
-    def save(hostobj, options)
+    def save(hostobj, options, contents)
       
       raise "Repository not initialized" unless self.exist?
       
-      path     = _filename(hostobj, options)
-      sub_dir  = path[0...-1].join('/') if path.size > 1
-      filename = path.pop
+      if contents.nil?
       
-      # Make directories if they do not exist
-      File.makedirs("#{@directory}/#{sub_dir}") unless sub_dir.nil?
+        CR::log.warn "No configuration found for #{hostobj.hostname}"
       
-      file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
-    
-      hostobj.config.each do |line|
-        file.syswrite line
-      end # contents.each
+      else
+        
+        CR::log.debug "Saving: #{hostobj.hostname}"
+        
+        path     = _filename(hostobj, options)
+        sub_dir  = path[0...-1].join('/') if path.size > 1
+        filename = path.pop
+        
+        # Make directories if they do not exist
+        File.makedirs("#{@directory}/#{sub_dir}") unless sub_dir.nil?
+        
+        file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
+      
+        contents.each do |line|
+          file.syswrite line
+        end # contents.each
+        
+      end # contents.nil?
       
     end # def save
     
