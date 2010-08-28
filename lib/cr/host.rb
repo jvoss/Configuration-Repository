@@ -18,7 +18,10 @@
 
 require 'snmp'
 require 'cr/hosts/cisco'
+require 'cr/hosts/extremexos'
 require 'cr/hosts/foundry'
+require 'cr/hosts/netscaler'
+require 'cr/hosts/screenos'
 
 module CR
   
@@ -91,8 +94,11 @@ module CR
       end
       
       case sysDescr
-        when /Cisco/    then _load_driver(Cisco)
-        when /Foundry/  then _load_driver(Foundry)
+        when /Cisco/      then _load_driver(Cisco)
+        when /ExtremeXOS/ then _load_driver(ExtremeXOS)
+        when /Foundry/    then _load_driver(Foundry)
+        when /NetScaler/  then _load_driver(Netscaler)
+        when /SSG/        then _load_driver(ScreenOS)
         #when /Force10/  then 'force10'
         else CR::log.warn "No suitable driver for #{@hostname}"
       end
