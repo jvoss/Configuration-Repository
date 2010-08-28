@@ -39,7 +39,10 @@ begin
     s.files         =  FileList["[A-Z]*", "{lib,test}/**/*", '.gitignore']
     s.add_dependency 'dnsruby'
     s.add_dependency 'git'
+    s.add_dependency 'net-scp'
     s.add_dependency 'net-ssh', '>= 2.0.23'
+    s.add_dependency 'rake'
+    s.add_dependency 'shoulda'
     s.add_dependency 'snmp'
   end
 

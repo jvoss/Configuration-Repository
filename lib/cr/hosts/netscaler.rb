@@ -19,8 +19,6 @@
 require 'net/scp'
 require 'cr/host'
 
-#gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
-
 module CR
   
   class Host
