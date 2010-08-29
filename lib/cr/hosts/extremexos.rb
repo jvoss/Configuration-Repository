@@ -45,8 +45,7 @@ module CR
         
         startup_config_tmp.gsub!(/\* \w+\.\d+ \#/, "")
         startup_config_tmp = startup_config.join
-        startup_config = startup_config_tmp.split(/
-/)
+        startup_config = startup_config_tmp.split(/\r\n/)
         
         return startup_config
         
