@@ -27,6 +27,9 @@ module CR
   
   class Host
     
+    # TODO consider renaming the error handling for Host
+    class NonFatalError < StandardError; end
+    
     SNMP_DEFAULT_COMMUNITY = 'public'
     SNMP_DEFAULT_PORT      = 161
     SNMP_DEFAULT_TIMEOUT   = 3
@@ -48,9 +51,9 @@ module CR
       @username     = username
       @password     = password
       @snmp_options = snmp_options
-    
+      
       _snmp_initialize
-    
+      
     end # def initialize
     
     # This method gets overwritten from loaded drivers by extend.
@@ -58,16 +61,21 @@ module CR
     # and a call is made to retrieve a configuration.
     #
     def config
+      
       nil
+      
     end # def config
     
     # Returns the devices configuration in an array as specified in 
     # lib/hosts/<type> as extended by finger printing.
     #
     def process
+      
       _snmp_fingerprint
+      
       config
-    end # def config
+      
+    end # def process
     
     private
     
@@ -89,24 +97,28 @@ module CR
       sysDescr = nil
       
       SNMP::Manager.open(@snmp_options) do |manager|
-
+        
         response = manager.get(['sysDescr.0'])
-
+        
         response.each_varbind do |var|
           sysDescr = var.value.to_s
         end # response.each_varbind
-
-      end
+        
+      end # SNMP::Manager.open
       
       case sysDescr
+        
         when /Cisco/      then _load_driver(Cisco)
         when /ExtremeXOS/ then _load_driver(ExtremeXOS)
         when /Foundry/    then _load_driver(Foundry)
         when /NetScaler/  then _load_driver(Netscaler)
         when /SSG/        then _load_driver(ScreenOS)
-        #when /Force10/  then 'force10'
+        
+        #when /Force10/   then 'force10'
+        
         else CR::log.warn "No suitable driver for #{@hostname}"
-      end
+        
+      end # case SysDescr
       
     end # def _snmp_fingerprint
     
@@ -129,8 +141,6 @@ module CR
       @snmp_options = snmp_defaults.merge(@snmp_options)
       
     end # def _snmp_initialize
-    
-    class NonFatalError < StandardError; end # TODO consider renaming the error handling for Host
     
   end # class Host
   

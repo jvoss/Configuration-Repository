@@ -23,9 +23,9 @@ require 'logger'
 module CR
   
   class Repository
-  
+    
     class Git < Git::Base 
-  
+      
       # Initializes a new Git repository. If the directory does not exist
       # it will be created. git_options hash is passed through to the 
       # Git::Base library.
@@ -56,16 +56,20 @@ module CR
       def commit_all(message)
         
         begin
+          
           super message
+          
         rescue ::Git::GitExecuteError
+        
           # TODO provide some useful information about why commit was not needed
           # stub - catches when a commit is not necessary (need to confirm that
           # it will still catch other errors
           CR.log.debug "no commit needed -- skipped"
-        end
+          
+        end # begin
         
       end # self.commit_all
-  
+      
       # Checks to see if a valid repository exists
       #
       def self.exist?(repository)

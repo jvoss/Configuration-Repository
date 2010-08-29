@@ -25,16 +25,32 @@ module CR
     # Return an array of hostnames from an AXFR request for a domain
     #
     def self.axfr(domain)
-      hosts = []
       
-      zone = Dnsruby::ZoneTransfer.new
+      hosts = []
+      zone  = Dnsruby::ZoneTransfer.new
       
       zone.transfer(domain.to_s).each do |record|
-        next unless record.type == Dnsruby::Types::A or record.type == Dnsruby::Types::AAAA
-        hosts.push record.name.to_s
-      end
+
+        host = record.name.to_s
+        type = record.type
+        
+        valid_record_type = type == Dnsruby::Types::A    || \
+                                    Dnsruby::Types::AAAA        
+
+        unless valid_record_type
+          
+          CR::log.debug "Ignoring \"#{host}\" host -- type #{type}"
+          
+          next # zone.transfer
+          
+        end # unless valid_record_type
+        
+        hosts.push host
+        
+      end # zone.transfer
       
       return hosts
+      
     end # def self.axfr
     
   end # module DNS

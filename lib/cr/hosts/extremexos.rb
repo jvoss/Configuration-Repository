@@ -25,6 +25,10 @@ module CR
     
     module ExtremeXOS
       
+      # Error class for catching non-fatal SSH errors
+      #
+      class SSHError < RuntimeError; end
+      
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
@@ -38,19 +42,15 @@ module CR
         telnet.cmd('show config') do |line|
           startup_config.push(line)
         end # telnet.cmd
- 
+        
         startup_config_tmp.gsub!(/\* \w+\.\d+ \#/, "")
         startup_config_tmp = startup_config.join
         startup_config = startup_config_tmp.split(/
 /)
-
+        
         return startup_config
         
       end # config
-      
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
       
     end # module ExtremeXOS
     
