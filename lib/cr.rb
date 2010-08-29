@@ -455,9 +455,9 @@ module CR
         @@log.error "SNMP timeout: #{host.hostname} -- skipping"
         next
         
-      rescue Host::NonFatalError
+      rescue Host::NonFatalError => e
         
-        @@log.error "NonFatalError: #{host.hostname} -- skipping"
+        @@log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
         next
         
       end

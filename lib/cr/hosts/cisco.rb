@@ -50,13 +50,20 @@ module CR
             
           end # Net::SSH.start
           
-        rescue # TODO  figure out how to catch more specific RuntimeErrors from SSH
-          # catches stuff like:
-          # /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/session.rb:322:in `exec': 
-          # could not execute command: "show startup-config" (RuntimeError)
-          # from /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/channel.rb:597:in `call'
+        rescue => e
           
-          raise Host::NonFatalError
+          case
+          
+            when e.to_s.include?('could not execute command:')
+              raise Host::NonFatalError, e.to_s
+              
+            when e.is_a?(Errno::ECONNREFUSED)
+              raise Host::NonFatalError, e.to_s
+              
+            else
+              raise e
+          
+          end # case
           
         end # begin
         
@@ -66,7 +73,7 @@ module CR
         return startup_config
         
       end # config
-            
+
     end # module Cisco
     
   end # class Host
