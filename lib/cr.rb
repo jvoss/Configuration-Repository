@@ -241,11 +241,11 @@ module CR
   #
   def self.create_hosts(host_strings, options, type)
     
-    hosts = []
-    
     host_objects = []
     
     host_strings.each do |host|
+      
+      hosts = []
         
       host_info = parse_host_string(host, options)
         
