@@ -27,10 +27,6 @@ module CR
     
     module Foundry
       
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
-      
       # Retrieve a device's startup configuration as an array via SSH
       #
       def config
