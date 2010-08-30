@@ -42,11 +42,10 @@ module CR
         telnet.cmd('show config') do |line|
           startup_config.push(line)
         end # telnet.cmd
-        
-        startup_config_tmp.gsub!(/\* \w+\.\d+ \#/, "")
-        startup_config_tmp = startup_config.join
-        startup_config = startup_config_tmp.split(/\r\n/)
-        
+       
+        startup_config.pop
+        startup_config.shift until startup_config[0] =~ /^# Module/
+ 
         return startup_config
         
       end # config
