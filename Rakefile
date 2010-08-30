@@ -22,7 +22,7 @@ require 'rake/clean'
 desc "Open an irb session preloaded with this library"
 task :console do
   
-  sh "irb -rubygems -I lib -r cr.rb"
+  sh "irb -rubygems -I lib -r lib/cr.rb"
 
 end # task :console
 

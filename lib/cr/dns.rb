@@ -33,22 +33,33 @@ module CR
 
         host = record.name.to_s
         type = record.type
-        
-        valid_record_type = type == Dnsruby::Types::A    || \
-                                    Dnsruby::Types::AAAA        
+
+        valid_record_type = type == 'A'    ||
+                            type == 'AAAA' ||
+                            type == 'CNAME'
 
         unless valid_record_type
           
-          CR::log.debug "Ignoring \"#{host}\" host -- type #{type}"
+          CR::log.debug "Ignoring host \"#{host}\" -- type #{type}"
           
           next # zone.transfer
           
         end # unless valid_record_type
         
+        # Retrieve the CNAME target and remove trailing period
+        host = record.rdata_to_string.chop if record.type == 'CNAME'
+        
+        if hosts.include?(host)
+          
+          CR::log.debug "Ignoring host \"#{host}\" -- duplicate"
+          next # zone.transfer
+          
+        end # if hosts.include?(host)
+        
         hosts.push host
         
       end # zone.transfer
-      
+
       return hosts
       
     end # def self.axfr
