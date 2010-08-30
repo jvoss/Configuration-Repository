@@ -34,6 +34,7 @@ module CRTest
       suite = Test::Unit::TestSuite.new
       
       suite << Test_core.suite
+      suite << Test_dns.suite
       suite << Test_host.suite
       suite << Test_options.suite
       suite << Test_repository.suite
