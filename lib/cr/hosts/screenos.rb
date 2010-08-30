@@ -25,10 +25,6 @@ module CR
     
     module ScreenOS
       
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
-      
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
@@ -42,13 +38,9 @@ module CR
              startup_config_tmp = scp.download!("ns_sys_config")
            end # Net::SCP.start
           
-        rescue # TODO  figure out how to catch more specific RuntimeErrors from SSH
-          # catches stuff like:
-          # /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/session.rb:322:in `exec': 
-          # could not execute command: "show startup-config" (RuntimeError)
-          # from /usr/lib/ruby/gems/1.8/gems/net-ssh-2.0.23/lib/net/ssh/connection/channel.rb:597:in `call'
+        rescue => e
           
-          raise Host::NonFatalError
+          raise Host::NonFatalError, e.to_s
           
         end # begin
         

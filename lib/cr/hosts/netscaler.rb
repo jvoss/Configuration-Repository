@@ -25,10 +25,6 @@ module CR
     
     module Netscaler
       
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
-      
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
@@ -36,10 +32,18 @@ module CR
         startup_config = []
         startup_config_tmp = ""
         
-        Net::SCP.start(@hostname, @username, :password => @password) do |scp|
-          startup_config_tmp = scp.download!("/nsconfig/ns.conf")
-        end # Net::SCP.start
-          
+        begin
+        
+          Net::SCP.start(@hostname, @username, :password => @password) do |scp|
+            startup_config_tmp = scp.download!("/nsconfig/ns.conf")
+          end # Net::SCP.start
+        
+        rescue => e
+        
+          raise Host::NonFatalError, e.to_s
+        
+        end # begin
+        
         startup_config = startup_config_tmp.split(/\r\n/) # Split on newlines.
         
         return startup_config

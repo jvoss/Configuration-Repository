@@ -25,23 +25,26 @@ module CR
     
     module ExtremeXOS
       
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
-      
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
       
         startup_config = []
-        startup_config_tmp = ""
         
-        telnet = Net::Telnet::new("Host" => @hostname)
-        telnet.login(@username, @password)
-        telnet.cmd('disable clipaging')
-        telnet.cmd('show config') do |line|
-          startup_config.push(line)
-        end # telnet.cmd
+        begin
+        
+          telnet = Net::Telnet::new("Host" => @hostname)
+          telnet.login(@username, @password)
+          telnet.cmd('disable clipaging')
+          telnet.cmd('show config') do |line|
+            startup_config.push(line)
+          end # telnet.cmd
+       
+       rescue => e
+       
+          raise Host::NonFatalError, e.to_s
+       
+       end # begin
        
         startup_config.pop
         startup_config.shift until startup_config[0] =~ /^# Module/
