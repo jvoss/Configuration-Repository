@@ -73,6 +73,18 @@ Usernames and passwords can also be specified as part of the host string
 within either file type allowing for greater flexiblility in environments
 with varying credentials.
 
+===CSV Columns:
+
+	<host string>,<snmp community>,<snmp version>,<snmp port>,<snmp timeout>,<snmp retries>
+
+===Host Strings:
+
+	<username>:<password>@<hostname or domain>
+	
+Username and password are optional. Omit '@' when listing only host or domain:
+
+	user:password@host.domain.tld or host.domain.tld
+
 == Copyright
 
 Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
