@@ -345,22 +345,20 @@ module CR
     begin
       if File.extname(filename) == '.csv'
         
-        # FIXME use CSV library for parsing CSV files
-        File.open(filename).each do |line|
-          values = line.chomp.split(',')
+        CSV.open(filename, 'r', ',') do |row|
           
-          host_string = values[0]
+          host_string = row[0]
           
-          snmp_options = { :Community => values[1],
-                           :Version   => SNMP_VERSION_MAP.invert[values[2]],
-                           :Port      => values[3].to_i,
-                           :Timeout   => values[4].to_i,
-                           :Retries   => values[5].to_i }
+          snmp_options = { :Community => row[1],
+                           :Version   => SNMP_VERSION_MAP.invert[row[2]],
+                           :Port      => row[3].to_i,
+                           :Timeout   => row[4].to_i,
+                           :Retries   => row[5].to_i }
                            
           options[:snmp_options] = options[:snmp_options].merge(snmp_options)
           
           host_strings.push(host_string)
-        end
+        end # CSV.open
         
       else
       
