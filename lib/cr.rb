@@ -23,6 +23,7 @@ require 'rubygems'
 require 'cr/constants'
 require 'cr/dns'
 require 'cr/host'
+require 'cr/options'
 require 'cr/repository'
 
 module CR
@@ -89,6 +90,7 @@ module CR
     options[:blacklist]    = []
     options[:domain]       = []
     options[:host]         = []
+#    options[:log]          = nil # TODO - remove - no longer needed
     options[:regex]        = //
     options[:username]     = nil
     options[:password]     = nil
@@ -109,6 +111,7 @@ module CR
         end # opts.on
         
         opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
+#          options[:log] = l
           @@log = Logger.new(l.to_s)
         end # opts.on
         
@@ -133,6 +136,7 @@ module CR
         end # opts.on
         
         opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
+          # TODO deal with verbosity level in log
           case verbose
             when 'fatal'
               @@log.level = Logger::FATAL
@@ -147,7 +151,7 @@ module CR
             else
               puts "Unsupported verbose level -- #{verbose}"
               exit ARGUMENT_ERROR
-          end # case verbose
+          end
         end # opts.on
         
         opts.separator ""
@@ -219,6 +223,7 @@ module CR
     hosts = create_hosts(options[:host], options, :host)
     hosts = hosts + create_hosts(options[:domain], options, :domain)
     
+#    options = CR::Options.new(options[:log], options[:repository], options[:regex])
     return hosts, options
     
   end # def self.parse_cmdline
@@ -458,6 +463,7 @@ module CR
       if repository.read(host, options) != current_config
         
         repository.save(host, options, current_config)
+#        @@log.debug "Saving: #{host.hostname}"
         
       else  
         
