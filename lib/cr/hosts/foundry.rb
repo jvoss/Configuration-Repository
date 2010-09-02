@@ -57,10 +57,10 @@ module CR
                 
                 end # ch.on_data
               
-                CR::log.debug "Sending command 'terminal length 0'"
+                CR.log.debug "Sending command 'terminal length 0'"
                 ch.send_data("terminal length 0\n")
                 
-                CR::log.debug "Sending command 'show running-config'"
+                CR.log.debug "Sending command 'show running-config'"
                 ch.send_data("show running-config\n")
               
               end # ssh.open_channel
@@ -90,7 +90,7 @@ module CR
           
         end # begin       
         
-        CR::log.debug "Parsing configuration file"        
+        CR.log.debug "Parsing configuration file"        
         
         # Shift out MOTD and other output messages until the configuration starts
         running_config.shift until running_config[0] =~ /^!/ or running_config.empty?

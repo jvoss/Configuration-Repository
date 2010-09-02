@@ -40,7 +40,7 @@ module CR
 
         unless valid_record_type
           
-          CR::log.debug "Ignoring host \"#{host}\" -- type #{type}"
+          CR.log.debug "Ignoring host \"#{host}\" -- type #{type}"
           
           next # zone.transfer
           
@@ -51,7 +51,7 @@ module CR
         
         if hosts.include?(host)
           
-          CR::log.debug "Ignoring host \"#{host}\" -- duplicate"
+          CR.log.debug "Ignoring host \"#{host}\" -- duplicate"
           next # zone.transfer
           
         end # if hosts.include?(host)

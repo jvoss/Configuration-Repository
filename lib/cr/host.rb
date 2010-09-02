@@ -83,7 +83,7 @@ module CR
     #
     def _load_driver(klass)
       
-      CR::log.debug "Loading \"#{klass}\" driver"
+      CR.log.debug "Loading \"#{klass}\" driver"
       
       extend klass
       
@@ -116,7 +116,7 @@ module CR
         
         #when /Force10/   then 'force10'
         
-        else CR::log.warn "No suitable driver for #{@hostname}"
+        else CR.log.warn "No suitable driver for #{@hostname}"
         
       end # case SysDescr
       

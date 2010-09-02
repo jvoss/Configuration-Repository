@@ -116,11 +116,11 @@ module CR
       
       if contents.nil?
       
-        CR::log.warn "No configuration found for #{hostobj.hostname}"
+        CR.log.warn "No configuration found for #{hostobj.hostname}"
       
       else
         
-        CR::log.debug "Saving: #{hostobj.hostname}"
+        CR.log.debug "Saving: #{hostobj.hostname}"
         
         path     = _filename(hostobj, options)
         sub_dir  = path[0...-1].join('/') if path.size > 1

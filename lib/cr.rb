@@ -75,16 +75,16 @@ module CR
         hosts.each do |host|
           
           unless host[0].match(options[:regex])
-            @@log.debug "Ignoring host (Regex): #{host[0]}"
+            log.debug "Ignoring host (Regex): #{host[0]}"
             next
           end 
           
           if options[:blacklist].include?(host[0])
-            @@log.debug "Ignoring host (Blacklist): #{host[0]}"
+            log.debug "Ignoring host (Blacklist): #{host[0]}"
             next
           end
           
-          @@log.debug "Adding host: #{host[0]}"
+          log.debug "Adding host: #{host[0]}"
           
           host_objects.push CR::Host.new(host[0], host[1], host[2], host[3])
           
@@ -226,14 +226,14 @@ module CR
   #
   def self.process(hosts, options)
     
-    @@log.info "Opening repository: #{options[:repository]}"
+    log.info "Opening repository: #{options[:repository]}"
     
     # initialize the repository
     repository = Repository.new(options[:repository], :git)
     
     hosts.each do |host|
       
-      @@log.info "Processing: #{host.hostname}"
+      log.info "Processing: #{host.hostname}"
       
       begin
         
@@ -241,12 +241,12 @@ module CR
       
       rescue SNMP::RequestTimeout
         
-        @@log.error "SNMP timeout: #{host.hostname} -- skipping"
+        log.error "SNMP timeout: #{host.hostname} -- skipping"
         next # hosts.each
         
       rescue Host::NonFatalError => e
         
-        @@log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
+        log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
         next # hosts.each
         
       end # begin
@@ -257,7 +257,7 @@ module CR
         
       else # == current_config  
         
-        @@log.debug "No change: #{host.hostname}"
+        log.debug "No change: #{host.hostname}"
 
       end # if
       
@@ -269,7 +269,7 @@ module CR
     repository.add_all
     repository.commit_all(commit_message)
     
-    @@log.info "Processing complete"
+    log.info "Processing complete"
     
   end # def self.process
   

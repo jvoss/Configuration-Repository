@@ -122,15 +122,15 @@ module CR
           # TODO deal with verbosity level in log
           case verbose
             when 'fatal'
-              @@log.level = Logger::FATAL
+              log.level = Logger::FATAL
             when 'error'
-              @@log.level = Logger::ERROR
+              log.level = Logger::ERROR
             when 'warn'
-              @@log.level = Logger::WARN
+              log.level = Logger::WARN
             when 'info'
-              @@log.level = Logger::INFO
+              log.level = Logger::INFO
             when 'debug'
-              @@log.level = Logger::DEBUG
+              log.level = Logger::DEBUG
             else
               puts "Unsupported verbose level -- #{verbose}"
               exit ARGUMENT_ERROR
