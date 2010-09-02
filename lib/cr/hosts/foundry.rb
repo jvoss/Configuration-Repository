@@ -53,7 +53,7 @@ module CR
                   # Just after the configuration is printed to the screen there
                   # is a blank like containing "\r\n" and is the only occurance
                   # when running this command.
-                  ch.close if data.to_s.match(/^\r\n$/)
+                  ch.close if data.to_s.match(/^end/)
                 
                 end # ch.on_data
               
@@ -90,7 +90,7 @@ module CR
           
         end # begin       
         
-        CR.log.debug "Parsing configuration file"        
+        CR.log.debug "Parsing configuration file" 
         
         # Shift out MOTD and other output messages until the configuration starts
         running_config.shift until running_config[0] =~ /^!/ or running_config.empty?
