@@ -17,217 +17,18 @@
 #
 
 require "csv"
-require "logger"
-require 'optparse'
 require 'rubygems'
 require 'cr/constants'
 require 'cr/dns'
 require 'cr/host'
+require 'cr/log'
 require 'cr/options'
 require 'cr/repository'
 
 module CR
   
   VERSION = '0.1.0'
-  
-  # Default logging configuration
-  @@log                 = Logger.new(STDOUT)
-  @@log.level           = Logger::INFO
-  @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
-  
-  # Parses command-line options using OptionParser and returns an array of
-  # host objects and an options hash used throughout CR.
-  #
-  # ===Command line options:
-  #   Usage: cr.rb -r REPOSITORY [OPTIONS]
-  #     -b, --blacklist FILENAME         
-  #     -d, --domain DOMAIN              Domain or file:<filename> (can be multiple)
-  #     -l, --logfile FILENAME           Log output file
-  #     -n, --hostname HOSTNAME          Hostname or file:<filename> (can be multiple)
-  #     -r, --repository REPOSITORY      Repository directory
-  #     -x, --regex REGEX                Regular expression
-  #     -u, --username USERNAME          Default device username
-  #     -p, --password PASSWORD          Default device password
-  #         --verbosity LEVEL            Verbose level [fatal|error|warn|info|debug]
-  #
-  #     SNMP Options:
-  #         --snmp-community COMMUNITY   Community string (default: public)
-  #         --snmp-port PORT             Port (default: 161)
-  #         --snmp-retries VALUE         Retries (default: 2)
-  #         --snmp-timeout VALUE         Timeout in seconds (default: 3)
-  #         --snmp-version VERSION       Version (default: 2c)
-  #
-  #     Other:
-  #     -h, --help                       Show this message
-  #     -v, --version                    Show version
-  #
-  # ===Examples
-  #
-  # Run against a single host:
-  #     cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
-  #
-  # Run against multiple hosts with the same credentials:
-  #     cr.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld
-  #       -u username -p password
-  #
-  # Run against domains with different credentials:
-  #     cr.rb -r /path/to/repository -d user1:pass1@domain1.tld
-  #       -d user2:pass2@domain2.tld
-  # 
-  # Run against a txt file of host strings containing hosts:
-  #     cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
-  #
-  # Run against a CSV file of host strings containing domains:
-  #     cr.rb -r /path/to/repository -d file:domainfile.csv -u user -p pass
-  #
-  # Usernames and passwords can also be specified as part of the host string
-  # within either file type allowing for greater flexiblility in environments
-  # with varying credentials.
-  #
-  def self.parse_cmdline
     
-    options = {}
-    options[:blacklist]    = []
-    options[:domain]       = []
-    options[:host]         = []
-#    options[:log]          = nil # TODO - remove - no longer needed
-    options[:regex]        = //
-    options[:username]     = nil
-    options[:password]     = nil
-    options[:snmp_options] = {}
-    
-    begin
-      
-      OptionParser.new do |opts|
-        
-        opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
-        
-        opts.on('-b', '--blacklist FILENAME', 'File containing blacklisted hosts') do |b|
-          options[:blacklist] = parse_blacklist(b)
-        end
-        
-        opts.on('-d', '--domain DOMAIN', 'Domain or file:<filename> (can be multiple)') do |d|
-          options[:domain].push(d)
-        end # opts.on
-        
-        opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
-#          options[:log] = l
-          @@log = Logger.new(l.to_s)
-        end # opts.on
-        
-        opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
-          options[:host].push(h)
-        end # opts.on
-        
-        opts.on('-r', '--repository REPOSITORY', 'Repository directory') do |r|
-          options[:repository] = r
-        end # opts.on
-        
-        opts.on('-x', '--regex REGEX', Regexp, 'Regular expression') do |regex|
-          options[:regex] = regex
-        end # opts.on
-        
-        opts.on('-u', '--username USERNAME', 'Default device username') do |u|
-          options[:username] = u
-        end # opts.on
-        
-        opts.on('-p', '--password PASSWORD', 'Default device password') do |p|
-          options[:password] = p
-        end # opts.on
-        
-        opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
-          # TODO deal with verbosity level in log
-          case verbose
-            when 'fatal'
-              @@log.level = Logger::FATAL
-            when 'error'
-              @@log.level = Logger::ERROR
-            when 'warn'
-              @@log.level = Logger::WARN
-            when 'info'
-              @@log.level = Logger::INFO
-            when 'debug'
-              @@log.level = Logger::DEBUG
-            else
-              puts "Unsupported verbose level -- #{verbose}"
-              exit ARGUMENT_ERROR
-          end
-        end # opts.on
-        
-        opts.separator ""
-        opts.separator "SNMP Options:"
-        
-        description = "Community string (default: #{Host::SNMP_DEFAULT_COMMUNITY})"
-        opts.on('--snmp-community COMMUNITY', description) do |com|
-          options[:snmp_options][:Community] = com
-        end # opts.on
-        
-        description = "Port (default: #{Host::SNMP_DEFAULT_PORT})"
-        opts.on('--snmp-port PORT', Integer, description) do |port|
-          options[:snmp_options][:Port] = port
-        end # opts.on
-        
-        description = "Retries (default: #{Host::SNMP_DEFAULT_RETRIES})"
-        opts.on('--snmp-retries VALUE', Integer, description) do |retries|
-          options[:snmp_options][:Retries] = retries
-        end # opts.on
-        
-        description = "Timeout in seconds (default: #{Host::SNMP_DEFAULT_TIMEOUT})"
-        opts.on('--snmp-timeout VALUE', Integer, description) do |timeout|
-          options[:snmp_options][:Timeout] = timeout
-        end # opts.on
-        
-        description = "Version (default: #{SNMP_VERSION_MAP[Host::SNMP_DEFAULT_VERSION]})"
-        opts.on('--snmp-version VERSION', String, description) do |version|
-          
-          x = SNMP_VERSION_MAP.invert[version]
-          
-          if x.nil?
-            puts "Unsupported SNMP version -- #{version}"
-            exit ARGUMENT_ERROR
-          end
-          
-          options[:snmp_options][:Version] = x
-        end # opts.on
-        
-        opts.separator ""
-        opts.separator "Other:"
-        
-        opts.on_tail('-h', '--help', 'Show this message') do
-          puts opts
-          exit NONFATAL_ERROR
-        end # opts.on_tail
-        
-        opts.on_tail('-v', '--version', 'Show version') do
-          puts VERSION
-          exit NONFATAL_ERROR
-        end
-        
-      end.parse! # OptionParser.new
-      
-      validate_repository(options[:repository])
-      
-    rescue OptionParser::InvalidOption => e
-      
-      puts e
-      exit ARGUMENT_ERROR
-      
-    rescue OptionParser::MissingArgument => e
-      
-      puts e
-      exit ARGUMENT_ERROR
-      
-    end # begin
-    
-    # TODO fix this
-    hosts = create_hosts(options[:host], options, :host)
-    hosts = hosts + create_hosts(options[:domain], options, :domain)
-    
-#    options = CR::Options.new(options[:log], options[:repository], options[:regex])
-    return hosts, options
-    
-  end # def self.parse_cmdline
-  
   # Creates an array of CR::Host objects from an array of host_strings.
   #
   # A list of host_strings can contain hostnames (type = :host) or a list
@@ -300,19 +101,7 @@ module CR
     return host_objects
     
   end # def self.create_hosts
-  
-  # Provides access to Logger. 
-  #
-  # By default Logger is initialized to direct messages to STDOUT with a
-  # level set to INFO. Command line options are also available to customize
-  # logging information at runtime.
-  #
-  def self.log
     
-    @@log
-    
-  end # def self.log
-  
   # Parses file and returns an array of blacklisted hostnames. Text files are
   # the only file types currently supported.
   #
@@ -343,6 +132,7 @@ module CR
     options      = options.dup
     
     begin
+      
       if File.extname(filename) == '.csv'
         
         CSV.open(filename, 'r', ',') do |row|
@@ -358,16 +148,17 @@ module CR
           options[:snmp_options] = options[:snmp_options].merge(snmp_options)
           
           host_strings.push(host_string)
+          
         end # CSV.open
         
-      else
+      else # != '.csv'
       
         File.open(filename).each do |line|
           # ignore comment lines that start with '#'
           host_strings.push(line.chomp) unless line =~ /^[#|\n]/
         end
       
-      end # if File.extname(filename)
+      end # if
       
     rescue Errno::ENOENT => e
       
@@ -406,7 +197,7 @@ module CR
       
       filename = host_string.split('file:')[1]
       
-    end # if host.string.include('file:')
+    end # if
     
     if host_string.include?('@')
       userpass, hostname = host_string.split(/(.*)@(.*)$/)[1..2]
@@ -416,9 +207,9 @@ module CR
       # example: user@host.domain.tld
       # this will resplit userpass in this condition to take the username only
       username = userpass.split(/^(\w+):(.*)/)[0] if username.nil?
-    else
+    else # !host.string.include?('@')
       hostname = host_string
-    end # host_string.include?('@')
+    end # host_string.include?
     
     return filename ? filename : [hostname, username, password]
     
@@ -451,29 +242,28 @@ module CR
       rescue SNMP::RequestTimeout
         
         @@log.error "SNMP timeout: #{host.hostname} -- skipping"
-        next
+        next # hosts.each
         
       rescue Host::NonFatalError => e
         
         @@log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
-        next
+        next # hosts.each
         
-      end
+      end # begin
       
       if repository.read(host, options) != current_config
         
         repository.save(host, options, current_config)
-#        @@log.debug "Saving: #{host.hostname}"
         
-      else  
+      else # == current_config  
         
         @@log.debug "No change: #{host.hostname}"
-      end
-      
+
+      end # if
       
     end # hosts.each
     
-    commit_message = "CR Commit: Processed #{hosts.size} hosts."
+    commit_message = "CR Commit: Processed #{hosts.size} host(s)"
     
     # add any new files and commit all changes
     repository.add_all

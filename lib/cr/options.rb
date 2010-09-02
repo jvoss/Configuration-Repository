@@ -16,47 +16,198 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'optparse'
+
 module CR
   
-  class Options
+  # Parses command-line options using OptionParser and returns an array of
+  # host objects and an options hash used throughout CR.
+  #
+  # ===Command line options:
+  #   Usage: cr.rb -r REPOSITORY [OPTIONS]
+  #     -b, --blacklist FILENAME         
+  #     -d, --domain DOMAIN              Domain or file:<filename> (can be multiple)
+  #     -l, --logfile FILENAME           Log output file
+  #     -n, --hostname HOSTNAME          Hostname or file:<filename> (can be multiple)
+  #     -r, --repository REPOSITORY      Repository directory
+  #     -x, --regex REGEX                Regular expression
+  #     -u, --username USERNAME          Default device username
+  #     -p, --password PASSWORD          Default device password
+  #         --verbosity LEVEL            Verbose level [fatal|error|warn|info|debug]
+  #
+  #     SNMP Options:
+  #         --snmp-community COMMUNITY   Community string (default: public)
+  #         --snmp-port PORT             Port (default: 161)
+  #         --snmp-retries VALUE         Retries (default: 2)
+  #         --snmp-timeout VALUE         Timeout in seconds (default: 3)
+  #         --snmp-version VERSION       Version (default: 2c)
+  #
+  #     Other:
+  #     -h, --help                       Show this message
+  #     -v, --version                    Show version
+  #
+  # ===Examples
+  #
+  # Run against a single host:
+  #     cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
+  #
+  # Run against multiple hosts with the same credentials:
+  #     cr.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld
+  #       -u username -p password
+  #
+  # Run against domains with different credentials:
+  #     cr.rb -r /path/to/repository -d user1:pass1@domain1.tld
+  #       -d user2:pass2@domain2.tld
+  # 
+  # Run against a txt file of host strings containing hosts:
+  #     cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
+  #
+  # Run against a CSV file of host strings containing domains:
+  #     cr.rb -r /path/to/repository -d file:domainfile.csv -u user -p pass
+  #
+  # Usernames and passwords can also be specified as part of the host string
+  # within either file type allowing for greater flexiblility in environments
+  # with varying credentials.
+  #
+  def self.parse_cmdline
     
-    class ArgumentError < StandardError; end
+    options = {}
+    options[:blacklist]    = []
+    options[:domain]       = []
+    options[:host]         = []
+    options[:regex]        = //
+    options[:username]     = nil
+    options[:password]     = nil
+    options[:snmp_options] = {}
     
-    attr_reader :log, :regex, :repository
-    
-    def initialize(log, repository, regex = //)
-
-      @log        = log
-      @regex      = regex
-      @repository = repository
+    begin
       
-      _validate_log
-      _validate_regex
-      _validate_repository
+      OptionParser.new do |opts|
+        
+        opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
+        
+        opts.on('-b', '--blacklist FILENAME', 'File containing blacklisted hosts') do |b|
+          options[:blacklist] = parse_blacklist(b)
+        end # opts.on
+        
+        opts.on('-d', '--domain DOMAIN', 'Domain or file:<filename> (can be multiple)') do |d|
+          options[:domain].push(d)
+        end # opts.on
+        
+        opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
+          @@log = Logger.new(l.to_s)
+        end # opts.on
+        
+        opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
+          options[:host].push(h)
+        end # opts.on
+        
+        opts.on('-r', '--repository REPOSITORY', 'Repository directory') do |r|
+          options[:repository] = r
+        end # opts.on
+        
+        opts.on('-x', '--regex REGEX', Regexp, 'Regular expression') do |regex|
+          options[:regex] = regex
+        end # opts.on
+        
+        opts.on('-u', '--username USERNAME', 'Default device username') do |u|
+          options[:username] = u
+        end # opts.on
+        
+        opts.on('-p', '--password PASSWORD', 'Default device password') do |p|
+          options[:password] = p
+        end # opts.on
+        
+        opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
+          # TODO deal with verbosity level in log
+          case verbose
+            when 'fatal'
+              @@log.level = Logger::FATAL
+            when 'error'
+              @@log.level = Logger::ERROR
+            when 'warn'
+              @@log.level = Logger::WARN
+            when 'info'
+              @@log.level = Logger::INFO
+            when 'debug'
+              @@log.level = Logger::DEBUG
+            else
+              puts "Unsupported verbose level -- #{verbose}"
+              exit ARGUMENT_ERROR
+          end
+        end # opts.on
+        
+        opts.separator ""
+        opts.separator "SNMP Options:"
+        
+        description = "Community string (default: #{Host::SNMP_DEFAULT_COMMUNITY})"
+        opts.on('--snmp-community COMMUNITY', description) do |com|
+          options[:snmp_options][:Community] = com
+        end # opts.on
+        
+        description = "Port (default: #{Host::SNMP_DEFAULT_PORT})"
+        opts.on('--snmp-port PORT', Integer, description) do |port|
+          options[:snmp_options][:Port] = port
+        end # opts.on
+        
+        description = "Retries (default: #{Host::SNMP_DEFAULT_RETRIES})"
+        opts.on('--snmp-retries VALUE', Integer, description) do |retries|
+          options[:snmp_options][:Retries] = retries
+        end # opts.on
+        
+        description = "Timeout in seconds (default: #{Host::SNMP_DEFAULT_TIMEOUT})"
+        opts.on('--snmp-timeout VALUE', Integer, description) do |timeout|
+          options[:snmp_options][:Timeout] = timeout
+        end # opts.on
+        
+        description = "Version (default: #{SNMP_VERSION_MAP[Host::SNMP_DEFAULT_VERSION]})"
+        opts.on('--snmp-version VERSION', String, description) do |version|
+          
+          x = SNMP_VERSION_MAP.invert[version]
+          
+          if x.nil?
+            puts "Unsupported SNMP version -- #{version}"
+            exit ARGUMENT_ERROR
+          end
+          
+          options[:snmp_options][:Version] = x
+        end # opts.on
+        
+        opts.separator ""
+        opts.separator "Other:"
+        
+        opts.on_tail('-h', '--help', 'Show this message') do
+          puts opts
+          exit NONFATAL_ERROR
+        end # opts.on_tail
+        
+        opts.on_tail('-v', '--version', 'Show version') do
+          puts VERSION
+          exit NONFATAL_ERROR
+        end # opts.on_tail
+        
+      end.parse! # OptionParser.new
+      
+      validate_repository(options[:repository])
+      
+    rescue OptionParser::InvalidOption => e
+      
+      puts e
+      exit ARGUMENT_ERROR
+      
+    rescue OptionParser::MissingArgument => e
+      
+      puts e
+      exit ARGUMENT_ERROR
+      
+    end # begin
     
-    end # def initialize
-
-    private
+    # TODO fix this
+    hosts = create_hosts(options[:host], options, :host)
+    hosts = hosts + create_hosts(options[:domain], options, :domain)
     
-    def _validate_log
-      
-      @log ||= :STDOUT
-      
-    end # def _validate_log
+    return hosts, options
     
-    def _validate_regex
-      
-      msg = "Invalid Regular Expression -- #{@regex}"
-      raise ArgumentError, msg, caller unless @regex.is_a?(Regexp)
-      
-    end # def _validate_regex
-    
-    def _validate_repository
-      
-      raise ArgumentError if @repository.nil?
-      
-    end # def _validate_repository
-    
-  end # class Options
+  end # def self.parse_cmdline
   
 end # module CR
