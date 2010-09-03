@@ -169,4 +169,74 @@ module CR
     
   end # class Repository
   
+  # Processes an array of host objects by calling the .config method on
+  # each CR::Host object. 
+  # 
+  # It expects the method to retrieve the desired configuration as an array.
+  # Then it compares it to what was previously saved to the repository 
+  # (if it exists) then saves it if there was a change (of if it is a new file). 
+  # Any new files will be added to the repository then committed at the end of 
+  # this method.
+  #
+  def self.process(hosts, options)
+    
+    log.info "Opening repository: #{options[:repository]}"
+    
+    # initialize the repository
+    repository = Repository.new(options[:repository], :git)
+    
+    hosts.each do |host|
+      
+      log.info "Processing: #{host.hostname}"
+      
+      begin
+        
+        current_config = host.process
+        
+      rescue SNMP::RequestTimeout
+        
+        log.error "SNMP timeout: #{host.hostname} -- skipping"
+        next # hosts.each
+        
+      rescue Host::NonFatalError => e
+        
+        log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
+        next # hosts.each
+        
+      end # begin
+      
+      if repository.read(host, options) != current_config
+        
+        repository.save(host, options, current_config)
+        
+      else # == current_config  
+        
+        log.debug "No change: #{host.hostname}"
+        
+      end # if
+      
+    end # hosts.each
+    
+    commit_message = "CR Commit: Processed #{hosts.size} host(s)"
+    
+    # add any new files and commit all changes
+    repository.add_all
+    repository.commit_all(commit_message)
+    
+    log.info "Processing complete"
+    
+  end # def self.process
+  
+  # Validates that a repository directory was specified on the command-line when
+  # CR is ran as an application. The application will exit when missing.
+  #
+  def self.validate_repository(repository)
+    
+    if repository.nil?
+      puts "missing repository"
+      exit ARGUMENT_ERROR
+    end
+    
+  end # self.validate_repository
+
 end # module CR

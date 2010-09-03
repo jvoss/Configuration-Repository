@@ -20,13 +20,13 @@ require 'rubygems'
 require 'test/unit'
 require 'shoulda'
 require 'test/test_helpers'
-require 'cr/options'
+require 'cr/parse'
 
 module CRTest
   
-  class Test_options < Test::Unit::TestCase
+  class Test_parse < Test::Unit::TestCase
     
-    # TODO - Write options tests
+    # TODO - Write parse tests
     #
     context "You" do
       
@@ -34,10 +34,10 @@ module CRTest
         
         assert false
         
-      end # should "write meaningful tests"
+      end # should "write tests for this functionality"
       
     end # context "You"
     
-  end # class Test_options
+  end # class Test_parse
 
 end # module CRTest

@@ -20,7 +20,9 @@ require 'test/unit/testsuite'
 
 require 'tc_core'
 require 'tc_host'
+require 'tc_log'
 require 'tc_options'
+require 'tc_parse'
 require 'tc_repository'
 
 require 'vcs/tc_git'
@@ -36,7 +38,9 @@ module CRTest
       suite << Test_core.suite
       suite << Test_dns.suite
       suite << Test_host.suite
+      suite << Test_log.suite
       suite << Test_options.suite
+      suite << Test_parse.suite
       suite << Test_repository.suite
       
       suite << Test_git.suite

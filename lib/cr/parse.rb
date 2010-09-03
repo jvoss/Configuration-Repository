@@ -16,6 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'csv'
+
 module CR
   
   # Parses file and returns an array of blacklisted hostnames. Text files are

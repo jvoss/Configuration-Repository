@@ -28,15 +28,15 @@ module CRTest
     
     # TODO - Write log tests
     #
-    context "Write log tests" do
+    context "You" do
       
-      should "still need to be written" do
+      should "write meaningful tests" do
         
-        assert true
+        assert false
         
-      end # should "still need to be written"
+      end # should "write meaningful tests"
       
-    end # context "Write log tests"
+    end # context "You"
     
   end # class Test_log
 

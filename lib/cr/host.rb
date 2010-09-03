@@ -144,4 +144,77 @@ module CR
     
   end # class Host
   
+  # Creates an array of CR::Host objects from an array of host_strings.
+  #
+  # A list of host_strings can contain hostnames (type = :host) or a list
+  # of domain names (type = :domain).
+  #
+  # See parse_host_string for information about host_string formatting.
+  #
+  #---
+  #TODO: Refactor
+  #+++
+  #
+  def self.create_hosts(host_strings, options, type)
+    
+    host_objects = []
+    
+    host_strings.each do |host|
+      
+      hosts = []
+        
+      host_info = parse_host_string(host, options)
+        
+      if host_info.is_a?(Array)
+      
+        target, username, password = parse_host_string(host, options)
+        
+        if type.to_sym == :domain
+      
+          DNS.axfr(target).each do |hostname|
+            
+            hosts.push [hostname, username, password, options[:snmp_options]]
+          
+          end # DNS.axfr
+        
+        elsif type.to_sym == :host
+          
+          hosts.push [target, username, password, options[:snmp_options]]
+        
+        else
+        
+          raise "Invalid host string type -- #{type}"
+        
+        end # if type
+      
+        hosts.each do |host|
+          
+          unless host[0].match(options[:regex])
+            log.debug "Ignoring host (Regex): #{host[0]}"
+            next
+          end 
+          
+          if options[:blacklist].include?(host[0])
+            log.debug "Ignoring host (Blacklist): #{host[0]}"
+            next
+          end
+          
+          log.debug "Adding host: #{host[0]}"
+          
+          host_objects.push CR::Host.new(host[0], host[1], host[2], host[3])
+          
+        end # hosts.each
+      
+      else # host_info must be a filename
+        
+        host_objects = parse_file(host_info, options, type)
+      
+      end # if host_options.is_a?(Array)
+      
+    end # host_strings.each
+    
+    return host_objects
+    
+  end # def self.create_hosts
+  
 end # module CR
