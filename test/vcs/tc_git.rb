@@ -31,7 +31,7 @@ module CRTest
     
     # test self.repo_exist? for invalid repositories
     #
-    context "Checking to see if an invalid repository exists" do
+    context "Checking if an invalid repository exists" do
       
       should "return false" do
         
@@ -39,7 +39,7 @@ module CRTest
         
       end # should "return false"
       
-    end # context "Checking to see if an invalid repository exists"
+    end # context "Checking if an invalid repository exists"
     
     # test self.init(repository) - creating repositories
     #
@@ -51,23 +51,35 @@ module CRTest
         
         assert_kind_of CR::Repository::Git, obj
         
+        FileUtils.rm_r(TEST_REPO) # remove testing directory
+        
       end # should "create a directory and return a git object"
       
     end # context "Initializing a repository"
     
     # test self.repo_exist? for valid repositories
     #
-    context "Checking to see if a valid repository exists" do
+    context "Checking if a valid repository exists" do
+      
+      setup do
+        
+        CR::Repository::Git.init(TEST_REPO)
+        
+      end # setup
+      
+      teardown do
+        
+        FileUtils.rm_r(TEST_REPO) # remove testing directory
+        
+      end # teardown
       
       should "return true" do
         
         assert CR::Repository::Git.exist?(TEST_REPO)
         
-        FileUtils.rm_r(TEST_REPO) # remove testing directory
-        
       end # should "return true"
       
-    end # context "Checking to see if a valid repository exists"
+    end # context "Checking if a valid repository exists"
     
   end # class Test_options
 
