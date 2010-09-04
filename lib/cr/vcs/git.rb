@@ -38,7 +38,7 @@ module CR
 
         Dir.mkdir(repository) unless File.exists?(repository)
       
-        super '.', git_options
+        super repository, git_options
         
       end # def self.init
       
