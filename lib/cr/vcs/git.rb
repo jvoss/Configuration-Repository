@@ -17,6 +17,7 @@
 #
 
 require 'rubygems'
+require 'fileutils'
 require 'git'
 require 'logger'
 
@@ -34,17 +35,8 @@ module CR
         
         raise "Repository already exists -- #{repository}" \
           if self.exist?(repository)
-        
-        begin
-          
-          Dir.chdir(repository)
-        
-        rescue Errno::ENOENT # directory does not exist
-        
-          Dir.mkdir(repository)
-          Dir.chdir(repository)
-        
-        end # begin
+
+        Dir.mkdir(repository) unless File.exists?(repository)
       
         super '.', git_options
         

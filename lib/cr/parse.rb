@@ -17,6 +17,8 @@
 #
 
 require 'csv'
+require 'cr/constants'
+require 'cr/log'
 
 module CR
   

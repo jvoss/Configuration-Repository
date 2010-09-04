@@ -55,7 +55,7 @@ module CRTest
       
       should "return a host object with the default SNMP options" do
         
-        exp_snmp_options = TEST_OPTIONS[:snmp_options]
+        exp_snmp_options = TEST_OPTIONS[:snmp_options].dup
         exp_snmp_options[:Host] = TEST_HOST
                              
         exp_attributes   = { :hostname     => TEST_HOST, 
