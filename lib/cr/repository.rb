@@ -80,8 +80,7 @@ module CR
     #
     def open
       
-      # TODO Add logging support with Git here
-      @repo = @vcs.open(@directory)
+      @repo = @vcs.open(@directory, :log => CR.log)
       
     end # def open
     
