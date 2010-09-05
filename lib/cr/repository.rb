@@ -80,7 +80,9 @@ module CR
     #
     def open
       
-      @repo = @vcs.open(@directory, :log => CR.log)
+      log = CR.log.level == Logger::DEBUG ? CR.log : nil
+      
+      @repo = @vcs.open(@directory, :log => log)
       
     end # def open
     
