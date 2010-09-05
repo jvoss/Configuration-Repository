@@ -103,3 +103,11 @@ task :todo do
   egrep /(FIXME|TODO|TBD)/
   
 end # task :todo
+
+require 'saikuro_treemap'
+namespace :metrics do
+  desc 'generate ccn treemap'
+  task :ccn_treemap do
+    SaikuroTreemap.generate_treemap :code_dirs => ['lib']
+  end # task :ccn_treemap
+end # namespace :metrics 

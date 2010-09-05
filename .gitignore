@@ -3,6 +3,10 @@ doc/
 # Ignore Jeweler directory for dumping Gem's
 pkg/
 
+# Ignore generated Saikuro Treemap
+tmp/
+reports/
+
 # Ignore Apatana project files
 .loadpath
 .project

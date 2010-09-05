@@ -27,6 +27,7 @@ The following gems are required to use Configuration Repository:
 * net-scp
 * net-ssh >= 2.0.23
 * rake
+* saikuro_treemap (for ccn metrics)
 * shoulda (for testing)
 * snmp
 
