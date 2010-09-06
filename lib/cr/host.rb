@@ -94,19 +94,8 @@ module CR
     #
     def _snmp_fingerprint
       
-      sysDescr = nil
-      
-      SNMP::Manager.open(@snmp_options) do |manager|
-        
-        response = manager.get(['sysDescr.0'])
-        
-        response.each_varbind do |var|
-          sysDescr = var.value.to_s
-        end # response.each_varbind
-        
-      end # SNMP::Manager.open
-      
-      case sysDescr
+      # FIXME case statement causes undue complexty in treemap
+      case _snmp_sysdescr
         
         when /Cisco/      then _load_driver(Cisco)
         when /ExtremeXOS/ then _load_driver(ExtremeXOS)
@@ -141,6 +130,26 @@ module CR
       @snmp_options = snmp_defaults.merge(@snmp_options)
       
     end # def _snmp_initialize
+    
+    # Returns SNMP value sysDescr.0 from host
+    #
+    def _snmp_sysdescr
+      
+      sysDescr = nil
+      
+      SNMP::Manager.open(@snmp_options) do |manager|
+        
+        response = manager.get(['sysDescr.0'])
+        
+        response.each_varbind do |var|
+          sysDescr = var.value.to_s
+        end # response.each_varbind
+        
+      end # SNMP::Manager.open
+      
+      return sysDescr
+      
+    end # def _snmp_sysdescr
     
   end # class Host
   
