@@ -58,6 +58,8 @@ module CR
           # it will still catch other errors
           CR.log.debug "no commit needed -- skipped"
           
+          false # Return false due to no commit made
+          
         end # begin
         
       end # self.commit_all

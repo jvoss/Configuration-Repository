@@ -81,6 +81,42 @@ module CRTest
       
     end # context "Checking if a valid repository exists"
     
+    # test self.commit_all for valid repositories
+    #
+    context "Commiting all changes" do
+      
+      setup do
+        
+        @repo = CR::Repository::Git.init(TEST_REPO)
+        
+      end # setup
+      
+      teardown do
+        
+        FileUtils.rm_r(TEST_REPO) # remove testing directory
+        
+      end # teardown
+        
+      should "return false if no commit was made" do
+        
+        assert !@repo.commit_all('Test commit.')
+        
+      end # should "return false if no commit was made"
+      
+      should "return git lib string if successful" do
+        
+        file = File.open("#{TEST_REPO}/testfile", 'w')
+        file.syswrite "test content"
+        file.close
+        
+        @repo.add('.')
+        
+        assert_equal String, @repo.commit_all('Test commit.').class
+        
+      end # should "not raise if successful"
+      
+    end # context "Committing all changes"
+    
   end # class Test_options
 
 end # module CRTest
