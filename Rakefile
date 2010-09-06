@@ -19,6 +19,8 @@
 require 'rake'
 require 'rake/clean'
 
+CLOBBER.include('pkg', 'reports', 'tmp')
+
 desc "Open an irb session preloaded with this library"
 task :console do
   
@@ -42,6 +44,7 @@ begin
     s.add_dependency 'net-scp'
     s.add_dependency 'net-ssh', '>= 2.0.23'
     s.add_dependency 'rake'
+    s.add_dependency 'saikuro_treemap'
     s.add_dependency 'shoulda'
     s.add_dependency 'snmp'
   end
@@ -106,7 +109,7 @@ end # task :todo
 
 require 'saikuro_treemap'
 namespace :metrics do
-  desc 'generate ccn treemap'
+  desc 'Generate CCN treemap'
   task :ccn_treemap do
     SaikuroTreemap.generate_treemap :code_dirs => ['lib']
   end # task :ccn_treemap
