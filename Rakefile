@@ -19,7 +19,7 @@
 require 'rake'
 require 'rake/clean'
 
-CLOBBER.include('pkg', 'reports', 'tmp')
+CLOBBER.include('coverage', 'pkg', 'reports', 'tmp')
 
 desc "Open an irb session preloaded with this library"
 task :console do
@@ -72,6 +72,15 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
   
 end # Rake::TestTask.new
+
+namespace :test do
+  desc 'Measures test coverage'
+  task :coverage do
+    rm_f "coverage"
+    rcov = "rcov -Ilib"
+    system("#{rcov} --html test/tc_*.rb test/vcs/tc_*.rb")
+  end # task :coverage
+end # namespace :test
 
 desc "Look for TODO and FIXME tags in the code"
 task :todo do

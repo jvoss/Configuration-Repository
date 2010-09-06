@@ -7,6 +7,9 @@ pkg/
 tmp/
 reports/
 
+# Ignore generated RCov
+coverage/
+
 # Ignore Apatana project files
 .loadpath
 .project
