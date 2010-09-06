@@ -57,6 +57,14 @@ module CRTest
   
   class Test_dns < Test::Unit::TestCase
     
+    # Test Records
+    A     = Dnsruby::RR.create("foo.domain.tld. 86400 A     192.168.1.1")
+    AAAA  = Dnsruby::RR.create("bar.domain.tld. 86400 AAAA  FFFF::1")
+    CNAME = Dnsruby::RR.create("foo.domain.tld. 86400 CNAME foo.domain.tld.")
+    MX    = Dnsruby::RR.create("foo.domain.tld. 86400 MX 20 foo.example.com.")
+    SOA   = Dnsruby::RR.create("srv.domain.tld. 864   SOA domain.tld. bar.domain.tld.")
+    TXT   = Dnsruby::RR.create("domain.tld.     86400 TXT \"test txt\"")
+    
     context "Zone transfers" do
       
       should "return a list of no duplicates and contain expected hosts" do
@@ -75,6 +83,46 @@ module CRTest
       end # should "return a list of no duplicates and contain expected hosts"
       
     end # context "Zone transfers"
+    
+    context "Processing records" do
+      
+      should "return a target hostname for valid records" do
+        
+        assert_equal "foo.domain.tld", CR::DNS.process_record(A)
+        assert_equal "bar.domain.tld", CR::DNS.process_record(AAAA)
+        assert_equal "foo.domain.tld", CR::DNS.process_record(CNAME)
+        
+      end # should "return a target hostname for valid records"
+      
+      should "return nil for invalid records" do
+        
+        assert_nil CR::DNS.process_record(MX)
+        assert_nil CR::DNS.process_record(SOA)
+        assert_nil CR::DNS.process_record(TXT)
+        
+      end # should "return nil for invalid records"
+      
+    end # context "Processing records"
+    
+    context "Validating record types" do
+      
+      should "return true when a valid type is given" do
+        
+        assert CR::DNS.valid_record_type?(A)
+        assert CR::DNS.valid_record_type?(AAAA)
+        assert CR::DNS.valid_record_type?(CNAME)
+        
+      end # should "return true when a valid type is given"
+      
+      should "return false when an invalid type is given" do
+        
+        assert !CR::DNS.valid_record_type?(MX)
+        assert !CR::DNS.valid_record_type?(SOA)
+        assert !CR::DNS.valid_record_type?(TXT)
+        
+      end # should "return false when an invalid type is given"
+      
+    end # context "Validating record types"
     
   end # class Test_dns
   
