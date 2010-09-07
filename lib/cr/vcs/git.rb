@@ -50,7 +50,10 @@ module CR
         begin
           
           super message
-          
+        
+        # Git-1.7.0.2-preview20100309.exe - Msysgit installer and the Ruby Git 
+        # library will not raise properly if there are no files to commit.
+        # Installing Git-1.7.1-preview20100612.exe fixes this issue.  
         rescue ::Git::GitExecuteError
         
           # TODO provide some useful information about why commit was not needed

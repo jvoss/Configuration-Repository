@@ -87,13 +87,18 @@ module CRTest
       
       setup do
         
-        @repo = CR::Repository::Git.init(TEST_REPO)
+        # This test uses different directory names due to some systems
+        # having permission issues with files still being in use when this test
+        # is setup and torndown.
+        @dir  = TEST_REPO + "2"
+        
+        @repo = CR::Repository::Git.init(@dir)
         
       end # setup
       
       teardown do
         
-        FileUtils.rm_r(TEST_REPO) # remove testing directory
+        FileUtils.rm_r(@dir) # remove testing directory
         
       end # teardown
         
@@ -105,7 +110,7 @@ module CRTest
       
       should "return git lib string if successful" do
         
-        file = File.open("#{TEST_REPO}/testfile", 'w')
+        file = File.open("#{@dir}/testfile", 'w')
         file.syswrite "test content"
         file.close
         
