@@ -194,7 +194,7 @@ module CR
       
           hostname, username, password = parse_host_string(host, options)
       
-          log.debug "Adding host: #{host}"
+          log.debug "Adding host: #{hostname}"
       
           host_objects.push CR::Host.new(hostname, username, password, snmp_options)
       
