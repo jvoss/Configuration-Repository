@@ -190,21 +190,10 @@ module CR
       
       log.info "Processing: #{host.hostname}"
       
-      begin
-        
-        current_config = host.process
-        
-      rescue SNMP::RequestTimeout
-        
-        log.error "SNMP timeout: #{host.hostname} -- skipping"
-        next # hosts.each
-        
-      rescue Host::NonFatalError => e
-        
-        log.error "NonFatalError: #{host.hostname} - #{e} -- skipping"
-        next # hosts.each
-        
-      end # begin
+      current_config = process_host(host)
+      
+      # Proceed to the next host if the configuration was empty
+      next if current_config.empty?
       
       if repository.read(host, options) != current_config
         
@@ -227,6 +216,35 @@ module CR
     log.info "Processing complete"
     
   end # def self.process
+  
+  # Returns CR::Host object's configuration.
+  # This method is typically called from process
+  #
+  #---
+  #TODO: Rename process_host method?
+  #+++
+  #
+  def self.process_host(host_object)
+    
+    current_config = []
+    
+    begin
+    
+      current_config = host_object.process
+    
+    rescue SNMP::RequestTimeout
+      
+      log.error "SNMP timeout: #{host_object.hostname} -- skipping"
+      
+    rescue Host::NonFatalError => e
+    
+      log.error "NonFatalError: #{host_object.hostname} - #{e} -- skipping"
+    
+    end # begin
+    
+    return current_config
+    
+  end # def self.process_host
   
   # Validates that a repository directory was specified on the command-line when
   # CR is ran as an application. The application will exit when missing.
