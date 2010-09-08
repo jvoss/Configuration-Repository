@@ -38,6 +38,22 @@ module CR
     
   end # def self.parse_blacklist
   
+  # Parses a domain and returns an array of CR::Host objects.
+  #
+  def self.parse_domain(domain, options)
+    
+    host_strings = []
+    
+    DNS.axfr(domain).each do |hostname|
+      
+      host_strings.push(hostname)
+          
+    end # DNS.axfr
+    
+    return create_hosts(host_strings, options, :host)
+    
+  end # def self.parse_domain
+  
   # Parses filename and returns an array of CR::Host objects. Files accepted
   # are text files with each line containing a valid host string or a CSV
   # in the following format:

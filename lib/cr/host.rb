@@ -170,55 +170,35 @@ module CR
     
     host_strings.each do |host|
       
-      hosts = []
+      case 
         
-      host_info = parse_host_string(host, options)
+        when host.match(/^file:(.*)/)
+          host_objects += parse_file($1, options, type)
+          next # host_strings
         
-      if host_info.is_a?(Array)
-      
-        target, username, password = parse_host_string(host, options)
-        
-        if type.to_sym == :domain
-      
-          DNS.axfr(target).each do |hostname|
-            
-            hosts.push [hostname, username, password, options[:snmp_options]]
+        when type.to_sym == :domain
+          host_objects += parse_domain(host, options)
+          next # host_strings
           
-          end # DNS.axfr
-        
-        elsif type.to_sym == :host
+        when !host.match(options[:regex])
+          log.debug "Ignoring host (Regex): #{host}"
+          next # host_strings
           
-          hosts.push [target, username, password, options[:snmp_options]]
-        
+        when options[:blacklist].include?(host)
+          log.debug "Ignoring host (Blacklist): #{host}"
+          next # host_strings
+          
         else
-        
-          raise "Invalid host string type -- #{type}"
-        
-        end # if type
+          
+          snmp_options = options[:snmp_options]
       
-        hosts.each do |host|
-          
-          unless host[0].match(options[:regex])
-            log.debug "Ignoring host (Regex): #{host[0]}"
-            next
-          end 
-          
-          if options[:blacklist].include?(host[0])
-            log.debug "Ignoring host (Blacklist): #{host[0]}"
-            next
-          end
-          
-          log.debug "Adding host: #{host[0]}"
-          
-          host_objects.push CR::Host.new(host[0], host[1], host[2], host[3])
-          
-        end # hosts.each
+          hostname, username, password = parse_host_string(host, options)
       
-      else # host_info must be a filename
-        
-        host_objects = parse_file(host_info, options, type)
+          log.debug "Adding host: #{host}"
       
-      end # if host_options.is_a?(Array)
+          host_objects.push CR::Host.new(hostname, username, password, snmp_options)
+      
+      end # case
       
     end # host_strings.each
     
