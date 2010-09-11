@@ -91,7 +91,16 @@ module CRTest
       
     end # context "Initalizing a host object"
     
-    # TODO test config method on Host
+    context "Retrieving a configuration from a host" do
+      
+      should "return nil if a driver has not been loaded" do
+        
+        host = CR::Host.new(TEST_HOST, TEST_USER, TEST_PASS)  
+        assert_nil host.config
+        
+      end # should "return nil if a driver has not been loaded"
+      
+    end # context "Retrieving a configuration from a host"
     
   end # class Test_host
   
