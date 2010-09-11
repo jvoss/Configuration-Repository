@@ -22,6 +22,37 @@ require 'shoulda'
 require 'test/test_helpers'
 require 'cr/parse'
 
+## Mockup for parse_domain() 
+
+module Dnsruby
+  
+  class ZoneTransfer
+    
+    def transfer(domain = 'example.com')
+      
+      records = [ RR.create("mail.#{domain}. 86400 MX 20 foo.example.com."),
+                  RR.create("foo.#{domain}. 86400 A 192.168.1.1"),
+                  RR.create("foo.#{domain}. 86400 A 192.168.2.1"),
+                  RR.create("bar.#{domain}. 86400 CNAME foo.#{domain}."),
+                  RR.create("srv.#{domain}. 864 SOA #{domain}. bar.#{domain}."),
+                  RR.create("host0.#{domain}. 86400 CNAME host.domain.tld."),
+                  RR.create("host1.#{domain}. 86400 A 192.168.1.2"),
+                  RR.create("#{domain}. 86400 TXT \"test txt\""),
+                  RR.create("host2.#{domain}. 86400 A 192.168.1.3"),
+                  RR.create("host3.#{domain}. 86400 AAAA 1234::5"),
+                  RR.create("srv.#{domain}. 86400 SRV 20 0 0 bar.#{domain}.")
+                ]
+      
+      return records
+      
+    end # def transfer
+    
+  end # class ZoneTransfer
+  
+end # module Dnsruby
+
+## end Mockup for parse_domain()
+
 module CRTest
   
   class Test_parse < Test::Unit::TestCase
@@ -79,6 +110,22 @@ module CRTest
       end # should
       
     end # context
+    
+    # test self.parse_domain(domain, options)
+    #
+    context "Parsing a domain" do
+      
+      should "return an array of host objects" do
+        
+        hosts = CR.parse_domain('example.com', TEST_OPTIONS)
+        
+        hosts.each do |host|
+          assert host.is_a? CR::Host
+        end
+        
+      end # should "return an array of host objects"
+      
+    end # context "Parsing a domain"
     
     # test self.parse_file(filename, options, type)
     #
