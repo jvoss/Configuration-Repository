@@ -17,6 +17,7 @@
 #
 
 require 'ftools'
+require 'cr/rescue'
 require 'cr/vcs/git'
 
 module CR
@@ -231,15 +232,11 @@ module CR
     begin
     
       current_config = host_object.process
-    
-    rescue SNMP::RequestTimeout
+       
+    rescue => e
       
-      log.error "SNMP timeout: #{host_object.hostname} -- skipping"
-      
-    rescue Host::NonFatalError => e
-    
-      log.error "NonFatalError: #{host_object.hostname} - #{e} -- skipping"
-    
+      CR::Rescue.catch_host(e, host_object)
+
     end # begin
     
     return current_config
@@ -252,8 +249,7 @@ module CR
   def self.validate_repository(repository)
     
     if repository.nil?
-      puts "missing repository"
-      exit ARGUMENT_ERROR
+      raise ArgumentError, 'missing repository'
     end
     
   end # self.validate_repository

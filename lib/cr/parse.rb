@@ -19,6 +19,7 @@
 require 'csv'
 require 'cr/constants'
 require 'cr/log'
+require 'cr/rescue'
 
 module CR
   
@@ -49,30 +50,21 @@ module CR
     
     options = options.dup
     
-    begin
+    CSV.open(filename, 'r', ',') do |row|
+          
+      host_string = row[0]
+          
+      snmp_options = { :Community => row[1],
+                       :Version   => SNMP_VERSION_MAP.invert[row[2]],
+                       :Port      => row[3].to_i,
+                       :Timeout   => row[4].to_i,
+                       :Retries   => row[5].to_i }
+                           
+      options[:snmp_options] = options[:snmp_options].merge(snmp_options)
       
-      CSV.open(filename, 'r', ',') do |row|
-            
-        host_string = row[0]
-            
-        snmp_options = { :Community => row[1],
-                         :Version   => SNMP_VERSION_MAP.invert[row[2]],
-                         :Port      => row[3].to_i,
-                         :Timeout   => row[4].to_i,
-                         :Retries   => row[5].to_i }
-                             
-        options[:snmp_options] = options[:snmp_options].merge(snmp_options)
-        
-        host_objects += create_hosts(host_string, options, type)
-            
-      end # CSV.open
-    
-    rescue Errno::ENOENT => e
-      
-      puts e
-      exit ARGUMENT_ERROR
-    
-    end # begin
+      host_objects += create_hosts(host_string, options, type)
+          
+    end # CSV.open
     
     return host_objects
     
@@ -161,24 +153,15 @@ module CR
     host_strings = []
     
     options = options.dup
-    
-    begin
       
-      File.open(filename).each do |line|
+    File.open(filename).each do |line|
+      
+      # ignore comment lines that start with '#'
+      host_strings.push(line.chomp) unless line =~ /^[#|\n]/
         
-        # ignore comment lines that start with '#'
-        host_strings.push(line.chomp) unless line =~ /^[#|\n]/
-          
-      end # File.open
-      
-      host_objects = create_hosts(host_strings, options, type)
-      
-    rescue Errno::ENOENT => e
-      
-      puts e
-      exit ARGUMENT_ERROR
-      
-    end # begin
+    end # File.open
+    
+    host_objects = create_hosts(host_strings, options, type)      
     
     return host_objects
     

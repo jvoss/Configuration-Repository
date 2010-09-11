@@ -17,6 +17,7 @@
 #
 
 require 'optparse'
+require 'cr/rescue'
 
 module CR
   
@@ -70,6 +71,8 @@ module CR
   # with varying credentials.
   #
   def self.parse_cmdline
+    
+    hosts   = []
     
     options = {}
     options[:blacklist]    = []
@@ -132,8 +135,7 @@ module CR
             when 'debug'
               log.level = Logger::DEBUG
             else
-              puts "Unsupported verbose level -- #{verbose}"
-              exit ARGUMENT_ERROR
+              raise ArgumentError, "Unsupported verbose level -- #{verbose}"
           end
         end # opts.on
         
@@ -166,8 +168,7 @@ module CR
           x = SNMP_VERSION_MAP.invert[version]
           
           if x.nil?
-            puts "Unsupported SNMP version -- #{version}"
-            exit ARGUMENT_ERROR
+            raise ArgumentError, "Unsupported SNMP version -- #{version}"
           end
           
           options[:snmp_options][:Version] = x
@@ -190,21 +191,15 @@ module CR
       
       validate_repository(options[:repository])
       
-    rescue OptionParser::InvalidOption => e
+      # TODO fix this
+      hosts = create_hosts(options[:host], options, :host)
+      hosts = hosts + create_hosts(options[:domain], options, :domain)
       
-      puts e
-      exit ARGUMENT_ERROR
+      rescue => e
       
-    rescue OptionParser::MissingArgument => e
-      
-      puts e
-      exit ARGUMENT_ERROR
+        CR::Rescue.catch_fatal(e)
       
     end # begin
-    
-    # TODO fix this
-    hosts = create_hosts(options[:host], options, :host)
-    hosts = hosts + create_hosts(options[:domain], options, :domain)
     
     return hosts, options
     
