@@ -89,14 +89,14 @@ module CR
     
     # Reads contents of hostObject.config from the repository into an array
     #
-    def read(hostobj, options)
+    def read(hostobj, options, filename)
       
       contents = []
       
-      filename = _filename(hostobj, options).join('/')
+      directory = _directory(hostobj, options)
       
       begin
-        File.open("#{@directory}/#{filename}", 'r') do |file|
+        File.open("#{@directory}/#{directory}/#{filename}", 'r') do |file|
           file.each_line do |line|
             contents.push(line)
           end
@@ -122,26 +122,58 @@ module CR
       
       else
         
-        CR.log.debug "Saving: #{hostobj.hostname}"
-        
-        path     = _filename(hostobj, options)
-        sub_dir  = path[0...-1].join('/') if path.size > 1
-        filename = path.pop
+        path = _directory(hostobj, options)
         
         # Make directories if they do not exist
-        File.makedirs("#{@directory}/#{sub_dir}") unless sub_dir.nil?
+        File.makedirs("#{@directory}/#{path}")
         
-        file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
+        contents.each_pair do |filename, value|
         
-        contents.each do |line|
-          file.syswrite line
-        end # contents.each
+          if value.nil?
+            CR.log.warn "Empty on device: #{hostobj.hostname} - #{filename}"
+            next
+          end
+        
+          if read(hostobj, options, filename) == value
+            CR.log.debug "No change: #{hostobj.hostname} - #{filename}"
+            next
+          end
+          
+          CR.log.debug "Saving: #{hostobj.hostname} - #{filename}"
+          
+          # Make any needed subdirectories
+          sub_dir  = filename.split('/')
+          filename = sub_dir.pop          # last entry is filename
+          sub_dir  = sub_dir.join('/')
+          
+          File.makedirs("#{@directory}/#{path}/#{sub_dir}")
+          
+          file = File.open("#{@directory}/#{path}/#{sub_dir}/#{filename}", 'w')
+          
+          value.each do |line|
+            file.syswrite line
+          end # contents.each
+        
+        end # contents.each_pair
         
       end # contents.nil?
       
     end # def save
     
     private
+    
+    # Determins directory within repository for CR:Host object to save files.
+    # Return a string: 'host/path/host.domain.tld/'
+    #
+    def _directory(hostobj, options)
+      
+      path = hostobj.hostname.match(options[:regex]).captures
+      
+      path.push hostobj.hostname
+      
+      path.join('/') + '/'
+      
+    end # def _directory
     
     # Initializes the repository object into instance variable @repo
     #
@@ -190,21 +222,8 @@ module CR
     hosts.each do |host|
       
       log.info "Processing: #{host.hostname}"
-      
-      current_config = process_host(host)
-      
-      # Proceed to the next host if the configuration was empty
-      next if current_config.empty?
-      
-      if repository.read(host, options) != current_config
         
-        repository.save(host, options, current_config)
-        
-      else # == current_config  
-        
-        log.debug "No change: #{host.hostname}"
-        
-      end # if
+      repository.save(host, options, process_host(host))
       
     end # hosts.each
     

@@ -46,7 +46,7 @@ module CR
         
         startup_config = startup_config_tmp.split(/\r\n/) # Split on newlines.
         
-        return startup_config
+        return {'/nsconfig/ns.conf' => startup_config}
         
       end # config
       

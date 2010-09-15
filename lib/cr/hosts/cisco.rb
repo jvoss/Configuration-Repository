@@ -73,7 +73,7 @@ module CR
         startup_config.shift until startup_config[0] =~ /^version/
         startup_config.unshift("!\r\n") # add back beginning '!' on configuration
         
-        return startup_config
+        return {'startup_config' => startup_config}
         
       end # config
 

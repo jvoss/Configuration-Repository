@@ -49,7 +49,7 @@ module CR
         startup_config.pop
         startup_config.shift until startup_config[0] =~ /^# Module/
  
-        return startup_config
+        return {'config' => startup_config}
         
       end # config
       

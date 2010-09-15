@@ -104,7 +104,7 @@ module CR
           raise Host::NonFatalError, "running-config came back empty!"
         end
         
-        return running_config
+        return {'running_config' => running_config}
         
       end # config
       

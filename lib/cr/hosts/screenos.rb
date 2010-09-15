@@ -47,7 +47,7 @@ module CR
         startup_config = startup_config_tmp.split(/\cM/) # Split on newlines.
         startup_config.shift # Remove header comment
         
-        return startup_config
+        return {'ns_sys_config' => startup_config}
         
       end # config
       
