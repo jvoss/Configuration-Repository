@@ -109,54 +109,41 @@ module CR
       
     end # def read
     
-    # Saves contents of CR::Host.config to file named by the object's
-    # hostname.
+    # Saves contents of CR::Host.config to directory named by the object's
+    # hostname. #config should return a hash with key being a filename and 
+    # value being an array containing the configuration.
     #
     def save(hostobj, options, contents)
       
       raise "Repository not initialized" unless self.exist?
+      raise "Contents hash blank" if contents.nil?
+      # FIXME Fix above raise statement to raise an exception that will not
+      # cause the script to terminate but log through rescue.rb
       
-      if contents.nil?
+      path = _directory(hostobj, options)
       
-        CR.log.warn "No configuration found for #{hostobj.hostname}"
+      contents.each_pair do |filename, value|
       
-      else
-        
-        path = _directory(hostobj, options)
-        
-        # Make directories if they do not exist
-        File.makedirs("#{@directory}/#{path}")
-        
-        contents.each_pair do |filename, value|
-        
-          if value.nil?
-            CR.log.warn "Empty on device: #{hostobj.hostname} - #{filename}"
-            next
-          end
-        
-          if read(hostobj, options, filename) == value
-            CR.log.debug "No change: #{hostobj.hostname} - #{filename}"
-            next
-          end
+        if value.nil?
           
-          CR.log.debug "Saving: #{hostobj.hostname} - #{filename}"
+          CR.log.warn "Empty from device: #{hostobj.hostname} - #{filename}"
+          next # filename, value
           
-          # Make any needed subdirectories
-          sub_dir  = filename.split('/')
-          filename = sub_dir.pop          # last entry is filename
-          sub_dir  = sub_dir.join('/')
+        end # if value.nil?
+      
+        if read(hostobj, options, filename) == value
           
-          File.makedirs("#{@directory}/#{path}/#{sub_dir}")
+          CR.log.debug "No change: #{hostobj.hostname} - #{filename}"
+          next # filename, value
           
-          file = File.open("#{@directory}/#{path}/#{sub_dir}/#{filename}", 'w')
-          
-          value.each do |line|
-            file.syswrite line
-          end # contents.each
+        end # if read(hostobj, options, filename) == value
         
-        end # contents.each_pair
+        CR.log.debug "Saving: #{hostobj.hostname} - #{filename}"
         
-      end # contents.nil?
+        # Save the file to disk
+        _save_file("#{path}/#{filename}", value)
+      
+      end # contents.each_pair
       
     end # def save
     
@@ -190,16 +177,32 @@ module CR
       
     end # _initialize_vcs
     
-    # Determines what the repository internal path structure and file name 
-    # should be based off the regex option. Returns as an array.
+    # Saves contents array to filename. Top level directory being repository 
+    # directory is assumed. Filename can be string like: 'hostname/etc/somefile'
+    # This will be interpreted as: repo_directory + 'hostname/etc/somefile'
     #
-    def _filename(hostobj, options)
+    def _save_file(filename, contents)
       
-      path = hostobj.hostname.match(options[:regex]).captures
+      # Make any needed subdirectories
+      sub_dir  = filename.split('/')
+      filename = sub_dir.pop          # last entry is filename
+      sub_dir  = sub_dir.join('/')
       
-      path.push hostobj.hostname
+      File.makedirs("#{@directory}/#{sub_dir}")
       
-    end # def _filename
+      file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
+      
+      contents.each do |line|
+        file.syswrite line
+      end # contents.each
+    
+      file.close
+      
+      CR.log.debug "Saved #{sub_dir}/#{filename}: #{contents.size} lines"
+      
+      return true
+       
+    end # def _save_file
     
   end # class Repository
   
