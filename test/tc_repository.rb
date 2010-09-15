@@ -26,72 +26,201 @@ require 'cr/repository'
 
 module CRTest
   
-  # FIXME This test needs severely overhauled
+  ### Host mockup object ###
+  
+  class Host < CR::Host
+  
+    def process
+      return { 'testfile' => ['test contents\r\n'] }
+    end # def process
+    
+  end # class Host
+  
+  ### Host mockup object ###
   
   class Test_repository < Test::Unit::TestCase
     
     TEST_REPO  = TEST_OPTIONS[:repository]
     TEST_VCS   = [:git]
+
+    # TODO - Disable CR logger from displaying warning messages
     
     TEST_VCS.each do |vcs|
     
       context "Checking a repository" do
         
-        setup do
-          
-          @repo = CR::Repository.new(TEST_REPO, vcs)
-          
-        end # setup
-        
-        teardown do
-          
-          FileUtils.rm_r(TEST_REPO) # remove testing directory
-          
-        end # teardown
-        
         should "return true if it does exist" do
           
-          assert @repo.exist?
+          directory = TEST_REPO + 'TC_repository1'
+          repo      = CR::Repository.new(directory, vcs)
+          
+          assert repo.exist?
+          
+          assert FileUtils.rm_r(directory)
           
         end # should "return true if it does exist"
         
-        # FIXME Fix the following tests with host mockup objects
-#        should "allow saving to a file" do
-#          
-#          assert @repo.save('testfile', 'TEST SAVE')
-#          
-#        end # should "allow saving to a file"
-#        
-#        should "allow reading from a file" do
-#          
-#          File.open("#{TEST_REPO}/testfile", 'w') do |file|
-#            file.print "TEST SAVE"
-#          end # File.open
-#          
-#          assert @repo.read('testfile').include?('TEST SAVE')
-#          
-#        end # should "allow reading from a file"
-        
-#        should "allow adding all files to a repository" do
-#          
-#          @repo.save(hostobj, TEST_OPTIONS)
-#          
-#          assert @repo.add_all
-#          
-#        end # should "allow adding all files to a repository" do
-          
-#        should "allow committing all files in a repository" do
-#          
-#          @repo.save(hostobj, TEST_OPTIONS)
-#          @repo.add_all
-#          
-#          assert @repo.commit_all('TEST COMMIT')
-#          
-#        end # should "allow committing all files in a repository"
-        
       end # context "Checking a repository"
+      
+      context "Working with a CR::Repository" do
+   
+        directory = TEST_REPO + 'TC_repository2'
+        
+        REPO = CR::Repository.new(directory, vcs)
+        
+        should "raise ArgumentError if an invalid VCS was initialized" do
+          
+          assert_raise ArgumentError do
+            CR::Repository.new(TEST_REPO, :invalid)
+          end
+          
+        end # should "raise ArgumentError if an invalid VCS was initialized"
+        
+        should "return a Repository object on successful initialization" do
+          
+          assert_kind_of(CR::Repository, REPO)
+          
+        end # should "return a Repository object on successful initialization"
+        
+        should "return a Repository object of VCS class when opened" do
+          
+          if vcs == :git
+            assert_kind_of(CR::Repository::Git, REPO.open)
+          end # if vcs == :git
+          
+        end # should "return a Repository object of VCS class when opened"
+        
+        should "save file contents properly and skip save when not changed" do
+          
+          host      = CRTest::Host.new('host.domain.tld', 'user', 'pass')
+          contents  = host.process
+          
+          assert_nothing_raised do
+            
+            REPO.save(host, TEST_OPTIONS, contents)
+            
+          end # assert_nothing_raised
+          
+          # Save again 
+          # TODO write better test for this
+          
+          assert_nothing_raised do
+            
+            REPO.save(host, TEST_OPTIONS, contents)
+            
+          end # assert_nothing_raised
+          
+        end # should "save file contents properly"
+        
+        should "raise when trying to save nil contents" do
+          
+          host     = CRTest::Host.new('host.domain.tld', 'user', 'pass')
+          contents = nil
+          
+          assert_raise RuntimeError do
+            REPO.save(host, TEST_OPTIONS, contents)
+          end # assert_raise
+          
+        end # should "raise when trying to save nil contents"
+
+        should "log but not raise on nil files within contents" do
+          
+          host     = CRTest::Host.new('host.domain.tld', 'user', 'pass')
+          contents = {'testfile' => nil}
+          
+          assert_nothing_raised do
+            REPO.save(host, TEST_OPTIONS, contents)
+          end # assert_nothing_raised
+          
+        end # should "log but not raise on nil files within contents"
+
+        should "read files properly" do
+          
+          host = CRTest::Host.new('host.domain.tld', 'user', 'pass')
+          
+          REPO.save(host, TEST_OPTIONS, host.process)
+          
+          expected = host.process['testfile']
+          
+          assert_equal expected, REPO.read(host, TEST_OPTIONS, 'testfile')
+          
+        end # should "read files properly"
+        
+        should "not raise when adding all files to VCS" do
+          
+          assert_nothing_raised do
+            REPO.add_all
+          end
+          
+        end # should "not raise when adding all files to VCS"
+        
+        should "not raise when committing all files to VCS" do
+          
+          assert_nothing_raised do
+            REPO.commit_all('test commit.')
+          end
+          
+        end # should "not raise when committing all files to VCS"
+        
+      end # context "Working with a CR::Repository"
+    
+      # FIXME Naming with ZZZZ's is a cheap hack with shoulda to get this
+      # context to run last!
+      context "ZZZZZ Test cleanup" do
+        
+        should "remove the testing directory" do
+          assert FileUtils.rm_r(TEST_REPO + 'TC_repository2')
+        end # should "remove the testing directory"
+        
+      end # context "Test cleanup"
     
     end # TEST_VCS.each
+    
+    context "Processing hosts" do
+      
+      should "not raise" do
+        
+        options = TEST_OPTIONS.dup
+        options[:repository] = options[:repository] + 'TC_repository3'
+        
+        host = CRTest::Host.new('host.domain.tld', 'user', 'pass')
+        
+        assert_nothing_raised do
+          
+          CR.process([host], options)
+          
+        end # assert_nothing_raised
+        
+        # Cleanup repository directory
+        assert FileUtils.rm_r(options[:repository])
+        
+      end # should "not raise"
+      
+      should "catch exceptions when a non error occurs" do
+        
+        # Should log a message
+        # TODO write better test
+        assert_nothing_raised do
+          
+          CR.process_host(nil)
+          
+        end # assert_nothing_raised
+        
+      end # should "catch exceptions when a non fatal error occurs"
+      
+    end # context "Processing hosts"
+    
+    context "Validating a repository" do
+      
+      should "raise if nil is given" do
+        
+        assert_raise ArgumentError do
+          CR.validate_repository(nil)
+        end
+        
+      end # should "raise if nil is given"
+      
+    end # context "Validating a repository"
     
   end # class Test_repository
   
