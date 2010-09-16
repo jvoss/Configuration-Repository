@@ -70,7 +70,7 @@ module CR
   # within either file type allowing for greater flexiblility in environments
   # with varying credentials.
   #
-  def self.parse_cmdline
+  def self.parse_cmdline(argv)
     
     hosts   = []
     
@@ -85,7 +85,7 @@ module CR
     
     begin
       
-      OptionParser.new do |opts|
+      opt = OptionParser.new do |opts|
         
         opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
         
@@ -187,7 +187,9 @@ module CR
           exit NONFATAL_ERROR
         end # opts.on_tail
         
-      end.parse! # OptionParser.new
+      end # OptionParser.new
+      
+      opt.parse!(argv)
       
       validate_repository(options[:repository])
       

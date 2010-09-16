@@ -21,6 +21,6 @@
 require 'rubygems'
 require 'cr'
 
-hosts, options = CR.parse_cmdline
+hosts, options = CR.parse_cmdline(ARGV)
 
 CR.process(hosts, options)
