@@ -43,16 +43,24 @@ module CR
     # ===Example 
     # host = Host.new('host.domain.tld', 'user', 'pass')
     # 
-    # snmp_options can contain any options available from the 'snmp' gem
+    # snmp_options can contain any options available from the 'snmp' gem.
     #
-    def initialize(hostname, username, password, snmp_options = {})
+    # Force a particular driver by supplying class name for the driver argument:
+    #   driver = CR::Host::Cisco
+    #
+    def initialize(hostname, username, password, snmp_options = {}, driver = nil)
       
+      @driver       = driver
       @hostname     = hostname
       @username     = username
       @password     = password
       @snmp_options = snmp_options
       
-      _snmp_initialize
+      if @driver.nil?
+        _snmp_initialize
+      else
+        _load_driver(@driver)
+      end # driver.nil?
       
     end # def initialize
     
@@ -71,7 +79,7 @@ module CR
     #
     def process
       
-      _snmp_fingerprint
+      _snmp_fingerprint if @driver.nil?
       
       config
       
