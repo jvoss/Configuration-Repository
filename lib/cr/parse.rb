@@ -18,6 +18,7 @@
 
 require 'csv'
 require 'cr/constants'
+require 'cr/host'
 require 'cr/log'
 require 'cr/rescue'
 
@@ -112,18 +113,22 @@ module CR
     
   end # def self.parse_file
   
-  # Parses a host string into hostname, username, and password.
+  # Parses a host string into hostname, username, password and driver.
   # 
   # Valid host strings are:
   #   hostname.domain.tld
   #   user@hostname.domain.tld
   #   user:pass@hostname.domain.tld
+  #   user:pass@hostname.domain.tld=Driver
   #
   # Domains can also be valid host strings: user:pass@domain.tld
   #
+  # Example:
+  #   user:pass@ciscodevice.domain.tld=Cisco
   #
   def self.parse_host_string(host_string, options)
     
+    driver   = nil
     hostname = nil
     username = options[:username]
     password = options[:password]
@@ -140,7 +145,12 @@ module CR
       hostname = host_string
     end # host_string.include?
     
-    return [hostname, username, password]
+    if hostname.include?('=')
+      hostname, driver = hostname.split(/(.*)=(.*)$/)[1..2]
+      driver = eval('CR::Host::' + driver)
+    end # if hostname.include?('=')
+    
+    return [hostname, username, password, driver]
     
   end # def self.parse_host_string  
   

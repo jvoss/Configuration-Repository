@@ -200,11 +200,11 @@ module CR
           
           snmp_options = options[:snmp_options]
       
-          hostname, username, password = parse_host_string(host, options)
+          hostname, username, password, driver = parse_host_string(host, options)
       
           log.debug "Adding host: #{hostname}"
       
-          host_objects.push CR::Host.new(hostname, username, password, snmp_options)
+          host_objects.push CR::Host.new(hostname, username, password, snmp_options, driver)
       
       end # case
       
