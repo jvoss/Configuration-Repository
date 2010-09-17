@@ -16,8 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'net/telnet'
 require 'cr/host'
+require 'cr/transport/telnet'
 
 module CR
   
@@ -32,13 +32,18 @@ module CR
         startup_config = []
         
         begin
-        
-          telnet = Net::Telnet::new("Host" => @hostname)
-          telnet.login(@username, @password)
-          telnet.cmd('disable clipaging')
-          telnet.cmd('show config') do |line|
-            startup_config.push(line)
-          end # telnet.cmd
+       
+          telnet = Transport::Telnet.new(@hostname, @username, @password)
+          
+          telnet.login do |session|
+            
+            session.cmd('disable clipaging')
+            
+            session.cmd('show config') do |line|
+              startup_config.push(line)
+            end # session.cmd('show config')
+            
+          end # telnet.login
        
        rescue => e
        
