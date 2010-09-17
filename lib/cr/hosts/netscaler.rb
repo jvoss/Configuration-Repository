@@ -16,8 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'net/scp'
 require 'cr/host'
+require 'cr/transport/scp'
 
 module CR
   
@@ -33,10 +33,10 @@ module CR
         startup_config_tmp = ""
         
         begin
-        
-          Net::SCP.start(@hostname, @username, :password => @password) do |scp|
-            startup_config_tmp = scp.download!("/nsconfig/ns.conf")
-          end # Net::SCP.start
+          
+          scp = Transport::SCP.new(@hostname, @username, @password)
+          
+          startup_config_tmp = scp.download!("/nsconfig/ns.conf")
         
         rescue => e
         

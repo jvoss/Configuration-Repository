@@ -34,44 +34,34 @@ module CR
         running_config = []
         
         begin
+  
+          ssh = Transport::SSH.new(@hostname, @username, @password)
           
-          Net::SSH.start(@hostname, @username, :password => @password) do |ssh|
+          ssh.open_channel_shell do |ch, success|
+              
+            ch.on_data do |ch, data|
             
-            ssh.open_channel do |channel|
-              
-              channel.send_channel_request "shell" do |ch, success|
-              
-                ch.on_data do |ch, data|
-                
-                  lines = data.split("\r\n")
-                
-                  lines.each do |line|
-                    running_config.push(line+"\r\n")
-                  end # lines.each
-                  
-                  # Match when to close the channel:
-                  # Just after the configuration is printed to the screen there
-                  # is a blank like containing "\r\n" and is the only occurance
-                  # when running this command.
-                  ch.close if data.to_s.match(/^end/)
-                
-                end # ch.on_data
-              
-                CR.log.debug "Sending command 'terminal length 0'"
-                ch.send_data("terminal length 0\n")
-                
-                CR.log.debug "Sending command 'show running-config'"
-                ch.send_data("show running-config\n")
-              
-              end # ssh.open_channel
-              
-              channel.wait
-              
-            end # ssh.open_channel
+              lines = data.split("\r\n")
             
-            ssh.loop
+              lines.each do |line|
+                running_config.push(line+"\r\n")
+              end # lines.each
+              
+              # Match when to close the channel:
+              # Just after the configuration is printed to the screen there
+              # is a blank like containing "\r\n" and is the only occurance
+              # when running this command.
+              ch.close if data.to_s.match(/^end/)
             
-          end # Net::SSH.start          
+            end # ch.on_data
+          
+            CR.log.debug "Sending command 'terminal length 0'"
+            ch.send_data("terminal length 0\n")
+            
+            CR.log.debug "Sending command 'show running-config'"
+            ch.send_data("show running-config\n")
+              
+          end # ssh.open_channel_shell
           
         rescue => e 
 

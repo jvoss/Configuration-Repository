@@ -1,4 +1,4 @@
-# Copyright 2010 Matthew J. Kosmoski
+# Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
 # This file is part of Configuration Repository (CR)
 #
@@ -16,43 +16,38 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'cr/host'
-require 'cr/transport/scp'
+require 'net/scp'
 
 module CR
   
-  class Host
+  module Transport
     
-    module ScreenOS
+    class SCP
       
-      # Retrieve a device's startup configuration as an array via Telnet
+      def initialize(hostname, username, password)
+        
+        @hostname = hostname
+        @username = username
+        @password = password
+        
+      end # def initialize
+      
+      # Downloads filename from the remote device
       #
-      def config
+      def download!(filename)
+        
+        response = nil
+        
+        Net::SCP.start(@hostname, @username, :password => @password) do |scp|
+          response = scp.download!(filename)
+        end # Net::SCP.start
+        
+        return response
+        
+      end # def download!
       
-        startup_config = []
-        startup_config_tmp = ""
-        
-        begin
-
-          scp = Transport::SCP.new(@hostname, @username, @password)
-          
-          startup_config_tmp = scp.download!("ns_sys_config")
-          
-        rescue => e
-          
-          raise Host::NonFatalError, e.to_s
-          
-        end # begin
-        
-        startup_config = startup_config_tmp.split(/\cM/) # Split on newlines.
-        startup_config.shift # Remove header comment
-        
-        return {'ns_sys_config' => startup_config}
-        
-      end # config
-      
-    end # module ScreenOS
+    end # class SCP
     
-  end # class Host
+  end # module Transport
   
 end # module CR

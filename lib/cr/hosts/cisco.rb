@@ -17,20 +17,14 @@
 #
 
 require 'rubygems'
-require 'net/ssh'
 require 'cr/host'
-
-gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
+require 'cr/transport/ssh'
 
 module CR
   
   class Host
     
     module Cisco
-      
-      # Error class for catching non-fatal SSH errors
-      #
-      class SSHError < RuntimeError; end
       
       # Retrieve a device's startup configuration as an array via SSH
       #
@@ -40,15 +34,9 @@ module CR
         
         begin
           
-          Net::SSH.start(@hostname, @username, :password => @password) do |ssh|
-            
-            ssh.exec!('show startup-config').each_line do |line|
-             startup_config.push(line)
-            end # ssh.exec!
-            
-            ssh.loop
-            
-          end # Net::SSH.start
+          ssh = Transport::SSH.new(@hostname, @username, @password)
+          
+          startup_config = ssh.exec!('show startup-config')
           
         rescue => e
           
