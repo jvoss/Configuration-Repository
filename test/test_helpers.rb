@@ -39,25 +39,29 @@ module CRTest
     'host1.domain1.tld1'              => 
       { :hostname => 'host1.domain1.tld1', 
         :username => TEST_OPTIONS[:username],
-        :password => TEST_OPTIONS[:password] 
+        :password => TEST_OPTIONS[:password],
+        :driver   => nil
       },
     # username/host                                       
     'user2@host2.domain2.tld2'        => 
       { :hostname => 'host2.domain2.tld2',
         :username => 'user2',
-        :password => TEST_OPTIONS[:password] 
+        :password => TEST_OPTIONS[:password],
+        :driver   => nil
       },
     # username/password                                       
     'user3:pass3@host3.domain3.tld3'  => 
       { :hostname => 'host3.domain3.tld3',
         :username => 'user3',
-        :password => 'pass3' 
+        :password => 'pass3',
+        :driver   => nil
       },
     # complex password                                       
-    'user4:pa:s@s4@host4.domain4.tld4' => 
+    'user4:pa:s@s4@host4.domain4.tld4=Cisco' => 
       { :hostname => 'host4.domain4.tld4',
         :username => 'user4',
-        :password => 'pa:s@s4' 
+        :password => 'pa:s@s4',
+        :driver   => CR::Host::Cisco
       }
   }
   

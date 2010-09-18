@@ -201,6 +201,7 @@ module CRTest
           expected_array.push TEST_HOST_STRINGS[host_string][:hostname]
           expected_array.push TEST_HOST_STRINGS[host_string][:username]
           expected_array.push TEST_HOST_STRINGS[host_string][:password]
+          expected_array.push TEST_HOST_STRINGS[host_string][:driver]
           
           response = CR.parse_host_string(host_string, TEST_OPTIONS)
          
