@@ -249,7 +249,7 @@ module CR
   #
   def self.process_host(host_object)
     
-    current_config = []
+    current_config = {}
     
     begin
     
