@@ -86,6 +86,10 @@ Username and password are optional. Omit '@' when listing only host or domain:
 
 	user:password@host.domain.tld or host.domain.tld
 
+Specify a driver with '=' and skip SNMP finger printing in any host string:
+
+	host.domain.tld=Cisco
+
 == Copyright
 
 Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
