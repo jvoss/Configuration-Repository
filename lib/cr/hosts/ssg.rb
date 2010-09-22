@@ -23,7 +23,7 @@ module CR
   
   class Host
     
-    module ScreenOS
+    module SSG # ScreenOS
       
       # Retrieve a device's startup configuration as an array via Telnet
       #
@@ -51,7 +51,7 @@ module CR
         
       end # config
       
-    end # module ScreenOS
+    end # module SSG
     
   end # class Host
   

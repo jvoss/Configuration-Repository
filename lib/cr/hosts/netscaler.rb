@@ -23,7 +23,7 @@ module CR
   
   class Host
     
-    module Netscaler
+    module NetScaler
       
       # Retrieve a device's startup configuration as an array via Telnet
       #

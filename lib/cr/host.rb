@@ -21,7 +21,7 @@ require 'cr/hosts/cisco'
 require 'cr/hosts/extremexos'
 require 'cr/hosts/foundry'
 require 'cr/hosts/netscaler'
-require 'cr/hosts/screenos'
+require 'cr/hosts/ssg'
 
 module CR
   
@@ -102,20 +102,20 @@ module CR
     #
     def _snmp_fingerprint
       
-      # FIXME case statement causes undue complexty in treemap
-      case _snmp_sysdescr
+      begin
         
-        when /Cisco/      then _load_driver(Cisco)
-        when /ExtremeXOS/ then _load_driver(ExtremeXOS)
-        when /Foundry/    then _load_driver(Foundry)
-        when /NetScaler/  then _load_driver(Netscaler)
-        when /SSG/        then _load_driver(ScreenOS)
+        # Match the first word returned from the SNMP sysDescr
+        # (usually a manufacturer) and attempt to load a driver named that.
+        manufacturer = _snmp_sysdescr.match(/^(\w+)/).to_s
         
-        #when /Force10/   then 'force10'
+        # Example: manufacturer = 'Cisco'
+        _load_driver( eval(manufacturer) )
         
-        else CR.log.warn "No suitable driver for #{@hostname}"
+      rescue
         
-      end # case SysDescr
+        CR.log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
+        
+      end # begin
       
     end # def _snmp_fingerprint
     
