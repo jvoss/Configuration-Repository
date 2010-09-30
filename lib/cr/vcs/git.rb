@@ -21,7 +21,7 @@ require 'fileutils'
 require 'git'
 require 'logger'
 
-module CR
+class CR
   
   class Repository
     
@@ -88,4 +88,4 @@ module CR
     
   end # class Repository
   
-end # module CR
+end # class CR

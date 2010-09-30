@@ -16,7 +16,6 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'rubygems'
 require 'cr/constants'
 require 'cr/dns'
 require 'cr/host'
@@ -25,8 +24,134 @@ require 'cr/options'
 require 'cr/parse'
 require 'cr/repository'
 
-module CR
+class CR
+  
+  extend CommandLine
+  extend Logging # TODO Integrate logging so that multiple instances can have different logs
   
   VERSION = '0.1.0'
   
-end # module CR
+  attr_reader :blacklist, :hosts, :repository
+  
+  def initialize(options = {})
+    
+    @blacklist    = options[:blacklist] || [] # array of blacklisted hostnames
+    @username     = options[:username]
+    @password     = options[:password]
+    @hosts        = []
+    @regex        = options[:regex] || //
+    @repository   = Repository.new(options[:directory], @regex, :git)
+    
+    _validate_blacklist
+    
+  end # def initialize
+  
+  def add_host(hostobj)
+    
+    raise "Argument not CR::Host object" unless hostobj.is_a?(CR::Host)
+    
+    case 
+    
+      when ! hostobj.hostname.match(@regex)
+        CR.log.debug "Ignoring host (Regex): #{hostobj.hostname}"
+    
+      when @blacklist.include?(hostobj.hostname)
+        CR.log.info "Ignoring host (Blacklist): #{hostobj.hostname}"
+        
+      when @hosts.include?(hostobj)
+        CR.log.debug "Ignoring host (Duplicate): #{hostobj.hostname}"
+        
+      else
+        CR.log.info "Adding host: #{hostobj.hostname}"
+        
+        hostobj.add_observer(@repository)
+        
+        @hosts << hostobj
+        
+    end # case
+    
+  end # def add_host
+  
+  # Adds a domain of hosts via AXFR request for an argument specified in
+  # host string format.
+  #
+  def add_domain_string(host_string, snmp_options = {})
+    
+    options = { :username => @username,
+                :password => @password  }
+    
+    domain, user, pass, driver = parse_host_string(host_string, options)
+    
+    DNS.axfr(domain).each do |hostname|
+      
+      add_host CR::Host.new(hostname, user, pass, snmp_options, driver)
+      
+    end # DNS.axfr
+    
+  end # def add_domain_string
+  
+  # Adds a host specified in host string format
+  #
+  def add_host_string(host_string, snmp_options = {})
+    
+    options = { :username => @username,
+                :password => @password }
+    
+    hostname, user, pass, driver = parse_host_string(host_string, options)
+      
+    host = CR::Host.new(hostname, user, pass, snmp_options, driver)
+    
+    add_host(host)
+    
+  end # def add_host_string
+
+  # Deletes a host. Argument can be any CR::Host comparable. I.e. hostname
+  # or Host object.
+  #
+  def delete_host!(host)
+    CR.log.info "Removed host: #{host}" if @hosts.delete(host)
+  end # delete_host!
+  
+  def import_blacklist(filename)
+    
+    parse_txt_file(filename).each do |host_string|
+      @blacklist.push(host_string) unless @blacklist.include?(host_string)
+    end
+    
+  end # def import_blacklist
+  
+  def import_csv(filename, type, snmp_options = {})
+    
+    parse_csv_file(filename, snmp_options).each do |host_string, options|
+    
+      type == :domain ? add_domain_string(host_string, options) :
+                        add_host_string(host_string, options)
+      
+    end # parse_csv_file
+    
+  end # def import_csv
+  
+  # Processes all hosts
+  #
+  def process_all
+    @hosts.each{ |host| host.process }
+    @repository.commit_all("CR Commit: Processed #{hosts.size} hosts")
+  end # def process_all
+  
+  private
+  
+  def _validate_blacklist
+    
+    # TODO fix the juggling of @blacklist variable?
+    if @blacklist.is_a?(String)
+      file       = @blacklist
+      @blacklist = []
+      
+      import_blacklist(file) 
+    end
+    
+    raise "Blacklist must be an array or filename" unless @blacklist.is_a?(Array)
+    
+  end # def _validate_blacklist
+  
+end # class CR

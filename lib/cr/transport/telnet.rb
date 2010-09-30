@@ -18,7 +18,7 @@
 
 require 'net/telnet'
 
-module CR
+class CR
   
   module Transport
     
@@ -49,4 +49,4 @@ module CR
     
   end # module Transport
   
-end # module CR
+end # class CR

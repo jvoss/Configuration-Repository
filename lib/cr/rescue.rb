@@ -18,7 +18,7 @@
 
 require 'cr/constants'
 
-module CR
+class CR
   
   module Rescue
     
@@ -47,4 +47,4 @@ module CR
     
   end # module Recsue
   
-end # module CR
+end # class CR

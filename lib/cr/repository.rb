@@ -20,18 +20,22 @@ require 'ftools'
 require 'cr/rescue'
 require 'cr/vcs/git'
 
-module CR
+class CR
   
   class Repository
     
     # Create a new repository object. VCS is the version control system 
     # to use, example :git
     #    
-    def initialize(directory, type)
+    def initialize(directory, regex, type, username = nil, email = nil)
       
       @directory = directory
+      @regex     = regex
       @type      = type
+      @username  = username || 'Configuration Repository'
+      @email     = email    || 'nobody@nowhere.com'
       
+      _validate_repository(directory)
       _initialize_vcs
       
     end # def initialize
@@ -44,6 +48,14 @@ module CR
       
     end # def add_all
     
+    # Adds host directory in the repository to tracking.
+    #
+    def add_host(hostobj)
+      
+      @repo.add _directory(hostobj)
+      
+    end # def add_host(hostobj)
+    
     # Commits all files in the repository with the commit message applied
     # to the log.
     #
@@ -52,6 +64,18 @@ module CR
       @repo.commit_all(message.to_s)
       
     end # def commit_all
+    
+    # Sets the repository's 'user.mail' attribute to the string supplied.
+    #
+    def config_user_email(newemail)
+      @repo.config('user.email', newemail.to_s)
+    end # def config_user_email
+    
+    # Sets the repository's 'user.name' attribute to the string supplied.
+    #
+    def config_user_name(newname)
+      @repo.config('user.name', newname.to_s)
+    end # def config_user_name
     
     # Checks to see if a repository exists at the directory specified 
     # during object creation.
@@ -71,9 +95,8 @@ module CR
       
       @repo = @vcs.init(@directory)
       
-      # TODO Allow options to change these settings:
-      @repo.config('user.name', 'Configuration Repository')
-      @repo.config('user.email', 'nobody@nowhere.com')
+      config_user_name(@username)
+      config_user_email(@email)
       
     end # def init
     
@@ -89,11 +112,11 @@ module CR
     
     # Reads contents of hostObject.config from the repository into an array
     #
-    def read(hostobj, options, filename)
+    def read(hostobj, filename)
       
       contents = []
       
-      directory = _directory(hostobj, options)
+      directory = _directory(hostobj)
       
       begin
         File.open("#{@directory}/#{directory}/#{filename}", 'r') do |file|
@@ -113,14 +136,14 @@ module CR
     # hostname. #config should return a hash with key being a filename and 
     # value being an array containing the configuration.
     #
-    def save(hostobj, options, contents)
+    def save(hostobj, contents)
       
       raise "Repository not initialized" unless self.exist?
       raise "Contents hash blank" if contents.nil?
       # FIXME Fix above raise statement to raise an exception that will not
       # cause the script to terminate but log through rescue.rb
       
-      path = _directory(hostobj, options)
+      path = _directory(hostobj)
       
       contents.each_pair do |filename, value|
       
@@ -131,7 +154,7 @@ module CR
           
         end # if value.nil?
       
-        if read(hostobj, options, filename) == value
+        if read(hostobj, filename) == value
           
           CR.log.debug "No change: #{hostobj.hostname} - #{filename}"
           next # filename, value
@@ -147,14 +170,22 @@ module CR
       
     end # def save
     
+    # Observer method for receiving updates when configurations are
+    # pulled from hosts.
+    #
+    def update(hostobj, config)
+      save(hostobj, config)
+      add_host(hostobj)
+    end # def update
+    
     private
     
     # Determins directory within repository for CR:Host object to save files.
     # Return a string: 'host/path/host.domain.tld/'
     #
-    def _directory(hostobj, options)
+    def _directory(hostobj)
       
-      path = hostobj.hostname.match(options[:regex]).captures
+      path = hostobj.hostname.match(@regex).captures
       
       path.push hostobj.hostname
       
@@ -204,76 +235,14 @@ module CR
        
     end # def _save_file
     
+    def _validate_repository(repository)
+    
+      if repository.nil?
+        raise ArgumentError, 'missing repository directory'
+      end
+    
+  end # _validate_repository
+    
   end # class Repository
-  
-  # Processes an array of host objects by calling the .config method on
-  # each CR::Host object. 
-  # 
-  # It expects the method to retrieve the desired configuration as an array.
-  # Then it compares it to what was previously saved to the repository 
-  # (if it exists) then saves it if there was a change (of if it is a new file). 
-  # Any new files will be added to the repository then committed at the end of 
-  # this method.
-  #
-  def self.process(hosts, options)
-    
-    log.info "Opening repository: #{options[:repository]}"
-    
-    # initialize the repository
-    repository = Repository.new(options[:repository], :git)
-    
-    hosts.each do |host|
-      
-      log.info "Processing: #{host.hostname}"
-        
-      repository.save(host, options, process_host(host))
-      
-    end # hosts.each
-    
-    commit_message = "CR Commit: Processed #{hosts.size} host(s)"
-    
-    # add any new files and commit all changes
-    repository.add_all
-    repository.commit_all(commit_message)
-    
-    log.info "Processing complete"
-    
-  end # def self.process
-  
-  # Returns CR::Host object's configuration.
-  # This method is typically called from process
-  #
-  #---
-  #TODO: Rename process_host method?
-  #+++
-  #
-  def self.process_host(host_object)
-    
-    current_config = {}
-    
-    begin
-    
-      current_config = host_object.process
-       
-    rescue => e
-      
-      CR::Rescue.catch_host(e, host_object)
 
-    end # begin
-    
-    return current_config
-    
-  end # def self.process_host
-  
-  # Validates that a repository directory was specified on the command-line when
-  # CR is ran as an application. The application will exit when missing.
-  #
-  def self.validate_repository(repository)
-    
-    if repository.nil?
-      raise ArgumentError, 'missing repository'
-    end
-    
-  end # self.validate_repository
-
-end # module CR
+end # class CR

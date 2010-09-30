@@ -21,7 +21,7 @@ require 'cr/host'
 
 gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
-module CR
+class CR
   
   class Host
     
@@ -102,4 +102,4 @@ module CR
     
   end # class Host
   
-end # module CR
+end # class CR

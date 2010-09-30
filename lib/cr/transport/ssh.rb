@@ -20,7 +20,7 @@ require 'net/ssh'
 
 gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
-module CR
+class CR
   
   module Transport
     
@@ -86,4 +86,4 @@ module CR
     
   end # module Transport
   
-end # module CR
+end # class CR

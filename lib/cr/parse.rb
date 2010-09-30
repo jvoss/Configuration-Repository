@@ -22,32 +22,16 @@ require 'cr/host'
 require 'cr/log'
 require 'cr/rescue'
 
-module CR
+class CR
   
-  # Parses file and returns an array of blacklisted hostnames. Text files are
-  # the only file types currently supported.
-  #
-  def self.parse_blacklist(filename)
-    
-    blacklist = []
-    
-    File.open(filename).each do |line|
-      # ignore comment lines that start with '#'
-      blacklist.push(line.chomp) unless line =~ /^[#|\n]/
-    end # File.open
-    
-    return blacklist
-    
-  end # def self.parse_blacklist
-  
-  # Parses a CSV file and returns an array of CR::Host objects. 
+  # Parses a CSV file and returns an array of host strings and options.
   # parse_file calls this method for handling CSV files. The fields are:
   # 
   # host_string,snmp_community,snmp_version,snmp_port,snmp_timeout,snmp_retries   
   #
-  def self.parse_csv_file(filename, options, type)
+  def parse_csv_file(filename, options)
     
-    host_objects = []
+    host_strings = []
     
     options = options.dup
     
@@ -61,31 +45,15 @@ module CR
                        :Timeout   => row[4].to_i,
                        :Retries   => row[5].to_i }
                            
-      options[:snmp_options] = options[:snmp_options].merge(snmp_options)
-      
-      host_objects += create_hosts(host_string, options, type)
+      options = options.merge(snmp_options)
+    
+      host_strings.push [host_string, options]
           
     end # CSV.open
     
-    return host_objects
+    return host_strings
     
-  end # def self.parse_csv_file
-  
-  # Parses a domain and returns an array of CR::Host objects.
-  #
-  def self.parse_domain(domain, options)
-    
-    host_strings = []
-    
-    DNS.axfr(domain).each do |hostname|
-      
-      host_strings.push(hostname)
-          
-    end # DNS.axfr
-    
-    return create_hosts(host_strings, options, :host)
-    
-  end # def self.parse_domain
+  end # def parse_csv_file
   
   # Parses filename and returns an array of CR::Host objects. Files accepted
   # are text files with each line containing a valid host string or a CSV
@@ -126,7 +94,7 @@ module CR
   # Example:
   #   user:pass@ciscodevice.domain.tld=Cisco
   #
-  def self.parse_host_string(host_string, options)
+  def parse_host_string(host_string, options)
     
     driver   = nil
     hostname = nil
@@ -152,17 +120,14 @@ module CR
     
     return [hostname, username, password, driver]
     
-  end # def self.parse_host_string  
+  end # def parse_host_string  
   
   # Parses a txt file and returns an array of CR::Host objects.
   # This method is called from parse_file when a txt file is supplied.
   #
-  def self.parse_txt_file(filename, options, type)
+  def parse_txt_file(filename)
     
-    host_objects = []
     host_strings = []
-    
-    options = options.dup
       
     File.open(filename).each do |line|
       
@@ -171,10 +136,8 @@ module CR
         
     end # File.open
     
-    host_objects = create_hosts(host_strings, options, type)      
-    
-    return host_objects
+    return host_strings
     
   end # def self.parse_txt_file
   
-end # module CR
+end # class CR

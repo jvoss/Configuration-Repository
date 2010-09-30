@@ -16,6 +16,7 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'observer'
 require 'snmp'
 require 'cr/hosts/cisco'
 require 'cr/hosts/extremexos'
@@ -23,9 +24,12 @@ require 'cr/hosts/foundry'
 require 'cr/hosts/netscaler'
 require 'cr/hosts/ssg'
 
-module CR
+class CR
   
   class Host
+    
+    include Comparable
+    include Observable
     
     # TODO consider renaming the error handling for Host
     class NonFatalError < StandardError; end
@@ -64,6 +68,10 @@ module CR
       
     end # def initialize
     
+    def ==(host)
+      @hostname == host.to_s
+    end # def ==
+    
     # This method gets overwritten from loaded drivers by extend.
     # Defaults to nil in the event the driver is not loaded properly
     # and a call is made to retrieve a configuration.
@@ -81,9 +89,16 @@ module CR
       
       _snmp_fingerprint if @driver.nil?
       
-      config
+      changed # indicate a change has occurred 
+      notify_observers(self, config)
       
     end # def process
+    
+    # Returns the hostname of the object. Used for comparisons
+    #
+    def to_s
+      @hostname
+    end # def to_s
     
     private
     
@@ -161,57 +176,4 @@ module CR
     
   end # class Host
   
-  # Creates an array of CR::Host objects from an array of host_strings.
-  #
-  # A list of host_strings can contain hostnames (type = :host) or a list
-  # of domain names (type = :domain).
-  #
-  # See parse_host_string for information about host_string formatting.
-  #
-  #---
-  #TODO: Refactor
-  #+++
-  #
-  def self.create_hosts(host_strings, options, type)
-    
-    host_objects = []
-    
-    host_strings.each do |host|
-      
-      case 
-        
-        when host.match(/^file:(.*)/)
-          host_objects += parse_file($1, options, type)
-          next # host_strings
-        
-        when type.to_sym == :domain
-          host_objects += parse_domain(host, options)
-          next # host_strings
-          
-        when !host.match(options[:regex])
-          log.debug "Ignoring host (Regex): #{host}"
-          next # host_strings
-          
-        when options[:blacklist].include?(host)
-          log.debug "Ignoring host (Blacklist): #{host}"
-          next # host_strings
-          
-        else
-          
-          snmp_options = options[:snmp_options]
-      
-          hostname, username, password, driver = parse_host_string(host, options)
-      
-          log.debug "Adding host: #{hostname}"
-      
-          host_objects.push CR::Host.new(hostname, username, password, snmp_options, driver)
-      
-      end # case
-      
-    end # host_strings.each
-    
-    return host_objects
-    
-  end # def self.create_hosts
-  
-end # module CR
+end # class CR

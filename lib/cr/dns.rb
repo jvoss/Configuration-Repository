@@ -18,7 +18,7 @@
 
 require 'dnsruby'
 
-module CR
+class CR
   
   module DNS
     
@@ -35,7 +35,7 @@ module CR
 
         if hosts.include?(host)
           
-          CR.log.debug "Ignoring host \"#{host}\" -- duplicate"
+          CR.log.debug "Ignoring record \"#{host}\" -- duplicate"
           
           next # zone.transfer
           
@@ -62,7 +62,7 @@ module CR
         
       else
         
-        CR.log.debug "Ignoring host \"#{record.name}\" -- type #{record.type}"
+        CR.log.debug "Ignoring record (#{record.type}): #{record.name}"
         
       end # valid_record_type?
       
@@ -84,4 +84,4 @@ module CR
     
   end # module DNS
   
-end # module CR
+end # class CR

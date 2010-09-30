@@ -16,11 +16,11 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-module CR
+class CR
   
   ARGUMENT_ERROR = 1
   NONFATAL_ERROR = 255
   
   SNMP_VERSION_MAP = { :SNMPv1 => '1', :SNMPv2c => '2c' }
   
-end # module CR
+end # class CR

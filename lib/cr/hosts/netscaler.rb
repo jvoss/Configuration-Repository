@@ -19,7 +19,7 @@
 require 'cr/host'
 require 'cr/transport/scp'
 
-module CR
+class CR
   
   class Host
     
@@ -54,4 +54,4 @@ module CR
     
   end # class Host
   
-end # module CR
+end # class CR

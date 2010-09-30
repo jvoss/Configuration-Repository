@@ -19,7 +19,7 @@
 require 'cr/host'
 require 'cr/transport/telnet'
 
-module CR
+class CR
   
   class Host
     
@@ -62,4 +62,4 @@ module CR
     
   end # class Host
   
-end # module CR
+end # class CR

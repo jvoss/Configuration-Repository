@@ -18,23 +18,33 @@
 
 require "logger"
 
-module CR
+class CR
   
-  # Default logging configuration
-  @@log                 = Logger.new(STDOUT)
-  @@log.level           = Logger::INFO
-  @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
+  module Logging
   
-  # Provides access to Logger. 
-  #
-  # By default Logger is initialized to direct messages to STDOUT with a
-  # level set to INFO. Command line options are also available to customize
-  # logging information at runtime.
-  #
-  def self.log
+    # Default logging configuration
+    @@log                 = Logger.new(STDOUT)
+    @@log.level           = Logger::DEBUG
+    @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
     
-    @@log
+    # Provides access to Logger. 
+    #
+    # By default Logger is initialized to direct messages to STDOUT with a
+    # level set to INFO. Command line options are also available to customize
+    # logging information at runtime.
+    #
+    def log
+      
+      @@log
+      
+    end # def log
     
-  end # def self.log
+    def log=(logger)
+      
+      @@log = logger
+      
+    end # def log=
   
-end # module CR
+  end # module Logging
+  
+end # class CR

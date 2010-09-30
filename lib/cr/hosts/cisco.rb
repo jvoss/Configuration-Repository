@@ -20,7 +20,7 @@ require 'rubygems'
 require 'cr/host'
 require 'cr/transport/ssh'
 
-module CR
+class CR
   
   class Host
     
@@ -69,4 +69,4 @@ module CR
     
   end # class Host
   
-end # module CR
+end # class CR
