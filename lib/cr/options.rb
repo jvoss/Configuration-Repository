@@ -107,8 +107,7 @@ class CR
           end # opts.on
           
           opts.on('-r', '--repository REPOSITORY', 'Repository directory') do |r|
-#            options[:repository] = r
-            options[:directory] = r
+            options[:repository] = r
           end # opts.on
           
           opts.on('-x', '--regex REGEX', Regexp, 'Regular expression') do |regex|

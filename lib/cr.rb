@@ -29,9 +29,12 @@ class CR
   extend CommandLine
   extend Logging # TODO Integrate logging so that multiple instances can have different logs
   
+  include Parsing
+  
   VERSION = '0.1.0'
   
-  attr_reader :blacklist, :hosts, :repository
+  attr_accessor :username, :password
+  attr_reader   :blacklist, :hosts, :repository
   
   def initialize(options = {})
     
@@ -39,8 +42,9 @@ class CR
     @username     = options[:username]
     @password     = options[:password]
     @hosts        = []
+#    @log
     @regex        = options[:regex] || //
-    @repository   = Repository.new(options[:directory], @regex, :git)
+    @repository   = Repository.new(options[:repository], @regex, :git)
     @snmp_options = options[:snmp_options] || {}
     
     _validate_blacklist
@@ -139,7 +143,7 @@ class CR
   def import_blacklist(filename)
     
     parse_txt_file(filename).each do |host_string|
-      @blacklist.push(host_string) unless @blacklist.include?(host_string)
+      @blacklist.push(host_string[0]) unless @blacklist.include?(host_string)
     end
     
   end # def import_blacklist

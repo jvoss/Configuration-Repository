@@ -17,6 +17,7 @@
 #
 
 require 'ftools'
+require 'cr'         # For logging support
 require 'cr/rescue'
 require 'cr/vcs/git'
 

@@ -57,6 +57,8 @@ module CRTest
   
   class Test_parse < Test::Unit::TestCase
     
+    include CR::Parsing
+    
     ## helper methods ##
     
     # Test a file and make assertions
@@ -64,7 +66,7 @@ module CRTest
     #
     def test_file(filename, test_host_string_hash, options, type)
       
-      hosts = CR.parse_file(filename, options, type)
+      hosts = parse_file(filename, options, type)
       
       assert_not_nil hosts
         
@@ -93,88 +95,52 @@ module CRTest
     
     ## end helper methods ##
     
-    # test self.parse_blacklist(filename)
-    #
-    context "Parsing a file of blacklisted hostnames" do
-      
-      should "return an array of blacklisted hosts from a txt file with comments" do
-          
-        test_blacklist = [ 'hostA.domain.tld', 
-                           'hostB.domain.tld', 
-                           'hostC.domain.tld']
-                           
-        test_blacklist_file = 'test/files/test_blacklist.txt'
-          
-        assert_equal test_blacklist, CR.parse_blacklist(test_blacklist_file)
-        
-      end # should
-      
-    end # context
-    
-    # test self.parse_domain(domain, options)
-    #
-    context "Parsing a domain" do
-      
-      should "return an array of host objects" do
-        
-        hosts = CR.parse_domain('example.com', TEST_OPTIONS)
-        
-        hosts.each do |host|
-          assert host.is_a? CR::Host
-        end
-        
-      end # should "return an array of host objects"
-      
-    end # context "Parsing a domain"
-    
-    # test self.parse_file(filename, options, type)
+    # test parse_file(filename, options)
     #
     context "Parsing a file of host strings" do
       
-      should "return an array of host objects from a txt file with comments" do
+      should "return an array of host strings from a txt file with comments" do
         
         filename = 'test/files/test_txt.txt'
         
         hostnames = [ 'host1.domain1.tld1',
-                      'host2.domain2.tld2',
-                      'host3.domain3.tld3',
-                      'host4.domain4.tld4'
+                      'user2@host2.domain2.tld2',
+                      'user3:pass3@host3.domain3.tld3',
+                      'user4:pa:s@s4@host4.domain4.tld4'
                     ]
 
-        CR.parse_file(filename, TEST_OPTIONS, :host).each do |host_obj|
+        parse_file(filename, TEST_OPTIONS).each do |host_string|
           
           hostname = hostnames.shift
-          options  = TEST_OPTIONS[:snmp_options].dup
           
-          options[:Host] = hostname
-          
-          assert_equal hostname, host_obj.hostname
-          assert_equal options,  host_obj.instance_variable_get(:@snmp_options)
+          assert_equal hostname, host_string[0]
           
         end # CR.parse_file
         
-      end # should "return an array of host objects from a txt file with comments"
+      end # should "return an array of host strings from a txt file with comments"
       
       should "return an array of host objects from a CSV file" do
         
         # Expected host string hash
-        host_strings = { 'line1' => { :hostname => 'host.domain.tld',
-                                      :username => 'user',
-                                      :password => 'pass' }
-                       } 
+        expected_host_strings = [ 'user:pass@host.domain.tld' ]
         
-        # Inspect hosts for setting proper SNMP options
-        options = { :snmp_options => { :Community => 'community',
-                                       :Version   => :SNMPv1,
-                                       :Port      => 69,
-                                       :Timeout   => 4,
-                                       :Retries   => 1,
-                                       :Host      => 'host.domain.tld' }
-                  }
+        # Default SNMP options
+        snmp_options = { :Community => 'community',
+                         :Version   => :SNMPv1,
+                         :Port      => 69,
+                         :Timeout   => 4,
+                         :Retries   => 1,
+                         :Host      => 'host.domain.tld'
+                       }
                                 
-        options = TEST_OPTIONS.merge(options)
+#        options = TEST_OPTIONS.merge(options)
         
-        test_file 'test/files/test_csv.csv', host_strings, options, :host
+        host_strings = parse_file('test/files/test_csv.csv', snmp_options)
+        
+        host_strings.each do |host_string, options|
+          assert_equal expected_host_strings.shift, host_string
+          assert_equal snmp_options, options
+        end
         
       end # should "return an array of host objects from a CSV file"
       
@@ -183,14 +149,6 @@ module CRTest
     # test self.parse_host_string(host_string, options)
     #
     context "Parsing a host string" do
-      
-      should "return a filename when 'file:' is in the host string" do
-        
-        x = CR.parse_host_string('file:test/files/test_txt.txt', TEST_OPTIONS)
-        
-        assert 'test/files/test_txt.txt', x
-        
-      end # should "return a filename when 'file:' is in the host string"
       
       should "return an array when a host string is given" do
 
@@ -203,7 +161,7 @@ module CRTest
           expected_array.push TEST_HOST_STRINGS[host_string][:password]
           expected_array.push TEST_HOST_STRINGS[host_string][:driver]
           
-          response = CR.parse_host_string(host_string, TEST_OPTIONS)
+          response = parse_host_string(host_string, TEST_OPTIONS)
          
           assert_equal expected_array, response
           

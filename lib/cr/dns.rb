@@ -16,6 +16,7 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'cr'      # to bring in logging support
 require 'dnsruby'
 
 class CR

@@ -18,7 +18,7 @@
 
 require 'test/unit/testsuite'
 
-require 'tc_core'
+require 'tc_cr'
 require 'tc_host'
 require 'tc_log'
 require 'tc_options'
@@ -35,7 +35,7 @@ module CRTest
 
       suite = Test::Unit::TestSuite.new
       
-      suite << Test_core.suite
+      suite << Test_cr.suite
       suite << Test_dns.suite
       suite << Test_host.suite
       suite << Test_log.suite

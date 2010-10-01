@@ -52,7 +52,7 @@ module CRTest
         should "return true if it does exist" do
           
           directory = TEST_REPO + 'TC_repository1'
-          repo      = CR::Repository.new(directory, vcs)
+          repo      = CR::Repository.new(directory, //, vcs)
           
           assert repo.exist?
           
@@ -66,12 +66,12 @@ module CRTest
    
         directory = TEST_REPO + 'TC_repository2'
         
-        REPO = CR::Repository.new(directory, vcs)
+        REPO = CR::Repository.new(directory, //, vcs)
         
         should "raise ArgumentError if an invalid VCS was initialized" do
           
           assert_raise ArgumentError do
-            CR::Repository.new(TEST_REPO, :invalid)
+            CR::Repository.new(TEST_REPO, //, :invalid)
           end
           
         end # should "raise ArgumentError if an invalid VCS was initialized"
@@ -97,7 +97,7 @@ module CRTest
           
           assert_nothing_raised do
             
-            REPO.save(host, TEST_OPTIONS, contents)
+            REPO.save(host, contents)
             
           end # assert_nothing_raised
           
@@ -106,7 +106,7 @@ module CRTest
           
           assert_nothing_raised do
             
-            REPO.save(host, TEST_OPTIONS, contents)
+            REPO.save(host, contents)
             
           end # assert_nothing_raised
           
@@ -118,7 +118,7 @@ module CRTest
           contents = nil
           
           assert_raise RuntimeError do
-            REPO.save(host, TEST_OPTIONS, contents)
+            REPO.save(host, contents)
           end # assert_raise
           
         end # should "raise when trying to save nil contents"
@@ -129,7 +129,7 @@ module CRTest
           contents = {'testfile' => nil}
           
           assert_nothing_raised do
-            REPO.save(host, TEST_OPTIONS, contents)
+            REPO.save(host, contents)
           end # assert_nothing_raised
           
         end # should "log but not raise on nil files within contents"
@@ -138,11 +138,11 @@ module CRTest
           
           host = CRTest::Host.new('host.domain.tld', 'user', 'pass')
           
-          REPO.save(host, TEST_OPTIONS, host.process)
+          REPO.save(host, host.process)
           
           expected = host.process['testfile']
           
-          assert_equal expected, REPO.read(host, TEST_OPTIONS, 'testfile')
+          assert_equal expected, REPO.read(host, 'testfile')
           
         end # should "read files properly"
         
@@ -175,52 +175,6 @@ module CRTest
       end # context "Test cleanup"
     
     end # TEST_VCS.each
-    
-    context "Processing hosts" do
-      
-      should "not raise" do
-        
-        options = TEST_OPTIONS.dup
-        options[:repository] = options[:repository] + 'TC_repository3'
-        
-        host = CRTest::Host.new('host.domain.tld', 'user', 'pass')
-        
-        assert_nothing_raised do
-          
-          CR.process([host], options)
-          
-        end # assert_nothing_raised
-        
-        # Cleanup repository directory
-        assert FileUtils.rm_r(options[:repository])
-        
-      end # should "not raise"
-      
-      should "catch exceptions when a non error occurs" do
-        
-        # Should log a message
-        # TODO write better test
-        assert_nothing_raised do
-          
-          CR.process_host(nil)
-          
-        end # assert_nothing_raised
-        
-      end # should "catch exceptions when a non fatal error occurs"
-      
-    end # context "Processing hosts"
-    
-    context "Validating a repository" do
-      
-      should "raise if nil is given" do
-        
-        assert_raise ArgumentError do
-          CR.validate_repository(nil)
-        end
-        
-      end # should "raise if nil is given"
-      
-    end # context "Validating a repository"
     
   end # class Test_repository
   
