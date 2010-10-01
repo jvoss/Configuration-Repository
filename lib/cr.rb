@@ -99,9 +99,7 @@ class CR
     
     hostname, user, pass, driver = parse_host_string(host_string, options)
       
-    host = CR::Host.new(hostname, user, pass, snmp_options, driver)
-    
-    add_host(host)
+    add_host CR::Host.new(hostname, user, pass, snmp_options, driver)
     
   end # def add_host_string
 
@@ -109,9 +107,13 @@ class CR
   # or Host object.
   #
   def delete_host!(host)
+    
     CR.log.info "Removed host: #{host}" if @hosts.delete(host)
+    
   end # delete_host!
   
+  # Imports a blacklist txt file with a hostname per line
+  #
   def import_blacklist(filename)
     
     parse_txt_file(filename).each do |host_string|
@@ -120,6 +122,9 @@ class CR
     
   end # def import_blacklist
   
+  # Imports a CSV file of host strings. Type specifies either a :domain or
+  # :host. 
+  #
   def import_csv(filename, type, snmp_options = {})
     
     parse_csv_file(filename, snmp_options).each do |host_string, options|
@@ -131,24 +136,35 @@ class CR
     
   end # def import_csv
   
-  # Processes all hosts
+  # Processes all hosts and commits changes to the database. A commit
+  # message can be given or left nil to use the default.
   #
-  def process_all
+  def process_all(commit_msg = nil)
+    
+    commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
+    
     @hosts.each{ |host| host.process }
-    @repository.commit_all("CR Commit: Processed #{hosts.size} hosts")
+    @repository.commit_all(commit_msg)
+    
   end # def process_all
   
   private
   
+  # Validates a blacklist. If a user supplied a string during object creation
+  # it is taken as a filename and passed to #import_blacklist. Otherwise an
+  # array of hostnames supplied is used.
+  #
   def _validate_blacklist
     
     # TODO fix the juggling of @blacklist variable?
     if @blacklist.is_a?(String)
+      
       file       = @blacklist
       @blacklist = []
       
-      import_blacklist(file) 
-    end
+      import_blacklist(file)
+      
+    end # if @blacklist.is_a?(String)
     
     raise "Blacklist must be an array or filename" unless @blacklist.is_a?(Array)
     
