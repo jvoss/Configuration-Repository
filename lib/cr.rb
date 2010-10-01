@@ -41,6 +41,7 @@ class CR
     @hosts        = []
     @regex        = options[:regex] || //
     @repository   = Repository.new(options[:directory], @regex, :git)
+    @snmp_options = options[:snmp_options] || {}
     
     _validate_blacklist
     
@@ -75,7 +76,7 @@ class CR
   # Adds a domain of hosts via AXFR request for an argument specified in
   # host string format.
   #
-  def add_domain_string(host_string, snmp_options = {})
+  def add_domain_string(host_string)
     
     options = { :username => @username,
                 :password => @password  }
@@ -84,7 +85,7 @@ class CR
     
     DNS.axfr(domain).each do |hostname|
       
-      add_host CR::Host.new(hostname, user, pass, snmp_options, driver)
+      add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
       
     end # DNS.axfr
     
@@ -92,14 +93,14 @@ class CR
   
   # Adds a host specified in host string format
   #
-  def add_host_string(host_string, snmp_options = {})
+  def add_host_string(host_string)
     
     options = { :username => @username,
                 :password => @password }
     
     hostname, user, pass, driver = parse_host_string(host_string, options)
       
-    add_host CR::Host.new(hostname, user, pass, snmp_options, driver)
+    add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
     
   end # def add_host_string
 
@@ -125,9 +126,9 @@ class CR
   # Imports a CSV file of host strings. Type specifies either a :domain or
   # :host. 
   #
-  def import_csv(filename, type, snmp_options = {})
+  def import_csv(filename, type)
     
-    parse_csv_file(filename, snmp_options).each do |host_string, options|
+    parse_csv_file(filename, @snmp_options).each do |host_string, options|
     
       type == :domain ? add_domain_string(host_string, options) :
                         add_host_string(host_string, options)
