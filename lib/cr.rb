@@ -76,31 +76,52 @@ class CR
   # Adds a domain of hosts via AXFR request for an argument specified in
   # host string format.
   #
-  def add_domain_string(host_string)
+  def add_domain_string(host_string, snmp_options = {})
     
-    options = { :username => @username,
-                :password => @password  }
-    
-    domain, user, pass, driver = parse_host_string(host_string, options)
-    
-    DNS.axfr(domain).each do |hostname|
+    # TODO Refactor this with add_host_string
+    if host_string.match(/file:(.*)/)
       
-      add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+      import_file $1, :domain
       
-    end # DNS.axfr
+    else
+    
+      options = { :username => @username,
+                  :password => @password  }
+      
+      options = options.merge(snmp_options.dup)
+      
+      domain, user, pass, driver = parse_host_string(host_string, options)
+      
+      DNS.axfr(domain).each do |hostname|
+        
+        add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+        
+      end # DNS.axfr
+    
+    end # if
     
   end # def add_domain_string
   
   # Adds a host specified in host string format
   #
-  def add_host_string(host_string)
+  def add_host_string(host_string, snmp_options = {})
     
-    options = { :username => @username,
-                :password => @password }
-    
-    hostname, user, pass, driver = parse_host_string(host_string, options)
+    if host_string.match(/file:(.*)/)
       
-    add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+      import_file $1, :host
+      
+    else
+    
+      options = { :username => @username,
+                  :password => @password }
+                  
+      options = options.merge(snmp_options.dup)
+      
+      hostname, user, pass, driver = parse_host_string(host_string, options)
+        
+      add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+    
+    end # if host_string.match
     
   end # def add_host_string
 
@@ -123,19 +144,19 @@ class CR
     
   end # def import_blacklist
   
-  # Imports a CSV file of host strings. Type specifies either a :domain or
-  # :host. 
+  # Imports supported file types (CSV or TXT). Type specifies either a 
+  # :domain or :host
   #
-  def import_csv(filename, type)
-    
-    parse_csv_file(filename, @snmp_options).each do |host_string, options|
+  def import_file(filename, type)
+   
+    parse_file(filename, @snmp_options).each do |host_string, options|
     
       type == :domain ? add_domain_string(host_string, options) :
                         add_host_string(host_string, options)
-      
-    end # parse_csv_file
     
-  end # def import_csv
+    end # parse_file
+    
+  end # def import_file
   
   # Processes all hosts and commits changes to the database. A commit
   # message can be given or left nil to use the default.

@@ -63,23 +63,25 @@ class CR
   #
   # See parse_host_string for more information about host string formatting.
   #
-  def self.parse_file(filename, options, type)
+  def parse_file(filename, options)
     
-    host_objects = []
+    host_strings = nil
       
       if File.extname(filename) == '.csv'
         
-        host_objects += parse_csv_file(filename, options, type)
+        host_strings = parse_csv_file(filename, options)
         
       else # != '.csv'
       
-        host_objects += parse_txt_file(filename, options, type)
+        options = {}
+      
+        host_strings = parse_txt_file(filename)
       
       end # if
       
-    return host_objects
+    return host_strings
     
-  end # def self.parse_file
+  end # def parse_file
   
   # Parses a host string into hostname, username, password and driver.
   # 
@@ -132,7 +134,7 @@ class CR
     File.open(filename).each do |line|
       
       # ignore comment lines that start with '#'
-      host_strings.push(line.chomp) unless line =~ /^[#|\n]/
+      host_strings.push [ line.chomp, {} ] unless line =~ /^[#|\n]/
         
     end # File.open
     
