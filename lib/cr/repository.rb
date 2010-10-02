@@ -71,6 +71,7 @@ class CR
     def commit_all(message)
       
       @repo.commit_all(message.to_s)
+      @changed = false
       
     end # def commit_all
     
@@ -252,7 +253,7 @@ class CR
         raise ArgumentError, 'missing repository directory'
       end
     
-  end # _validate_repository
+    end # _validate_repository
     
   end # class Repository
 
