@@ -30,6 +30,7 @@ class CR
     #    
     def initialize(directory, regex, type, username = nil, email = nil)
       
+      @changed   = false
       @directory = directory
       @regex     = regex
       @type      = type
@@ -56,6 +57,13 @@ class CR
       @repo.add _directory(hostobj)
       
     end # def add_host(hostobj)
+    
+    # Indicates whether the repository has pending changes that need
+    # committed.
+    #
+    def changed?
+      @changed
+    end # def changed?
     
     # Commits all files in the repository with the commit message applied
     # to the log.
@@ -92,9 +100,11 @@ class CR
     #
     def init
       
-      #raise "Repository already initialized -- #{@directory}" if self.exist?
+      raise "Repository already initialized -- #{@directory}" if self.exist?
       
       @repo = @vcs.init(@directory)
+      
+      @changed = true
       
       config_user_name(@username)
       config_user_email(@email)
@@ -165,7 +175,7 @@ class CR
         CR.log.debug "Saving: #{hostobj.hostname} - #{filename}"
         
         # Save the file to disk
-        _save_file("#{path}/#{filename}", value)
+        @changed = true if _save_file("#{path}/#{filename}", value)
       
       end # contents.each_pair
       

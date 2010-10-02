@@ -170,7 +170,7 @@ class CR
     commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
     
     @hosts.each{ |host| host.process }
-    @repository.commit_all(commit_msg)
+    @repository.commit_all(commit_msg) if @repository.changed?
     
   end # def process_all
   
