@@ -90,7 +90,6 @@ class CR
           opts.banner = "Usage: #{File.basename($0)} -r REPOSITORY [OPTIONS]"
           
           opts.on('-b', '--blacklist FILENAME', 'File containing blacklisted hosts') do |b|
-#            options[:blacklist] = parse_blacklist(b)
             options[:blacklist] = b
           end # opts.on
           
@@ -192,11 +191,6 @@ class CR
         
         opt.parse!(argv)
         
-#        validate_repository(options[:repository])
-        
-        # TODO fix this
-#        hosts = create_hosts(options[:host], options, :host)
-#        hosts = hosts + create_hosts(options[:domain], options, :domain)
         cr = CR.new(options)
         
         options[:host].each do |host_string|
