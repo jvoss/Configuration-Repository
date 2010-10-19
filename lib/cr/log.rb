@@ -16,35 +16,30 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require "logger"
+require 'logger'
 
 class CR
   
-  module Logging
-  
-    # Default logging configuration
+  module Log
+   
     @@log                 = Logger.new(STDOUT)
     @@log.level           = Logger::DEBUG
     @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
     
-    # Provides access to Logger. 
-    #
-    # By default Logger is initialized to direct messages to STDOUT with a
-    # level set to INFO. Command line options are also available to customize
-    # logging information at runtime.
-    #
-    def log
-      
-      @@log
-      
-    end # def log
-    
-    def log=(logger)
-      
-      @@log = logger
-      
-    end # def log=
+    def self.method_missing(m, *args, &block)
+      @@log.send(m, *args, &block)
+    end # def method_missing
   
-  end # module Logging
+    def self.respond_to?(symbol, include_private = false)
+      @@log.respond_to?(symbol, include_private)
+    end # respond_to?
+  
+  end # module Log
+  
+  # Provides access to logger proxy.
+  #
+  def self.log
+    Log
+  end # def self.log
   
 end # class CR

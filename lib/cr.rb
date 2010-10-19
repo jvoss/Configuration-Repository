@@ -27,7 +27,7 @@ require 'cr/repository'
 class CR
   
   extend CommandLine
-  extend Logging # TODO Integrate logging so that multiple instances can have different logs
+#  extend Logging # TODO Integrate logging so that multiple instances can have different logs
   
   include Parsing
   
@@ -36,7 +36,7 @@ class CR
   attr_accessor :username, :password
   attr_reader   :blacklist, :hosts, :repository
   
-  def initialize(options = {})
+  def initialize(options = {}) 
     
     @blacklist    = options[:blacklist] || [] # array of blacklisted hostnames
     @username     = options[:username]

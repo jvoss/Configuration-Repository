@@ -20,6 +20,7 @@ require 'rubygems'
 require 'fileutils'
 require 'git'
 require 'logger'
+require 'cr/log'
 
 class CR
   

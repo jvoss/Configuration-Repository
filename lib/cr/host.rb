@@ -18,11 +18,7 @@
 
 require 'observer'
 require 'snmp'
-require 'cr/hosts/cisco'
-require 'cr/hosts/extremexos'
-require 'cr/hosts/foundry'
-require 'cr/hosts/netscaler'
-require 'cr/hosts/ssg'
+require 'cr/log'
 
 class CR
   
@@ -104,11 +100,16 @@ class CR
     
     # Loads the specified driver class by extending its functionality into self
     #
-    def _load_driver(klass)
+    def _load_driver(driver)
       
-      CR.log.debug "Loading \"#{klass}\" driver"
+      # Load all .rb files in hosts directory
+      lib_dir      = File.dirname(__FILE__) + '/hosts'
+      full_pattern = File.join(lib_dir, '*.rb')
+      Dir.glob(full_pattern).each {|file| require file}
       
-      extend klass
+      CR.log.debug "Loading \"#{driver}\" driver"
+      
+      extend eval(driver.capitalize)
       
     end # def _load_driver
     
@@ -124,7 +125,7 @@ class CR
         manufacturer = _snmp_sysdescr.match(/^(\w+)/).to_s
         
         # Example: manufacturer = 'Cisco'
-        _load_driver( eval(manufacturer) )
+        _load_driver(manufacturer)
         
       rescue
         

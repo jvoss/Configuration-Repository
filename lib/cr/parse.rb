@@ -19,7 +19,6 @@
 require 'csv'
 require 'cr/constants'
 require 'cr/host'
-require 'cr/log'
 require 'cr/rescue'
 
 class CR
@@ -124,7 +123,6 @@ class CR
       
       if hostname.include?('=')
         hostname, driver = hostname.split(/(.*)=(.*)$/)[1..2]
-        driver = eval('CR::Host::' + driver)
       end # if hostname.include?('=')
       
       return [hostname, username, password, driver]
