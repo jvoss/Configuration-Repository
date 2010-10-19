@@ -18,6 +18,7 @@
 
 require 'observer'
 require 'snmp'
+require 'cr/log'
 
 class CR
   
@@ -108,7 +109,7 @@ class CR
       
       CR.log.debug "Loading \"#{driver}\" driver"
       
-      extend eval(driver)
+      extend eval(driver.capitalize)
       
     end # def _load_driver
     

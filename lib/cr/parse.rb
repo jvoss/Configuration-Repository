@@ -19,7 +19,6 @@
 require 'csv'
 require 'cr/constants'
 require 'cr/host'
-require 'cr/log'
 require 'cr/rescue'
 
 class CR

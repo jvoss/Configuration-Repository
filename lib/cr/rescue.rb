@@ -17,6 +17,7 @@
 #
 
 require 'cr/constants'
+require 'cr/log'
 
 class CR
   
@@ -33,13 +34,13 @@ class CR
       
       if err_object.is_a? Host::NonFatalError
           
-        CR::log.error "NonFatalError: #{host_object.hostname} - #{err_object} -- skipping"
+        CR.log.error "NonFatalError: #{host_object.hostname} - #{err_object} -- skipping"
         
       end # if klass.is_a? Host::NonFatalError
       
       if err_object.is_a? SNMP::RequestTimeout
         
-        CR::log.error "SNMP timeout: #{host_object.hostname} -- skipping"
+        CR.log.error "SNMP timeout: #{host_object.hostname} -- skipping"
         
       end # if klass.is_a? SNMP::RequestTimeout
       
