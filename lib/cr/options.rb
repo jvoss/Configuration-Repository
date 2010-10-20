@@ -100,6 +100,7 @@ class CR
           
           opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
             options[:log] = Logger.new(l.to_s)
+            options[:log].datetime_format = "%Y-%m-%d %H:%M:%S"
           end # opts.on
           
           opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
