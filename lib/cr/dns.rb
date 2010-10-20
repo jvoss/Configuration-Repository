@@ -31,7 +31,7 @@ class CR
       hosts = []
       zone  = Dnsruby::ZoneTransfer.new
       
-      zone.transfer(domain.to_s).eacclh do |record|
+      zone.transfer(domain.to_s).each do |record|
         
         host = process_record(record)
 
