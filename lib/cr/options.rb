@@ -17,7 +17,7 @@
 #
 
 require 'optparse'
-require 'cr/rescue'
+#require 'cr/rescue'
 
 class CR
   
@@ -124,7 +124,6 @@ class CR
           end # opts.on
           
           opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
-            # TODO deal with verbosity level in log
             case verbose
               when 'fatal'
                 options[:log].level = Logger::FATAL
@@ -203,6 +202,9 @@ class CR
           cr.add_domain_string(host_string)
         end
         
+        # Catch errors when dealing with command line options so that clean
+        # error reporting can be done
+        # 
 #        rescue => e
 #        
 #          CR::Rescue.catch_fatal(e)
