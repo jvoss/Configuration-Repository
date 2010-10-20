@@ -157,7 +157,7 @@ class CR
     # hostname. #config should return a hash with key being a filename and 
     # value being an array containing the configuration.
     #
-    def save(hostobj, contents)
+    def save_host(hostobj, contents)
       
       raise "Repository not initialized" unless self.exist?
       raise "Contents hash blank" if contents.nil?
@@ -189,13 +189,13 @@ class CR
       
       end # contents.each_pair
       
-    end # def save
+    end # def save_host
     
     # Observer method for receiving updates when configurations are
     # pulled from hosts.
     #
     def update(hostobj, config)
-      save(hostobj, config)
+      save_host(hostobj, config)
       add_host(hostobj)
     end # def update
     
