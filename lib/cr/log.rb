@@ -20,26 +20,18 @@ require 'logger'
 
 class CR
   
-  module Log
-   
-    @@log                 = Logger.new(STDOUT)
-    @@log.level           = Logger::DEBUG
-    @@log.datetime_format = "%Y-%m-%d %H:%M:%S"
+  attr_reader :log
+  
+  private
+  
+  def _initialize_log
     
-    def self.method_missing(m, *args, &block)
-      @@log.send(m, *args, &block)
-    end # def method_missing
-  
-    def self.respond_to?(symbol, include_private = false)
-      @@log.respond_to?(symbol, include_private)
-    end # respond_to?
-  
-  end # module Log
-  
-  # Provides access to logger proxy.
-  #
-  def self.log
-    Log
-  end # def self.log
+    log                 = Logger.new(STDOUT)
+    log.level           = Logger::DEBUG
+    log.datetime_format = "%Y-%m-%d %H:%M:%S"
+    
+    return log
+    
+  end # def _initialize_log
   
 end # class CR

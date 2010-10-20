@@ -16,9 +16,9 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'logger'
 require 'observer'
 require 'snmp'
-require 'cr/log'
 
 class CR
   
@@ -41,20 +41,26 @@ class CR
     # Initializes a new host object:
     #
     # ===Example 
-    # host = Host.new('host.domain.tld', 'user', 'pass')
+    # host = Host.new( :hostname     => 'host.domain.tld',
+    #                  :username     => 'user',
+    #                  :password     => 'pass',
+    #                  :log          => Logger.new(STDOUT),
+    #                  :snmp_options => {},
+    #                  :driver       => '' )
     # 
     # snmp_options can contain any options available from the 'snmp' gem.
     #
     # Force a particular driver by supplying class name for the driver argument:
     #   driver = CR::Host::Cisco
     #
-    def initialize(hostname, username, password, snmp_options = {}, driver = nil)
-      
-      @driver       = driver
-      @hostname     = hostname
-      @username     = username
-      @password     = password
-      @snmp_options = snmp_options
+    def initialize(options = {}) 
+    
+      @driver       = options[:driver]
+      @hostname     = options[:hostname]
+      @log          = options[:log]          || Logger.new(STDOUT)
+      @username     = options[:username]
+      @password     = options[:password]
+      @snmp_options = options[:snmp_options] || {}
       
       if @driver.nil?
         _snmp_initialize
@@ -82,6 +88,7 @@ class CR
     # lib/hosts/<type> as extended by finger printing.
     #
     def process
+      @log.info "Processing host: #{@hostname}"
       
       _snmp_fingerprint if @driver.nil?
       
@@ -107,9 +114,9 @@ class CR
       full_pattern = File.join(lib_dir, '*.rb')
       Dir.glob(full_pattern).each {|file| require file}
       
-      CR.log.debug "Loading \"#{driver}\" driver"
+      @log.debug "Loading \"#{driver.to_s.capitalize}\" driver"
       
-      extend eval(driver.capitalize)
+      extend eval(driver.to_s.capitalize)
       
     end # def _load_driver
     
@@ -127,10 +134,10 @@ class CR
         # Example: manufacturer = 'Cisco'
         _load_driver(manufacturer)
         
-      rescue
-        
-        CR.log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
-        
+      rescue 
+
+        @log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
+
       end # begin
       
     end # def _snmp_fingerprint
@@ -151,7 +158,7 @@ class CR
       snmp_defaults[:Host] = @hostname
       
       # Use any specific settings the user supplied for SNMP
-      @snmp_options = snmp_defaults.merge(@snmp_options)
+      @snmp_options = snmp_defaults.merge(@snmp_options.dup)
       
     end # def _snmp_initialize
     

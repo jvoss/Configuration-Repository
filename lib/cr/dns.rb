@@ -17,11 +17,12 @@
 #
 
 require 'dnsruby'
-require 'cr/log'
 
 class CR
   
   module DNS
+    
+    @log = Logger.new(STDOUT)
     
     # Return an array of hostnames from an AXFR request for a domain
     #
@@ -30,13 +31,13 @@ class CR
       hosts = []
       zone  = Dnsruby::ZoneTransfer.new
       
-      zone.transfer(domain.to_s).each do |record|
+      zone.transfer(domain.to_s).eacclh do |record|
         
         host = process_record(record)
 
         if hosts.include?(host)
           
-          CR.log.debug "Ignoring record \"#{host}\" -- duplicate"
+          @log.debug "Ignoring record \"#{host}\" -- duplicate"
           
           next # zone.transfer
           
@@ -63,7 +64,7 @@ class CR
         
       else
         
-        CR.log.debug "Ignoring record (#{record.type}): #{record.name}"
+        @log.debug "Ignoring record (#{record.type}): #{record.name}"
         
       end # valid_record_type?
       

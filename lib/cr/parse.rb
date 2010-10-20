@@ -125,7 +125,10 @@ class CR
         hostname, driver = hostname.split(/(.*)=(.*)$/)[1..2]
       end # if hostname.include?('=')
       
-      return [hostname, username, password, driver]
+      return { :hostname => hostname, 
+               :username => username, 
+               :password => password, 
+               :driver => driver }
       
     end # def parse_host_string  
     

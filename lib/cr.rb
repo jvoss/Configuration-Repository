@@ -26,9 +26,7 @@ require 'cr/repository'
 
 class CR
   
-  extend CommandLine
-#  extend Logging # TODO Integrate logging so that multiple instances can have different logs
-  
+  extend  CommandLine
   include Parsing
   
   VERSION = '0.1.0'
@@ -42,11 +40,11 @@ class CR
     @username     = options[:username]
     @password     = options[:password]
     @hosts        = []
-#    @log
-    @regex        = options[:regex] || //
-    @repository   = Repository.new(options[:repository], @regex, :git)
+    @log          = options[:log]          || _initialize_log
+    @regex        = options[:regex]        || //
     @snmp_options = options[:snmp_options] || {}
     
+    _initialize_repository(options[:repository], @regex, :git)
     _validate_blacklist
     
   end # def initialize
@@ -58,16 +56,16 @@ class CR
     case 
     
       when ! hostobj.hostname.match(@regex)
-        CR.log.debug "Ignoring host (Regex): #{hostobj.hostname}"
+        @log.debug "Ignoring host (Regex): #{hostobj.hostname}"
     
       when @blacklist.include?(hostobj.hostname)
-        CR.log.info "Ignoring host (Blacklist): #{hostobj.hostname}"
+        @log.info "Ignoring host (Blacklist): #{hostobj.hostname}"
         
       when @hosts.include?(hostobj)
-        CR.log.debug "Ignoring host (Duplicate): #{hostobj.hostname}"
+        @log.debug "Ignoring host (Duplicate): #{hostobj.hostname}"
         
       else
-        CR.log.info "Adding host: #{hostobj.hostname}"
+        @log.info "Adding host: #{hostobj.hostname}"
         
         hostobj.add_observer(@repository)
         
@@ -89,16 +87,20 @@ class CR
       
     else
     
-      options = { :username => @username,
-                  :password => @password  }
+      options = { :username     => @username,
+                  :password     => @password,
+                  :snmp_options => snmp_options,
+                  :log          => @log }
       
-      options = options.merge(snmp_options.dup)
+      options = options.merge parse_host_string(host_string, options)
       
-      domain, user, pass, driver = parse_host_string(host_string, options)
+      DNS.instance_variable_set(:@log, @log)
       
-      DNS.axfr(domain).each do |hostname|
+      DNS.axfr(options[:hostname]).each do |hostname|
         
-        add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+        options = options.merge(:hostname => hostname)
+        
+        add_host CR::Host.new(options)
         
       end # DNS.axfr
     
@@ -116,14 +118,14 @@ class CR
       
     else
     
-      options = { :username => @username,
-                  :password => @password }
-                  
-      options = options.merge(snmp_options.dup)
+      options = { :username     => @username,
+                  :password     => @password, 
+                  :snmp_options => snmp_options,
+                  :log          => @log }
       
-      hostname, user, pass, driver = parse_host_string(host_string, options)
+      options = options.merge parse_host_string(host_string, options)
         
-      add_host CR::Host.new(hostname, user, pass, @snmp_options, driver)
+      add_host CR::Host.new(options)
     
     end # if host_string.match
     
@@ -134,7 +136,7 @@ class CR
   #
   def delete_host!(host)
     
-    CR.log.info "Removed host: #{host}" if @hosts.delete(host)
+    @log.info "Removed host: #{host}" if @hosts.delete(host)
     
   end # delete_host!
   
@@ -175,6 +177,17 @@ class CR
   end # def process_all
   
   private
+  
+  # Initializes CR::Repository object
+  #
+  def _initialize_repository(directory, regex, type)
+    
+    @repository = Repository.new( :directory => directory,
+                                  :log       => @log,
+                                  :regex     => regex,
+                                  :type      => type )
+                                  
+  end # def _initialize_repository
   
   # Validates a blacklist. If a user supplied a string during object creation
   # it is taken as a filename and passed to #import_blacklist. Otherwise an

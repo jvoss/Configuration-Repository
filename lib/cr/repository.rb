@@ -17,7 +17,7 @@
 #
 
 require 'ftools'
-require 'cr/log'
+require 'logger'
 require 'cr/rescue'
 require 'cr/vcs/git'
 
@@ -27,17 +27,26 @@ class CR
     
     # Create a new repository object. VCS is the version control system 
     # to use, example :git
+    #
+    #==Example
+    # Repository.new( :directory => '/path',
+    #                 :regex     => //,
+    #                 :type      => :git,
+    #                 :username  => 'Username String',
+    #                 :email     => 'email@string.org' )
     #    
-    def initialize(directory, regex, type, username = nil, email = nil)
+    def initialize(options = {})
       
       @changed   = false
-      @directory = directory
-      @regex     = regex
-      @type      = type
-      @username  = username || 'Configuration Repository'
-      @email     = email    || 'nobody@nowhere.com'
       
-      _validate_repository(directory)
+      @directory = options[:directory]
+      @log       = options[:log]       || Logger.new(STDOUT)
+      @regex     = options[:regex]
+      @type      = options[:type]
+      @username  = options[:username]  || 'Configuration Repository'
+      @email     = options[:email]     || 'nobody@nowhere.com'
+      
+      _validate_repository(@directory)
       _initialize_vcs
       
     end # def initialize
@@ -116,7 +125,7 @@ class CR
     #
     def open
       
-      log = CR.log.level == Logger::DEBUG ? CR.log : nil
+      log = @log.level == Logger::DEBUG ? @log : nil
       
       @repo = @vcs.open(@directory, :log => log)
       
@@ -161,19 +170,19 @@ class CR
       
         if value.nil?
           
-          CR.log.warn "Empty from device: #{hostobj.hostname} - #{filename}"
+          @log.warn "Empty from device: #{hostobj.hostname} - #{filename}"
           next # filename, value
           
         end # if value.nil?
       
         if read(hostobj, filename) == value
           
-          CR.log.debug "No change: #{hostobj.hostname} - #{filename}"
+          @log.debug "No change: #{hostobj.hostname} - #{filename}"
           next # filename, value
           
         end # if read(hostobj, options, filename) == value
         
-        CR.log.debug "Saving: #{hostobj.hostname} - #{filename}"
+        @log.debug "Saving: #{hostobj.hostname} - #{filename}"
         
         # Save the file to disk
         @changed = true if _save_file("#{path}/#{filename}", value)
@@ -241,7 +250,7 @@ class CR
     
       file.close
       
-      CR.log.debug "Saved #{sub_dir}/#{filename}: #{contents.size} lines"
+      @log.debug "Saved #{sub_dir}/#{filename}: #{contents.size} lines"
       
       return true
        

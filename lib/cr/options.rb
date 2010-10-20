@@ -78,6 +78,7 @@ class CR
       options[:blacklist]    = []
       options[:domain]       = []
       options[:host]         = []
+      options[:log]          = Logger.new(STDOUT)
       options[:regex]        = //
       options[:username]     = nil
       options[:password]     = nil
@@ -98,7 +99,7 @@ class CR
           end # opts.on
           
           opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
-            @@log = Logger.new(l.to_s)
+            options[:log] = Logger.new(l.to_s)
           end # opts.on
           
           opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
@@ -125,15 +126,15 @@ class CR
             # TODO deal with verbosity level in log
             case verbose
               when 'fatal'
-                log.level = Logger::FATAL
+                options[:log].level = Logger::FATAL
               when 'error'
-                log.level = Logger::ERROR
+                options[:log].level = Logger::ERROR
               when 'warn'
-                log.level = Logger::WARN
+                options[:log].level = Logger::WARN
               when 'info'
-                log.level = Logger::INFO
+                options[:log].level = Logger::INFO
               when 'debug'
-                log.level = Logger::DEBUG
+                options[:log].level = Logger::DEBUG
               else
                 raise ArgumentError, "Unsupported verbose level -- #{verbose}"
             end
@@ -201,9 +202,9 @@ class CR
           cr.add_domain_string(host_string)
         end
         
-        rescue => e
-        
-          CR::Rescue.catch_fatal(e)
+#        rescue => e
+#        
+#          CR::Rescue.catch_fatal(e)
         
       end # begin
       
