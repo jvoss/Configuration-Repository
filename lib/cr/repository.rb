@@ -25,11 +25,11 @@ class CR
   
   class Repository
     
-    # Create a new repository object. VCS is the version control system 
-    # to use, example :git
+    # Create a new repository object.
     #
     #==Example
     # Repository.new( :directory => '/path',
+    #                 :log       => Logger.new(STDOUT),
     #                 :regex     => //,
     #                 :type      => :git,
     #                 :username  => 'Username String',
