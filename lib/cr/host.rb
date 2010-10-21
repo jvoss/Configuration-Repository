@@ -36,7 +36,7 @@ class CR
     SNMP_DEFAULT_RETRIES   = 2
     SNMP_DEFAULT_VERSION   = :SNMPv2c
     
-    attr_reader :hostname
+    attr_reader :driver, :hostname, :username, :password
     
     # Initializes a new host object:
     #
