@@ -28,18 +28,14 @@ class CR
   extend  CommandLine
   include Parsing
   
-  attr_accessor :username, :password
-  attr_reader   :blacklist, :hosts, :repository
+  attr_reader :blacklist, :hosts, :repository
   
   def initialize(options = {}) 
     
     @blacklist    = options[:blacklist] || [] # array of blacklisted hostnames
-#    @username     = options[:username]
-#    @password     = options[:password]
     @hosts        = []
     @log          = options[:log]          || _initialize_log
     @regex        = options[:regex]        || //
-#    @snmp_options = options[:snmp_options] || {}
     
     @default_host_options = { :username     => options[:username],
                               :password     => options[:password],
@@ -89,8 +85,6 @@ class CR
     
     host_options[:snmp_options] = snmp_options unless snmp_options.empty?
     
-#    # TODO Refactor this with add_host_string
-    
     host_options.merge! parse_host_string(host_string, host_options)
     
     DNS.instance_variable_set(:@log, @log)
@@ -117,6 +111,30 @@ class CR
     add_host CR::Host.new(host_options)
     
   end # def add_host_string
+  
+  # Returns the default password for new hosts
+  #
+  def default_password
+    @default_host_options[:password]
+  end # def default_password
+  
+  # Sets the default password for new hosts
+  #
+  def default_password=(password)
+    @default_host_options[:password] = password
+  end # def default_password
+  
+  # Returns the default username for new hosts
+  #
+  def default_username
+    @default_host_options[:username]
+  end # def default_username
+  
+  # Sets the default username for new hosts
+  #
+  def default_username=(username)
+    @default_host_options[:username] = username
+  end # def default_username
 
   # Deletes a host from consideration. Argument can be any CR::Host comparable. 
   # I.e. hostname or Host object.
@@ -182,15 +200,7 @@ class CR
   #
   def _validate_blacklist
     
-    # TODO fix the juggling of @blacklist variable?
-    if @blacklist.is_a?(String)
-      
-      file       = @blacklist
-      @blacklist = []
-      
-      import_blacklist(file)
-      
-    end # if @blacklist.is_a?(String)
+    import_blacklist(@blacklist) if @blacklist.is_a?(String)
     
     raise "Blacklist must be an array or filename" unless @blacklist.is_a?(Array)
     
