@@ -34,12 +34,18 @@ class CR
   def initialize(options = {}) 
     
     @blacklist    = options[:blacklist] || [] # array of blacklisted hostnames
-    @username     = options[:username]
-    @password     = options[:password]
+#    @username     = options[:username]
+#    @password     = options[:password]
     @hosts        = []
     @log          = options[:log]          || _initialize_log
     @regex        = options[:regex]        || //
-    @snmp_options = options[:snmp_options] || {}
+#    @snmp_options = options[:snmp_options] || {}
+    
+    @default_host_options = { :username     => options[:username],
+                              :password     => options[:password],
+                              :snmp_options => options[:snmp_options],
+                              :log          => @log
+                            }
     
     _initialize_repository(options[:repository], @regex, :git)
     _validate_blacklist
@@ -77,31 +83,22 @@ class CR
   #
   def add_domain_string(host_string, snmp_options = {})
     
-    # TODO Refactor this with add_host_string
-    if host_string.match(/file:(.*)/)
-      
-      import_file $1, :domain
-      
-    else
+    return import_file($1, :domain) if host_string.match(/file:(.*)/)
     
-      options = { :username     => @username,
-                  :password     => @password,
-                  :snmp_options => snmp_options,
-                  :log          => @log }
-      
-      options = options.merge parse_host_string(host_string, options)
-      
-      DNS.instance_variable_set(:@log, @log)
-      
-      DNS.axfr(options[:hostname]).each do |hostname|
-        
-        options = options.merge(:hostname => hostname)
-        
-        add_host CR::Host.new(options)
-        
-      end # DNS.axfr
+    host_options = @default_host_options.dup
     
-    end # if
+    host_options[:snmp_options] = snmp_options unless snmp_options.empty?
+    
+#    # TODO Refactor this with add_host_string
+    
+    host_options.merge! parse_host_string(host_string, host_options)
+    
+    DNS.instance_variable_set(:@log, @log)
+    
+    DNS.axfr(host_options[:hostname]).each do |hostname|
+      host_options = host_options.merge(:hostname => hostname)
+      add_host CR::Host.new(host_options)
+    end # DNS.axfr
     
   end # def add_domain_string
   
@@ -109,29 +106,22 @@ class CR
   #
   def add_host_string(host_string, snmp_options = {})
     
-    if host_string.match(/file:(.*)/)
-      
-      import_file $1, :host
-      
-    else
+    return import_file($1, :host) if host_string.match(/file:(.*)/)
     
-      options = { :username     => @username,
-                  :password     => @password, 
-                  :snmp_options => snmp_options,
-                  :log          => @log }
-      
-      options = options.merge parse_host_string(host_string, options)
-        
-      add_host CR::Host.new(options)
+    host_options = @default_host_options.dup
     
-    end # if host_string.match
+    host_options[:snmp_options] = snmp_options unless snmp_options.empty?
+    
+    host_options.merge! parse_host_string(host_string, host_options)
+      
+    add_host CR::Host.new(host_options)
     
   end # def add_host_string
 
-  # Deletes a host. Argument can be any CR::Host comparable. I.e. hostname
-  # or Host object.
+  # Deletes a host from consideration. Argument can be any CR::Host comparable. 
+  # I.e. hostname or Host object.
   #
-  def delete_host!(host)
+  def delete_host(host)
     
     @log.info "Removed host: #{host}" if @hosts.delete(host)
     

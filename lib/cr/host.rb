@@ -85,7 +85,7 @@ class CR
     end # def config
     
     # Returns the devices configuration in an array as specified in 
-    # lib/hosts/<type> as extended by finger printing.
+    # config method as extended by finger printing or driver loading.
     #
     def process
       @log.info "Processing host: #{@hostname}"
