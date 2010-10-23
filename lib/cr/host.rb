@@ -52,8 +52,15 @@ class CR
     # 
     # snmp_options can contain any options available from the 'snmp' gem.
     #
-    # Force a particular driver by supplying class name for the driver argument:
-    #   driver = CR::Host::Cisco
+    # Force a particular driver by supplying a filename of the driver.
+    #  
+    # Drivers are found in the order:
+    #  driver = a filename itself
+    #  driver = User's <home directory>/.convene/drivers/<driver>.rb
+    #  driver = Pre-packaged drivers <driver>.rb
+    #
+    # Driver filenames should be all lowercased. Driver class definitions
+    # should have the first letter of the driver capitalized only.
     #
     def initialize(options = {}) 
     
