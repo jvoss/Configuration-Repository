@@ -16,10 +16,15 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'ftools'
+
 class CR
   
   ARGUMENT_ERROR = 1
   NONFATAL_ERROR = 255
+  
+  BASE_DIR = File.dirname(__FILE__)
+  HOME_DIR = File.expand_path('~') + '/.convene'
   
   SNMP_VERSION_MAP = { :SNMPv1 => '1', :SNMPv2c => '2c' }
   

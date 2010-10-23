@@ -16,9 +16,11 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'ftools'
 require 'logger'
 require 'observer'
 require 'snmp'
+require 'cr/constants'
 
 class CR
   
@@ -55,17 +57,17 @@ class CR
     #
     def initialize(options = {}) 
     
-      @driver       = options[:driver].capitalize
+      @driver       = nil
       @hostname     = options[:hostname]
       @log          = options[:log]          || Logger.new(STDOUT)
       @username     = options[:username]
       @password     = options[:password]
       @snmp_options = options[:snmp_options] || {}
       
-      if @driver.nil?
+      if options[:driver].nil?
         _snmp_initialize
       else
-        _load_driver(@driver)
+        _load_driver(options[:driver])
       end # driver.nil?
       
     end # def initialize
@@ -105,18 +107,37 @@ class CR
     
     private
     
-    # Loads the specified driver class by extending its functionality into self
+    # Loads the specified driver by extending its functionality into self.
+    # Drivers are found in the order:
+    #  driver = a filename itself
+    #  driver = User's <home directory>/.convene/drivers/<driver>.rb
+    #  driver = Pre-packaged drivers <driver>.rb
+    #
+    # Driver filenames should be all lowercased. Driver class definitions
+    # should have the first letter of the driver capitalized only.
     #
     def _load_driver(driver)
+
+      driver   = driver.downcase
+      filename = nil
+
+      filename = driver if File.exist?(driver)
       
-      # Load all .rb files in hosts directory
-      lib_dir      = File.dirname(__FILE__) + '/hosts'
-      full_pattern = File.join(lib_dir, '*.rb')
-      Dir.glob(full_pattern).each {|file| require file}
+      f = HOME_DIR + "/drivers/#{driver}.rb"
+      filename = f if File.exist?(f)
       
-      @log.debug "Loading \"#{driver.to_s.capitalize}\" driver"
+      f = BASE_DIR + "/drivers/#{driver}.rb"
+      filename = f if File.exist?(f)
       
-      extend eval(driver.to_s.capitalize)
+      # TODO Name an error class with raising this exception?
+      raise "Unable to locate driver #{driver}.rb" if filename.nil?
+      
+      @log.debug "Opening driver: #{filename}"
+      require filename
+
+      @driver = eval(driver.to_s.capitalize)
+      @log.info "Loading \"#{@driver}\" driver"
+      extend @driver
       
     end # def _load_driver
     
@@ -134,9 +155,10 @@ class CR
         # Example: manufacturer = 'Cisco'
         _load_driver(manufacturer)
         
-      rescue 
+      rescue => e
 
         @log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
+        @log.debug e
 
       end # begin
       

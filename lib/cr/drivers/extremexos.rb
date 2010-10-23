@@ -17,40 +17,48 @@
 #
 
 require 'cr/host'
-require 'cr/transport/scp'
+require 'cr/transport/telnet'
 
 class CR
   
   class Host
     
-    module NetScaler
+    module Extremexos
       
       # Retrieve a device's startup configuration as an array via Telnet
       #
       def config
       
         startup_config = []
-        startup_config_tmp = ""
         
         begin
+       
+          telnet = Transport::Telnet.new(@hostname, @username, @password)
           
-          scp = Transport::SCP.new(@hostname, @username, @password)
-          
-          startup_config_tmp = scp.download!("/nsconfig/ns.conf")
-        
-        rescue => e
-        
+          telnet.login do |session|
+            
+            session.cmd('disable clipaging')
+            
+            session.cmd('show config') do |line|
+              startup_config.push(line)
+            end # session.cmd('show config')
+            
+          end # telnet.login
+       
+       rescue => e
+       
           raise Host::NonFatalError, e.to_s
-        
-        end # begin
-        
-        startup_config = startup_config_tmp.split(/\r\n/) # Split on newlines.
-        
-        return {'/nsconfig/ns.conf' => startup_config}
+       
+       end # begin
+       
+        startup_config.pop
+        startup_config.shift until startup_config[0] =~ /^# Module/
+ 
+        return {'config' => startup_config}
         
       end # config
       
-    end # module Netscalar
+    end # module Extremexos
     
   end # class Host
   

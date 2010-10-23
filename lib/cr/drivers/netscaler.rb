@@ -23,7 +23,7 @@ class CR
   
   class Host
     
-    module SSG # ScreenOS
+    module Netscaler
       
       # Retrieve a device's startup configuration as an array via Telnet
       #
@@ -33,25 +33,24 @@ class CR
         startup_config_tmp = ""
         
         begin
-
+          
           scp = Transport::SCP.new(@hostname, @username, @password)
           
-          startup_config_tmp = scp.download!("ns_sys_config")
-          
+          startup_config_tmp = scp.download!("/nsconfig/ns.conf")
+        
         rescue => e
-          
+        
           raise Host::NonFatalError, e.to_s
-          
+        
         end # begin
         
-        startup_config = startup_config_tmp.split(/\cM/) # Split on newlines.
-        startup_config.shift # Remove header comment
+        startup_config = startup_config_tmp.split(/\r\n/) # Split on newlines.
         
-        return {'ns_sys_config' => startup_config}
+        return {'/nsconfig/ns.conf' => startup_config}
         
       end # config
       
-    end # module SSG
+    end # module Netscalar
     
   end # class Host
   
