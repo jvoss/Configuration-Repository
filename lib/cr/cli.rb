@@ -199,7 +199,7 @@ class CR
         end
         
         options[:domain].each do |host_string|
-          cr.add_domain_string(host_string)
+          cr.add_host_string(host_string, :domain)
         end
         
         # Catch errors when dealing with command line options so that clean

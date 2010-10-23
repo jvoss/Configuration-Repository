@@ -74,12 +74,12 @@ class CR
     
   end # def add_host
   
-  # Adds a domain of hosts via AXFR request for an argument specified in
-  # host string format.
+  # Adds a host or domain specified in host string format.
+  # type = :host or type = :domain
   #
-  def add_domain_string(host_string, snmp_options = {})
+  def add_host_string(host_string, type = :host, snmp_options = {})
     
-    return import_file($1, :domain) if host_string.match(/file:(.*)/)
+    return import_file($1, type) if host_string.match(/file:(.*)/)
     
     host_options = @default_host_options.dup
     
@@ -87,28 +87,20 @@ class CR
     
     host_options.merge! parse_host_string(host_string, host_options)
     
-    DNS.instance_variable_set(:@log, @log)
-    
-    DNS.axfr(host_options[:hostname]).each do |hostname|
-      host_options = host_options.merge(:hostname => hostname)
-      add_host CR::Host.new(host_options)
-    end # DNS.axfr
-    
-  end # def add_domain_string
-  
-  # Adds a host specified in host string format
-  #
-  def add_host_string(host_string, snmp_options = {})
-    
-    return import_file($1, :host) if host_string.match(/file:(.*)/)
-    
-    host_options = @default_host_options.dup
-    
-    host_options[:snmp_options] = snmp_options unless snmp_options.empty?
-    
-    host_options.merge! parse_host_string(host_string, host_options)
+    if type == :domain
       
-    add_host CR::Host.new(host_options)
+      DNS.instance_variable_set(:@log, @log)
+      
+      DNS.axfr(host_options[:hostname]).each do |hostname|
+        host_options = host_options.merge(:hostname => hostname)
+        add_host CR::Host.new(host_options)
+      end # DNS.axfr
+      
+    else
+      
+      add_host CR::Host.new(host_options)
+      
+    end # if type == :domain
     
   end # def add_host_string
   
@@ -161,9 +153,8 @@ class CR
   def import_file(filename, type)
    
     parse_file(filename, @snmp_options).each do |host_string, options|
-    
-      type == :domain ? add_domain_string(host_string, options) :
-                        add_host_string(host_string, options)
+                        
+      add_host_string(host_string, type, options)
     
     end # parse_file
     

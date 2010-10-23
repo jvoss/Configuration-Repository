@@ -55,7 +55,7 @@ class CR
     #
     def initialize(options = {}) 
     
-      @driver       = options[:driver]
+      @driver       = options[:driver].capitalize
       @hostname     = options[:hostname]
       @log          = options[:log]          || Logger.new(STDOUT)
       @username     = options[:username]
