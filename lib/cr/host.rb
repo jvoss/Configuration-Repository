@@ -59,10 +59,10 @@ class CR
     
       @driver       = nil
       @hostname     = options[:hostname]
-      @log          = options[:log]          || Logger.new(STDOUT)
+      @log          = options[:log]          ||= Logger.new(STDOUT)
       @username     = options[:username]
       @password     = options[:password]
-      @snmp_options = options[:snmp_options] || {}
+      @snmp_options = options[:snmp_options] ||= {}
       
       if options[:driver].nil?
         _snmp_initialize
