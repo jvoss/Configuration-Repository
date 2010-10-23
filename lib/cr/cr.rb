@@ -16,17 +16,17 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'cr/cli'
 require 'cr/dns'
 require 'cr/host'
 require 'cr/log'
-require 'cr/options' # TODO - rename class within options?
 require 'cr/parse'
 require 'cr/repository'
 
 class CR
   
-  extend  CommandLine
   include Parsing
+  extend  Cli
   
   attr_reader :blacklist, :hosts, :repository
   

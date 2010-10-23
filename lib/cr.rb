@@ -16,14 +16,7 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'cr/constants'
 require 'cr/cr'
-require 'cr/dns'
-require 'cr/host'
-require 'cr/log'
-require 'cr/options'
-require 'cr/parse'
-require 'cr/repository'
 
 class CR
   

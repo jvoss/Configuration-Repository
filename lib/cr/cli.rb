@@ -21,7 +21,7 @@ require 'optparse'
 
 class CR
   
-  module CommandLine
+  module Cli
   
     # Parses command-line options using OptionParser and returns an array of
     # host objects and an options hash used throughout CR.
@@ -215,6 +215,6 @@ class CR
       
     end # def self.parse_cmdline
   
-  end # module CommandLine
+  end # module Cli
   
 end # class CR
