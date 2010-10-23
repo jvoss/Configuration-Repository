@@ -32,10 +32,10 @@ class CR
   
   def initialize(options = {}) 
     
-    @blacklist    = options[:blacklist] || [] # array of blacklisted hostnames
-    @hosts        = []
-    @log          = options[:log]          || _initialize_log
-    @regex        = options[:regex]        || //
+    @blacklist = options[:blacklist] || [] # array of blacklisted hostnames
+    @hosts     = []
+    @log       = options[:log]       || _initialize_log
+    @regex     = options[:regex]     || //
     
     @default_host_options = { :username     => options[:username],
                               :password     => options[:password],
