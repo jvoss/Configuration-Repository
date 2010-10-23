@@ -40,11 +40,11 @@ class CR
       @changed   = false
       
       @directory = options[:directory]
-      @log       = options[:log]       ||= Logger.new(STDOUT)
+      @log       = options[:log]       || Logger.new(STDOUT)
       @regex     = options[:regex]
       @type      = options[:type]
-      @username  = options[:username]  ||= 'Configuration Repository'
-      @email     = options[:email]     ||= 'nobody@nowhere.com'
+      @username  = options[:username]  || 'Configuration Repository'
+      @email     = options[:email]     || 'nobody@nowhere.com'
       
       _validate_repository(@directory)
       _initialize_vcs
