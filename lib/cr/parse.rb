@@ -18,8 +18,6 @@
 
 require 'csv'
 require 'cr/constants'
-require 'cr/host'
-require 'cr/rescue'
 
 class CR
   
@@ -125,10 +123,13 @@ class CR
         hostname, driver = hostname.split(/(.*)=(.*)$/)[1..2]
       end # if hostname.include?('=')
       
-      return { :hostname => hostname, 
-               :username => username, 
-               :password => password, 
-               :driver => driver }
+      attributes = { :hostname => hostname, 
+                     :username => username, 
+                     :password => password, 
+                     :driver   => driver 
+                   }
+                   
+      return attributes
       
     end # def parse_host_string  
     
