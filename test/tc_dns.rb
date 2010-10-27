@@ -17,112 +17,61 @@
 #
 
 require 'rubygems'
+require 'logger'
 require 'test/unit'
-require 'shoulda'
 require 'test/test_helpers'
 require 'cr/dns'
-
-## Mockup 
-
-module Dnsruby
-  
-  class ZoneTransfer
-    
-    def transfer(domain = 'example.com')
-      
-      records = [ RR.create("mail.#{domain}. 86400 MX 20 foo.example.com."),
-                  RR.create("foo.#{domain}. 86400 A 192.168.1.1"),
-                  RR.create("foo.#{domain}. 86400 A 192.168.2.1"),
-                  RR.create("bar.#{domain}. 86400 CNAME foo.#{domain}."),
-                  RR.create("srv.#{domain}. 864 SOA #{domain}. bar.#{domain}."),
-                  RR.create("host0.#{domain}. 86400 CNAME host.domain.tld."),
-                  RR.create("host1.#{domain}. 86400 A 192.168.1.2"),
-                  RR.create("#{domain}. 86400 TXT \"test txt\""),
-                  RR.create("host2.#{domain}. 86400 A 192.168.1.3"),
-                  RR.create("host3.#{domain}. 86400 AAAA 1234::5"),
-                  RR.create("srv.#{domain}. 86400 SRV 20 0 0 bar.#{domain}.")
-                ]
-      
-      return records
-      
-    end # def transfer
-    
-  end # class ZoneTransfer
-  
-end # module Dnsruby
-
-## end Mockup
+require 'test/mocks/dns'
 
 module CRTest
   
   class Test_dns < Test::Unit::TestCase
     
-    # Test Records
-    A     = Dnsruby::RR.create("foo.domain.tld. 86400 A     192.168.1.1")
-    AAAA  = Dnsruby::RR.create("bar.domain.tld. 86400 AAAA  FFFF::1")
-    CNAME = Dnsruby::RR.create("foo.domain.tld. 86400 CNAME foo.domain.tld.")
-    MX    = Dnsruby::RR.create("foo.domain.tld. 86400 MX 20 foo.example.com.")
-    SOA   = Dnsruby::RR.create("srv.domain.tld. 864   SOA domain.tld. bar.domain.tld.")
-    TXT   = Dnsruby::RR.create("domain.tld.     86400 TXT \"test txt\"")
+    def setup
+      # Set DNS logging to nil to avoid logging output
+      CR::DNS.instance_variable_set(:@log, Logger.new(nil))
+      
+      # Test Records
+      @a     = Dnsruby::RR.create("foo.domain.tld. 86400 A     192.168.1.1")
+      @aaaa  = Dnsruby::RR.create("bar.domain.tld. 86400 AAAA  FFFF::1")
+      @cname = Dnsruby::RR.create("foo.domain.tld. 86400 CNAME foo.domain.tld.")
+      @mx    = Dnsruby::RR.create("foo.domain.tld. 86400 MX 20 foo.example.com.")
+      @soa   = Dnsruby::RR.create("srv.domain.tld. 864   SOA domain.tld. bar.domain.tld.")
+      @txt   = Dnsruby::RR.create("domain.tld.     86400 TXT \"test txt\"")
+    end # def setup
     
-    context "Zone transfers" do
+    def test_axfr
+      expected_hosts = [ 'foo.example.com',
+                         'host.domain.tld',
+                         'host1.example.com',
+                         'host2.example.com',
+                         'host3.example.com'
+                        ]
+                        
+      hosts = CR::DNS.axfr('example.com')
       
-      should "return a list of no duplicates and contain expected hosts" do
-      
-        expected_hosts = [ 'foo.example.com',
-                           'host.domain.tld',
-                           'host1.example.com',
-                           'host2.example.com',
-                           'host3.example.com'
-                         ]
-      
-        hosts = CR::DNS.axfr('example.com')
-        
-        assert_equal expected_hosts, hosts
-      
-      end # should "return a list of no duplicates and contain expected hosts"
-      
-    end # context "Zone transfers"
+      assert_equal expected_hosts, hosts
+    end # def test_axfr
     
-    context "Processing records" do
+    def test_process_record
+      assert_equal "foo.domain.tld", CR::DNS.process_record(@a)
+      assert_equal "bar.domain.tld", CR::DNS.process_record(@aaaa)
+      assert_equal "foo.domain.tld", CR::DNS.process_record(@cname)
       
-      should "return a target hostname for valid records" do
-        
-        assert_equal "foo.domain.tld", CR::DNS.process_record(A)
-        assert_equal "bar.domain.tld", CR::DNS.process_record(AAAA)
-        assert_equal "foo.domain.tld", CR::DNS.process_record(CNAME)
-        
-      end # should "return a target hostname for valid records"
-      
-      should "return nil for invalid records" do
-        
-        assert_nil CR::DNS.process_record(MX)
-        assert_nil CR::DNS.process_record(SOA)
-        assert_nil CR::DNS.process_record(TXT)
-        
-      end # should "return nil for invalid records"
-      
-    end # context "Processing records"
+      assert_nil CR::DNS.process_record(@mx)
+      assert_nil CR::DNS.process_record(@soa)
+      assert_nil CR::DNS.process_record(@txt)
+    end # def test_process_record
     
-    context "Validating record types" do
+    def test_valid_record_type
+      assert CR::DNS.valid_record_type?(@a)
+      assert CR::DNS.valid_record_type?(@aaaa)
+      assert CR::DNS.valid_record_type?(@cname)
       
-      should "return true when a valid type is given" do
-        
-        assert CR::DNS.valid_record_type?(A)
-        assert CR::DNS.valid_record_type?(AAAA)
-        assert CR::DNS.valid_record_type?(CNAME)
-        
-      end # should "return true when a valid type is given"
-      
-      should "return false when an invalid type is given" do
-        
-        assert !CR::DNS.valid_record_type?(MX)
-        assert !CR::DNS.valid_record_type?(SOA)
-        assert !CR::DNS.valid_record_type?(TXT)
-        
-      end # should "return false when an invalid type is given"
-      
-    end # context "Validating record types"
+      assert !CR::DNS.valid_record_type?(@mx)
+      assert !CR::DNS.valid_record_type?(@soa)
+      assert !CR::DNS.valid_record_type?(@txt)
+    end # def test_valid_record_type
     
   end # class Test_dns
   
