@@ -17,8 +17,8 @@
 #
 
 require 'rubygems'
+require 'logger'
 require 'test/unit'
-require 'shoulda'
 require 'test/test_helpers'
 require 'cr'
 
@@ -26,122 +26,90 @@ module CRTest
 
   class Test_cr < Test::Unit::TestCase
     
-    # Test initialize #
-    context "Creating a new instance" do
-      
-      should "raise if required options are missing" do
-        
-        assert_raise ArgumentError do 
-          CR.new
-        end
-        
-      end # should "raise if require options are missing"
-      
-      should "respond to attribute accessors and readers" do
-        
-        cr = CR.new(TEST_OPTIONS)
-        
-        assert_equal cr.username, TEST_OPTIONS[:username]
-        assert_equal cr.password, TEST_OPTIONS[:password]
-        
-        assert_not_nil cr.blacklist
-        assert_not_nil cr.hosts
-        assert_not_nil cr.repository
-        
-        # Cleanup repository directory
+    def setup
+      @cr = CR.new( :repository => TEST_OPTIONS[:repository],
+                    :log        => Logger.new(nil),
+                    :username   => 'username',
+                    :password   => 'password'
+                  )
+    end # def setup
+    
+    def teardown
+      if File.exists?(TEST_OPTIONS[:repository])
         assert FileUtils.rm_r(TEST_OPTIONS[:repository])
-        
-      end # should "respond to attribute readers"
+      end
+    end # def teardown
+    
+    def test_add_host
+      host = CR::Host.new(:hostname => 'test.domain.tld')
       
-      should "allow either a blacklist file or array" do
-        
-        options = TEST_OPTIONS.dup
-        
-        options[:blacklist] = ['host.domain.tld']
-        
-        cr = CR.new(options)
-        
-        assert_equal cr.blacklist, options[:blacklist]
-        
-        options[:blacklist] = 'test/files/test_blacklist.txt'
-        
-        cr = CR.new(options)
-        
-        assert cr.blacklist.include?('hostA.domain.tld')
-        assert cr.blacklist.include?('hostB.domain.tld')
-        assert cr.blacklist.include?('hostC.domain.tld')
-        
-        # Cleanup repository directory
-        assert FileUtils.rm_r(TEST_OPTIONS[:repository])
-        
-      end # should "allow either a blacklist file or array"
+      assert @cr.add_host(host)
+      assert @cr.hosts.include?(host)
+    end # def test_add_host
+    
+    def test_add_host_string
+      assert @cr.add_host_string('user:pass@host.domain.tld')
+      assert @cr.hosts.include?('host.domain.tld')
+    end # def test_add_host_string
+    
+    def test_blacklist
+      assert @cr.respond_to?(:blacklist)
+      assert @cr.blacklist.kind_of?(Array)
+    end # def test_blacklist
+    
+    def test_default_password
+      assert_equal 'password', @cr.default_password
+      @cr.default_password = 'testing'
+      assert_equal 'testing', @cr.default_password
+    end # def test_default_password
+    
+    def test_default_username
+      assert_equal 'username', @cr.default_username
+      @cr.default_username = 'usertest'
+      assert_equal 'usertest', @cr.default_username
+    end # def test_default_username
+    
+    def test_delete_host
+      @cr.delete_host('test.domain.tld')
+      @cr.delete_host('host.domain.tld')
       
-    end # context "Creating a new instance"
+      assert_equal 0, @cr.hosts.size
+    end # def test_delete_host
+    
+    def test_hosts
+      assert @cr.respond_to?(:hosts)
+      assert @cr.hosts.kind_of?(Array)
+    end # def test_hosts
+    
+    def test_import_blacklist
+      @cr.import_blacklist("#{File.dirname(__FILE__)}/files/test_blacklist.txt")
       
-    context "Working with a CR object" do 
+      assert_equal 3, @cr.blacklist.size
+      assert       @cr.blacklist.include?('hostA.domain.tld')
+      assert       @cr.blacklist.include?('hostB.domain.tld')
+      assert       @cr.blacklist.include?('hostC.domain.tld')
+    end # def test_import_blacklist
+    
+    def test_import_file
+      @cr.import_file("#{File.dirname(__FILE__)}/files/test_txt.txt", :host)
+      @cr.import_file("#{File.dirname(__FILE__)}/files/test_csv.csv", :host)
       
-      # add_host
-      should "allow host objects to be added" do
-        
-        cr = CR.new(TEST_OPTIONS)
-        
-        host = CR::Host.new('hostname', 'user', 'pass')
-        
-        assert_equal [host], cr.add_host(host)
-        assert_equal [host], cr.hosts
-        
-      end # should "allow host objects to be added"
-      
-      # add_host_string
-      should "allow hosts to be added by host string" do
-        
-        cr = CR.new(TEST_OPTIONS)
-        
-        cr.add_host_string('test.domain.tld')
-        
-        assert_equal 'test.domain.tld', cr.hosts.first.to_s
-        
-      end # should "allow hosts to be added by host string"
-      
-      # delete_host
-      should "allow hosts to be deleted by string or object reference" do
-        
-        cr = CR.new(TEST_OPTIONS)
-        
-        cr.add_host_string('test.domain.tld')
-        
-        assert        cr.delete_host!('test.domain.tld')
-        assert_equal  0, cr.hosts.size
-        
-      end # should "allow hosts to be deleted by string or object reference" do
-      
-      # import_blacklist
-      # Tested during initialization when a file is supplied
-      
-      # import_file
-      should "support importing CSV and TXT files of hosts" do
-        
-        cr = CR.new(TEST_OPTIONS)
-        
-        cr.import_file('test/files/test_csv.csv', :host)
-        
-        assert_equal cr.hosts.size, 1
-        assert_equal cr.hosts.first.hostname, 'host.domain.tld'
-        
-        cr.import_file('test/files/test_txt.txt', :host)
-        
-        assert_equal cr.hosts.size, 5
-        assert cr.hosts.include?('host1.domain1.tld1')
-        assert cr.hosts.include?('host2.domain2.tld2')
-        assert cr.hosts.include?('host3.domain3.tld3')
-        assert cr.hosts.include?('host4.domain4.tld4')
-        
-        # Cleanup repository directory
-        assert FileUtils.rm_r(TEST_OPTIONS[:repository])
-        
-      end # should "support import CSV and TXT files of hosts"
-      
-    end # context "Working with a CR object"
+      assert_equal 5, @cr.hosts.size
+      assert       @cr.hosts.include?('host1.domain1.tld1')
+      assert       @cr.hosts.include?('host2.domain2.tld2')
+      assert       @cr.hosts.include?('host3.domain3.tld3')
+      assert       @cr.hosts.include?('host4.domain4.tld4')
+      assert       @cr.hosts.include?('host.domain.tld')
+    end # def test_import_file
+    
+    def test_process_all
+      assert false
+    end # def test_process_all
+    
+    def test_repository
+      assert @cr.respond_to?(:repository)
+      assert @cr.repository.kind_of?(CR::Repository)
+    end # def test_repository
     
   end # class Test_cr
 

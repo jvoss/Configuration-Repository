@@ -127,20 +127,24 @@ class CR
 
       driver   = driver.downcase
       filename = nil
-
-      filename = driver if File.exist?(driver)
       
-      f = HOME_DIR + "/drivers/#{driver}.rb"
-      filename = f if File.exist?(f)
+      locations = [ driver,
+                    HOME_DIR + "/drivers/#{driver}.rb",
+                    BASE_DIR + "/drivers/#{driver}.rb"
+                  ]
       
-      f = BASE_DIR + "/drivers/#{driver}.rb"
-      filename = f if File.exist?(f)
+      locations.each do |location|
+        filename = location if File.exist?(location)
+      end # locations.each
       
       # TODO Name an error class with raising this exception?
       raise "Unable to locate driver #{driver}.rb" if filename.nil?
       
       @log.debug "Opening driver: #{filename}"
       require filename
+
+      # Fixup constant name when driver is a direct filename
+      driver = driver.match(/(\w*)(\.rb)?/)[1]
 
       @driver = eval(driver.to_s.capitalize)
       @log.info "Loading \"#{@driver}\" driver"
