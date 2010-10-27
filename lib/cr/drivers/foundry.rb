@@ -16,10 +16,8 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'net/ssh'
 require 'cr/host'
-
-gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
+require 'cr/transport/ssh'
 
 class CR
   
@@ -55,10 +53,10 @@ class CR
             
             end # ch.on_data
           
-            CR.log.debug "Sending command 'terminal length 0'"
+            @log.debug "Sending command 'terminal length 0'"
             ch.send_data("terminal length 0\n")
             
-            CR.log.debug "Sending command 'show running-config'"
+            @log.debug "Sending command 'show running-config'"
             ch.send_data("show running-config\n")
               
           end # ssh.open_channel_shell
@@ -80,7 +78,7 @@ class CR
           
         end # begin       
         
-        CR.log.debug "Parsing configuration file" 
+        @log.debug "Parsing configuration file" 
         
         # Shift out MOTD and other output messages until the configuration starts
         running_config.shift until running_config[0] =~ /^!/ or running_config.empty?
