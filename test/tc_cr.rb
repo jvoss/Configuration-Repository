@@ -17,6 +17,7 @@
 #
 
 require 'rubygems'
+require 'logger'
 require 'test/unit'
 require 'test/test_helpers'
 require 'cr'
@@ -27,10 +28,17 @@ module CRTest
     
     def setup
       @cr = CR.new( :repository => TEST_OPTIONS[:repository],
+                    :log        => Logger.new(nil),
                     :username   => 'username',
                     :password   => 'password'
                   )
     end # def setup
+    
+    def teardown
+      if File.exists?(TEST_OPTIONS[:repository])
+        assert FileUtils.rm_r(TEST_OPTIONS[:repository])
+      end
+    end # def teardown
     
     def test_add_host
       host = CR::Host.new(:hostname => 'test.domain.tld')
@@ -43,6 +51,11 @@ module CRTest
       assert @cr.add_host_string('user:pass@host.domain.tld')
       assert @cr.hosts.include?('host.domain.tld')
     end # def test_add_host_string
+    
+    def test_blacklist
+      assert @cr.respond_to?(:blacklist)
+      assert @cr.blacklist.kind_of?(Array)
+    end # def test_blacklist
     
     def test_default_password
       assert_equal 'password', @cr.default_password
@@ -62,6 +75,11 @@ module CRTest
       
       assert_equal 0, @cr.hosts.size
     end # def test_delete_host
+    
+    def test_hosts
+      assert @cr.respond_to?(:hosts)
+      assert @cr.hosts.kind_of?(Array)
+    end # def test_hosts
     
     def test_import_blacklist
       @cr.import_blacklist("#{File.dirname(__FILE__)}/files/test_blacklist.txt")
@@ -87,6 +105,11 @@ module CRTest
     def test_process_all
       assert false
     end # def test_process_all
+    
+    def test_repository
+      assert @cr.respond_to?(:repository)
+      assert @cr.repository.kind_of?(CR::Repository)
+    end # def test_repository
     
   end # class Test_cr
 
