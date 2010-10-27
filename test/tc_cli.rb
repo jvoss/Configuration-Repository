@@ -18,9 +18,8 @@
 
 require 'rubygems'
 require 'test/unit'
-require 'shoulda'
 require 'test/test_helpers'
-require 'cr/options'
+require 'cr/cli'
 
 module CRTest
   
@@ -28,15 +27,9 @@ module CRTest
     
     # TODO - Write options tests
     #
-    context "You" do
-      
-      should "write meaningful tests" do
-        
-        assert false
-        
-      end # should "write meaningful tests"
-      
-    end # context "You"
+    def test_parse_cmdline
+      assert false
+    end # def test_parse_cmdline
     
   end # class Test_options
 
