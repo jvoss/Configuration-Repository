@@ -39,7 +39,7 @@ class CR
     
     @default_host_options = { :username     => options[:username],
                               :password     => options[:password],
-                              :snmp_options => options[:snmp_options],
+                              :snmp_options => options[:snmp_options] ||= {},
                               :log          => @log
                             }
     
@@ -151,8 +151,9 @@ class CR
   # :domain or :host
   #
   def import_file(filename, type)
+    snmp_options = @default_host_options[:snmp_options]
    
-    parse_file(filename, @snmp_options).each do |host_string, options|
+    parse_file(filename, snmp_options).each do |host_string, options|
                         
       add_host_string(host_string, type, options)
     

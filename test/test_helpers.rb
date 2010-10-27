@@ -61,7 +61,7 @@ module CRTest
       { :hostname => 'host4.domain4.tld4',
         :username => 'user4',
         :password => 'pa:s@s4',
-        :driver   => CR::Host::Cisco
+        :driver   => 'cisco'
       }
   }
   
