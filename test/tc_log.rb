@@ -18,25 +18,31 @@
 
 require 'rubygems'
 require 'test/unit'
-require 'shoulda'
 require 'test/test_helpers'
+require 'cr/cr'
 require 'cr/log'
 
 module CRTest
   
   class Test_log < Test::Unit::TestCase
     
-    # TODO - Write log tests
-    #
-    context "You" do
-      
-      should "write meaningful tests" do
-        
-        assert false
-        
-      end # should "write meaningful tests"
-      
-    end # context "You"
+    def setup
+      @cr = CR.new( :repository => TEST_OPTIONS[:repository],
+                    :log        => Logger.new(nil),
+                    :username   => 'username',
+                    :password   => 'password'
+                  )
+    end # def setup
+    
+    def teardown
+      if File.exists?(TEST_OPTIONS[:repository])
+        assert FileUtils.rm_r(TEST_OPTIONS[:repository])
+      end
+    end # def teardown
+    
+    def test_initialize_log
+      assert @cr.respond_to?(:log)
+    end # def test_initialize_log
     
   end # class Test_log
 
