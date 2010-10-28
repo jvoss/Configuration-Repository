@@ -43,7 +43,7 @@ module CRTest
         :driver   => nil
       },
     # username/host                                       
-    'user2@host2.domain2.tld2'        => 
+    'convene://user2@host2.domain2.tld2' => 
       { :hostname => 'host2.domain2.tld2',
         :username => 'user2',
         :password => TEST_OPTIONS[:password],
@@ -57,10 +57,17 @@ module CRTest
         :driver   => nil
       },
     # complex password                                       
-    'user4:pa:s@s4@host4.domain4.tld4=cisco' => 
+    'user4:pa:s@s4@host4.domain4.tld4?driver=cisco' => 
       { :hostname => 'host4.domain4.tld4',
         :username => 'user4',
         :password => 'pa:s@s4',
+        :driver   => 'cisco'
+      },
+    # complex password with uri and driver                                      
+    'convene://user5:pa:s@s5@host5.domain5.tld5?driver=cisco' => 
+      { :hostname => 'host5.domain5.tld5',
+        :username => 'user5',
+        :password => 'pa:s@s5',
         :driver   => 'cisco'
       }
   }

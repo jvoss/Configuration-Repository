@@ -17,6 +17,7 @@
 #
 
 require 'csv'
+require 'uri'
 require 'cr/constants'
 
 class CR
@@ -84,16 +85,20 @@ class CR
     
     # Parses a host string into hostname, username, password and driver.
     # 
-    # Valid host strings are:
+    # Valid host strings are in URI format:
+    #   hostname.domain.tld
     #   hostname.domain.tld
     #   user@hostname.domain.tld
     #   user:pass@hostname.domain.tld
-    #   user:pass@hostname.domain.tld=Driver
+    #   user:pass@hostname.domain.tld?driver=cisco
+    #   user:pass@hostname.domain.tld?driver=/path/to/driver
+    #     .rb is assumed when specifying full driver path
     #
-    # Domains can also be valid host strings: user:pass@domain.tld
+    # Domains can also be valid URIs: user:pass@domain.tld
+    # URI's can include convene:// or be omitted
     #
     # Example:
-    #   user:pass@ciscodevice.domain.tld=Cisco
+    #   convene://user:pass@ciscodevice.domain.tld?driver=cisco
     #
     def parse_host_string(host_string, options)
       
@@ -102,26 +107,22 @@ class CR
       username = options[:username]
       password = options[:password]
       
-      if host_string.include?('@')
-        userpass, hostname = host_string.split(/(.*)@(.*)$/)[1..2]
-        username, password = userpass.split(/^(\w+):(.*)/)[1..2]
-        
-        # userpass split fails when no password is supplied but a user is
-        # example: user@host.domain.tld
-        # this will resplit userpass in this condition to take the username only
-        username = userpass.split(/^(\w+):(.*)/)[0] if username.nil?
-        
-        # Password also gets reset to nil from above if a user is supplied with
-        # no password
-        password = options[:password] if password.nil?
-        
-      else # !host.string.include?('@')
-        hostname = host_string
-      end # host_string.include?
+      host_string, username, password = _validate_host_string(host_string, options)
       
-      if hostname.include?('=')
-        hostname, driver = hostname.split(/(.*)=(.*)$/)[1..2]
-      end # if hostname.include?('=')
+      # Prepend convene:// if needed
+      if host_string.match(/^((\w+):\/\/)/)
+        raise "Unknown scheme #{$2}" unless $2 == 'convene'
+      else
+        host_string = "convene://#{host_string}"
+      end # unless host_string.match
+      
+      uri = URI.parse(host_string)
+   
+      hostname = uri.host
+      username = uri.user     unless uri.user.nil?
+      password = uri.password unless uri.password.nil?
+      
+      driver = $1 if uri.query.to_s.match(/[d|D]river=(.*)/)
       
       attributes = { :hostname => hostname, 
                      :username => username, 
@@ -150,6 +151,33 @@ class CR
       return host_strings
       
     end # def parse_txt_file
+  
+    private
+    
+    # Validate host string for complex passwords
+    #
+    def _validate_host_string(host_string, options)
+      
+      username = options[:username]
+      password = options[:password]
+      userpass = ''
+      
+      # host_string is frozen
+      uri = host_string.dup
+      
+      # remove 'convene://'
+      uri = uri.split(/convene:\/\/(.*)/)[1] if uri.include?('convene://')
+      
+      userpass = uri.split(/(.*)@.*$/)[1] if uri.include?('@')
+        
+      if userpass.match(/@/)
+        uri.slice!("#{userpass}@") if uri.slice!("#{userpass}@")
+        username, password = userpass.split(/^(\w+):(.*)/)[1..2]
+      end # if userpass.include?
+      
+      return [uri, username, password]
+      
+    end # def _validate_host_string
   
   end # module Parsing
   

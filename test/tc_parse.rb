@@ -57,9 +57,9 @@ module CRTest
       filename = 'test/files/test_txt.txt'
       
       hostnames = [ 'host1.domain1.tld1',
-                      'user2@host2.domain2.tld2',
-                      'user3:pass3@host3.domain3.tld3',
-                      'user4:pa:s@s4@host4.domain4.tld4'
+                    'user2@host2.domain2.tld2',
+                    'user3:pass3@host3.domain3.tld3',
+                    'user4:pa:s@s4@host4.domain4.tld4'
                   ]
                   
       parse_file(filename, @snmp_options).each do |host_string|
