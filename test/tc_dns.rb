@@ -29,7 +29,7 @@ module CRTest
     
     def setup
       # Set DNS logging to nil to avoid logging output
-      CR::DNS.instance_variable_set(:@log, Logger.new(nil))
+      ::CR::DNS.instance_variable_set(:@log, Logger.new(nil))
       
       # Test Records
       @a     = Dnsruby::RR.create("foo.domain.tld. 86400 A     192.168.1.1")
@@ -48,29 +48,29 @@ module CRTest
                          'host3.example.com'
                         ]
                         
-      hosts = CR::DNS.axfr('example.com')
+      hosts = ::CR::DNS.axfr('example.com')
       
       assert_equal expected_hosts, hosts
     end # def test_axfr
     
     def test_process_record
-      assert_equal "foo.domain.tld", CR::DNS.process_record(@a)
-      assert_equal "bar.domain.tld", CR::DNS.process_record(@aaaa)
-      assert_equal "foo.domain.tld", CR::DNS.process_record(@cname)
+      assert_equal "foo.domain.tld", ::CR::DNS.process_record(@a)
+      assert_equal "bar.domain.tld", ::CR::DNS.process_record(@aaaa)
+      assert_equal "foo.domain.tld", ::CR::DNS.process_record(@cname)
       
-      assert_nil CR::DNS.process_record(@mx)
-      assert_nil CR::DNS.process_record(@soa)
-      assert_nil CR::DNS.process_record(@txt)
+      assert_nil ::CR::DNS.process_record(@mx)
+      assert_nil ::CR::DNS.process_record(@soa)
+      assert_nil ::CR::DNS.process_record(@txt)
     end # def test_process_record
     
     def test_valid_record_type
-      assert CR::DNS.valid_record_type?(@a)
-      assert CR::DNS.valid_record_type?(@aaaa)
-      assert CR::DNS.valid_record_type?(@cname)
+      assert ::CR::DNS.valid_record_type?(@a)
+      assert ::CR::DNS.valid_record_type?(@aaaa)
+      assert ::CR::DNS.valid_record_type?(@cname)
       
-      assert !CR::DNS.valid_record_type?(@mx)
-      assert !CR::DNS.valid_record_type?(@soa)
-      assert !CR::DNS.valid_record_type?(@txt)
+      assert !::CR::DNS.valid_record_type?(@mx)
+      assert !::CR::DNS.valid_record_type?(@soa)
+      assert !::CR::DNS.valid_record_type?(@txt)
     end # def test_valid_record_type
     
   end # class Test_dns

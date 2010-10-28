@@ -27,11 +27,11 @@ module CRTest
   class Test_cr < Test::Unit::TestCase
     
     def setup
-      @cr = CR.new( :repository => TEST_OPTIONS[:repository],
-                    :log        => Logger.new(nil),
-                    :username   => 'username',
-                    :password   => 'password'
-                  )
+      @cr = ::CR.new( :repository => TEST_OPTIONS[:repository],
+                      :log        => Logger.new(nil),
+                      :username   => 'username',
+                      :password   => 'password'
+                    )
     end # def setup
     
     def teardown
@@ -108,7 +108,7 @@ module CRTest
     
     def test_repository
       assert @cr.respond_to?(:repository)
-      assert @cr.repository.kind_of?(CR::Repository)
+      assert @cr.repository.kind_of?(::CR::Repository)
     end # def test_repository
     
   end # class Test_cr

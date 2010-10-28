@@ -27,10 +27,10 @@ module CRTest
   class Test_log < Test::Unit::TestCase
     
     def setup
-      @cr = CR.new( :repository => TEST_OPTIONS[:repository],
-                    :log        => Logger.new(nil),
-                    :username   => 'username',
-                    :password   => 'password'
+      @cr = ::CR.new( :repository => TEST_OPTIONS[:repository],
+                      :log        => Logger.new(nil),
+                      :username   => 'username',
+                      :password   => 'password'
                   )
     end # def setup
     

@@ -25,7 +25,7 @@ module CRTest
   
   class Test_parse < Test::Unit::TestCase
     
-    include CR::Parsing
+    include ::CR::Parsing
     
     def setup
       @snmp_options = { :Community => 'community',

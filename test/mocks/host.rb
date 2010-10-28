@@ -31,6 +31,7 @@ module CRTest
         # occur.
         @driver = 'TESTING'
         super
+        return { 'testfile' => ['test contents\r\n'] }
       end # def process
       
     end # class Host

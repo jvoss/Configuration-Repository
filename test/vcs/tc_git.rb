@@ -23,105 +23,105 @@ require 'fileutils'
 require 'test/test_helpers'
 require 'cr/vcs/git'
 
-module CRTest
-  
-  class Test_git < Test::Unit::TestCase
-    
-    TEST_REPO  = TEST_OPTIONS[:repository]
-    
-    # test self.repo_exist? for invalid repositories
-    #
-    context "Checking if an invalid repository exists" do
-      
-      should "return false" do
-        
-        assert_equal false, CR::Repository::Git.exist?(TEST_REPO)
-        
-      end # should "return false"
-      
-    end # context "Checking if an invalid repository exists"
-    
-    # test self.init(repository) - creating repositories
-    #
-    context "Initializing a repository" do
-      
-      should "create a directory, intialize git, and return a git object" do
-        
-        obj = CR::Repository::Git.init(TEST_REPO)
-        
-        assert_kind_of CR::Repository::Git, obj
-        
-        FileUtils.rm_r(TEST_REPO) # remove testing directory
-        
-      end # should "create a directory and return a git object"
-      
-    end # context "Initializing a repository"
-    
-    # test self.repo_exist? for valid repositories
-    #
-    context "Checking if a valid repository exists" do
-      
-      setup do
-        
-        CR::Repository::Git.init(TEST_REPO)
-        
-      end # setup
-      
-      teardown do
-        
-        FileUtils.rm_r(TEST_REPO) # remove testing directory
-        
-      end # teardown
-      
-      should "return true" do
-        
-        assert CR::Repository::Git.exist?(TEST_REPO)
-        
-      end # should "return true"
-      
-    end # context "Checking if a valid repository exists"
-    
-    # test self.commit_all for valid repositories
-    #
-    context "Commiting all changes" do
-      
-      setup do
-        
-        # This test uses different directory names due to some systems
-        # having permission issues with files still being in use when this test
-        # is setup and torndown.
-        @dir  = TEST_REPO + "2"
-        
-        @repo = CR::Repository::Git.init(@dir)
-        
-      end # setup
-      
-      teardown do
-        
-        FileUtils.rm_r(@dir) # remove testing directory
-        
-      end # teardown
-        
-      should "return false if no commit was made" do
-        
-        assert !@repo.commit_all('Test commit.')
-        
-      end # should "return false if no commit was made"
-      
-      should "return git lib string if successful" do
-        
-        file = File.open("#{@dir}/testfile", 'w')
-        file.syswrite "test content"
-        file.close
-        
-        @repo.add('.')
-        
-        assert_equal String, @repo.commit_all('Test commit.').class
-        
-      end # should "not raise if successful"
-      
-    end # context "Committing all changes"
-    
-  end # class Test_options
-
-end # module CRTest
+#module CRTest
+#  
+#  class Test_git < Test::Unit::TestCase
+#    
+#    TEST_REPO  = TEST_OPTIONS[:repository]
+#    
+#    # test self.repo_exist? for invalid repositories
+#    #
+#    context "Checking if an invalid repository exists" do
+#      
+#      should "return false" do
+#        
+#        assert_equal false, CR::Repository::Git.exist?(TEST_REPO)
+#        
+#      end # should "return false"
+#      
+#    end # context "Checking if an invalid repository exists"
+#    
+#    # test self.init(repository) - creating repositories
+#    #
+#    context "Initializing a repository" do
+#      
+#      should "create a directory, intialize git, and return a git object" do
+#        
+#        obj = CR::Repository::Git.init(TEST_REPO)
+#        
+#        assert_kind_of CR::Repository::Git, obj
+#        
+#        FileUtils.rm_r(TEST_REPO) # remove testing directory
+#        
+#      end # should "create a directory and return a git object"
+#      
+#    end # context "Initializing a repository"
+#    
+#    # test self.repo_exist? for valid repositories
+#    #
+#    context "Checking if a valid repository exists" do
+#      
+#      setup do
+#        
+#        CR::Repository::Git.init(TEST_REPO)
+#        
+#      end # setup
+#      
+#      teardown do
+#        
+#        FileUtils.rm_r(TEST_REPO) # remove testing directory
+#        
+#      end # teardown
+#      
+#      should "return true" do
+#        
+#        assert CR::Repository::Git.exist?(TEST_REPO)
+#        
+#      end # should "return true"
+#      
+#    end # context "Checking if a valid repository exists"
+#    
+#    # test self.commit_all for valid repositories
+#    #
+#    context "Commiting all changes" do
+#      
+#      setup do
+#        
+#        # This test uses different directory names due to some systems
+#        # having permission issues with files still being in use when this test
+#        # is setup and torndown.
+#        @dir  = TEST_REPO + "2"
+#        
+#        @repo = CR::Repository::Git.init(@dir)
+#        
+#      end # setup
+#      
+#      teardown do
+#        
+#        FileUtils.rm_r(@dir) # remove testing directory
+#        
+#      end # teardown
+#        
+#      should "return false if no commit was made" do
+#        
+#        assert !@repo.commit_all('Test commit.')
+#        
+#      end # should "return false if no commit was made"
+#      
+#      should "return git lib string if successful" do
+#        
+#        file = File.open("#{@dir}/testfile", 'w')
+#        file.syswrite "test content"
+#        file.close
+#        
+#        @repo.add('.')
+#        
+#        assert_equal String, @repo.commit_all('Test commit.').class
+#        
+#      end # should "not raise if successful"
+#      
+#    end # context "Committing all changes"
+#    
+#  end # class Test_options
+#
+#end # module CRTest
