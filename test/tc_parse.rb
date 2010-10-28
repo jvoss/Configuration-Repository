@@ -84,6 +84,10 @@ module CRTest
         assert_equal expected_hash, response
       end # TEST_HOST_STRINGS.each_key
       
+      assert_raises RuntimeError do
+        parse_host_string('blah://host.domain.tld', TEST_OPTIONS)
+      end # assert_raise
+      
     end # def test_parse_host_string
 
   end # class Test_parse
