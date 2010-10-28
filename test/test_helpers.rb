@@ -22,7 +22,7 @@ require 'tmpdir'
 module CRTest
   
   TEST_OPTIONS = { :blacklist    => [],
-                   :log          => 'test.log',
+                   :log          => nil,
                    :regex        => //,
                    :repository   => "#{Dir.tmpdir}/CRtestrepo",
                    :username     => 'testuser',
@@ -57,7 +57,7 @@ module CRTest
         :driver   => nil
       },
     # complex password                                       
-    'user4:pa:s@s4@host4.domain4.tld4=Cisco' => 
+    'user4:pa:s@s4@host4.domain4.tld4=cisco' => 
       { :hostname => 'host4.domain4.tld4',
         :username => 'user4',
         :password => 'pa:s@s4',
