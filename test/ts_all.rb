@@ -18,14 +18,15 @@
 
 require 'test/unit/testsuite'
 
-require 'tc_cr'
-require 'tc_host'
-require 'tc_log'
-require 'tc_options'
-require 'tc_parse'
-require 'tc_repository'
+require 'test/tc_cli'
+require 'test/tc_cr'
+require 'test/tc_dns'
+require 'test/tc_host'
+require 'test/tc_log'
+require 'test/tc_parse'
+require 'test/tc_repository'
 
-require 'vcs/tc_git'
+require 'test/vcs/tc_git'
 
 module CRTest
 
@@ -35,15 +36,15 @@ module CRTest
 
       suite = Test::Unit::TestSuite.new
       
+      suite << Test_cli.suite
       suite << Test_cr.suite
       suite << Test_dns.suite
       suite << Test_host.suite
       suite << Test_log.suite
-      suite << Test_options.suite
       suite << Test_parse.suite
       suite << Test_repository.suite
       
-      suite << Test_git.suite
+#      suite << Test_git.suite
       
       return suite
       

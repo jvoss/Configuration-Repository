@@ -78,10 +78,12 @@ class CR
     # to the log.
     #
     def commit_all(message)
+      msg = nil
       
-      @repo.commit_all(message.to_s)
-      @changed = false
+      msg = @repo.commit_all(message.to_s)
+      @changed = false if msg
       
+      return msg
     end # def commit_all
     
     # Sets the repository's 'user.mail' attribute to the string supplied.
@@ -114,10 +116,10 @@ class CR
       
       @repo = @vcs.init(@directory)
       
-      @changed = true
-      
       config_user_name(@username)
       config_user_email(@email)
+      
+      @changed = true
       
     end # def init
     
