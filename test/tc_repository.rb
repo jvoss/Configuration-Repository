@@ -34,12 +34,12 @@ module CRTest
       
       @host = CR::Host.new(:hostname => 'test.domain.tld', :log => Logger.new(nil))
       
-      options = { :directory => TEST_REPO,
-                  :log       => Logger.new(nil),
-                  :regex     => //,
-                }
+      @options = { :directory => TEST_REPO,
+                   :log       => Logger.new(nil),
+                   :regex     => //,
+                 }
       
-      git_options = options.dup.merge(:type => :git)
+      git_options = @options.dup.merge(:type => :git)
       
       @repositories[:git] = ::CR::Repository.new(git_options)
     end # def setup
@@ -57,13 +57,21 @@ module CRTest
     end # def test_add_all
     
     def test_add_host
+      config = @host.process
+      
       @repositories.each_value do |repo|
+        repo.save_host(@host, config)
         assert repo.add_host(@host)
       end # @repositories.each_value
     end # def test_add_host
     
     def test_changed?
+      config = @host.process
+      
       @repositories.each_value do |repo|
+        repo.save_host(@host, config)
+        repo.add_host(@host)
+        
         assert repo.changed?
         
         repo.commit_all('message')
@@ -73,7 +81,12 @@ module CRTest
     end # def test_changed?
     
     def test_commit_all
+      config = @host.process
+      
       @repositories.each_value do |repo|
+        repo.save_host(@host, config)
+        repo.add_host(@host)
+        
         assert repo.commit_all('test message')
       end # @repositories.each_value
     end # def test_commit_all
@@ -132,6 +145,19 @@ module CRTest
       
       @repositories.each_value do |repo|
         assert repo.save_host(@host, config)
+        
+        # Assert that the program does not crash if a file was nil,
+        # this generates a log message and moves on to the next file
+        assert_nothing_raised do 
+          repo.save_host(@host, {'filename' => nil})
+        end # assert_nothing_raised
+        
+        # Assert that the program does not crash if there was no change to
+        # the file. It generates a log message and move on to the next file.
+        assert_nothing_raised do
+          repo.save_host(@host, config)
+        end # assert_nothing_raised
+        
       end # @repositories.each_value
     end # def test_save_host
     
@@ -142,6 +168,23 @@ module CRTest
         assert repo.update(@host, config)
       end # @repositories.each_value
     end # def test_update
+    
+    # Test private methods
+    
+    def test_initialize_vcs
+      assert_raises ArgumentError do
+        invalid_options = @options.dup.merge(:type => :invalid)
+        
+        ::CR::Repository.new(invalid_options)
+      end # assert_raises ArgumentError
+    end # def test_initialize_vcs
+    
+    def test_validate_repository
+      # Assert that an exception is raised when no repository directory is given
+      assert_raises ArgumentError do
+        ::CR::Repository.new()
+      end # assert_raises ArgumentError
+    end # def test_validate_repository
     
   end # class Test_repository
   

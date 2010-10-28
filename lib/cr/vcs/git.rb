@@ -60,7 +60,7 @@ class CR
           # TODO provide some useful information about why commit was not needed
           # stub - catches when a commit is not necessary (need to confirm that
           # it will still catch other errors
-          CR.log.debug "no commit needed -- skipped"
+#          CR.log.debug "no commit needed -- skipped"
           
           false # Return false due to no commit made
           
