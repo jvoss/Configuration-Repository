@@ -24,6 +24,11 @@ module CRTest
     
     class Host < ::CR::Host
       
+      def config
+        super # ensure super method is executed
+        return { 'testfile' => ['test contents\r\n'] }
+      end # def config
+      
       # Overwrite process method to bypass attempts to connect to a real device.
       #
       def process

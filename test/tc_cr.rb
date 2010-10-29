@@ -20,6 +20,8 @@ require 'rubygems'
 require 'logger'
 require 'test/unit'
 require 'test/test_helpers'
+require 'test/mocks/dns'
+require 'test/mocks/host'
 require 'cr'
 
 module CRTest
@@ -30,7 +32,9 @@ module CRTest
       @cr = ::CR.new( :repository => TEST_OPTIONS[:repository],
                       :log        => Logger.new(nil),
                       :username   => 'username',
-                      :password   => 'password'
+                      :password   => 'password',
+                      :regex      => /(example|domain)/,
+                      :blacklist  => ['blacklisted.domain.tld']
                     )
     end # def setup
     
@@ -45,11 +49,33 @@ module CRTest
       
       assert @cr.add_host(host)
       assert @cr.hosts.include?(host)
+      
+      # Assert no crash on duplicate hosts, non-regex matches, blacklist matches
+      # (log messages occur)
+      #
+      assert_nothing_raised do
+        assert @cr.add_host(host)        # duplicate
+        
+        testhost = CR::Host.new(:hostname => 'host.tld')
+        assert @cr.add_host(testhost)    # non-regex match
+        
+        blacklisted = CR::Host.new(:hostname => 'blacklisted.domain.tld')
+        assert @cr.add_host(blacklisted) # blacklisted
+      end # assert_nothing_raised
+      
     end # def test_add_host
     
     def test_add_host_string
       assert @cr.add_host_string('user:pass@host.domain.tld')
       assert @cr.hosts.include?('host.domain.tld')
+      
+      # Test adding domains
+      assert @cr.add_host_string('example.com', :domain)
+      assert @cr.hosts.include?('foo.example.com')
+      assert @cr.hosts.include?('host.domain.tld')
+      assert @cr.hosts.include?('host1.example.com')
+      assert @cr.hosts.include?('host2.example.com')
+      assert @cr.hosts.include?('host3.example.com')
     end # def test_add_host_string
     
     def test_blacklist
@@ -84,7 +110,7 @@ module CRTest
     def test_import_blacklist
       @cr.import_blacklist("#{File.dirname(__FILE__)}/files/test_blacklist.txt")
       
-      assert_equal 3, @cr.blacklist.size
+      assert_equal 4, @cr.blacklist.size
       assert       @cr.blacklist.include?('hostA.domain.tld')
       assert       @cr.blacklist.include?('hostB.domain.tld')
       assert       @cr.blacklist.include?('hostC.domain.tld')
@@ -103,7 +129,23 @@ module CRTest
     end # def test_import_file
     
     def test_process_all
-      assert false
+      snmp_options = { :Port      => 10161,
+                       :Community => 'ppuuubllicc',
+                       :Version   => :SNMPv1,
+                       :Timeout   => 7,
+                       :Retries   => 1 }
+      
+      test_options = { :hostname     => 'host.domain.tld',
+                       :username     => 'username',
+                       :password     => 'password',
+                       :log          => Logger.new(nil),
+                       :snmp_options => snmp_options
+                      }
+      
+      host = CR::Host.new(test_options)
+      @cr.add_host(host)
+      
+      assert @cr.process_all
     end # def test_process_all
     
     def test_repository

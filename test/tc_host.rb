@@ -53,9 +53,10 @@ module CRTest
     end # def test_comparable
     
     def test_config
-      # Assert nil is returned because a driver has not been loaded 
+      # Assert mock config is returned because a driver has not been loaded 
       # and therefor, overwritten.
-      assert_nil @host.config
+      assert !@host.config.nil?
+      assert @host.config.kind_of?(Hash)
     end # def test_config
     
     def test_driver
@@ -85,7 +86,7 @@ module CRTest
       @host.add_observer(observer)
       @host.process
       
-      assert_nil   observer.config
+      assert       !observer.config.nil?
       assert_equal @host, observer.hostobj
     end # def test_process
     
