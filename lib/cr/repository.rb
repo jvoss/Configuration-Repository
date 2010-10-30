@@ -25,6 +25,8 @@ class CR
   
   class Repository
     
+    attr_reader :directory, :regex
+    
     # Create a new repository object.
     #
     #==Example

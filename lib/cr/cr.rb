@@ -28,7 +28,7 @@ class CR
   extend  Cli
   include Parsing
   
-  attr_reader :blacklist, :hosts, :repository
+  attr_reader :blacklist, :hosts, :log, :repository
   
   def initialize(options = {}) 
     
@@ -140,6 +140,8 @@ class CR
   # Imports a blacklist txt file with a hostname per line
   #
   def import_blacklist(filename)
+    
+    @blacklist = [] unless @blacklist.is_a?(Array)
     
     parse_txt_file(filename).each do |host_string|
       @blacklist.push(host_string[0]) unless @blacklist.include?(host_string)
