@@ -16,7 +16,9 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'snmp'
 require 'cr/constants'
+require 'cr/host'
 require 'cr/log'
 
 class CR
@@ -34,13 +36,13 @@ class CR
       
       if err_object.is_a? Host::NonFatalError
           
-        CR.log.error "NonFatalError: #{host_object.hostname} - #{err_object} -- skipping"
+        host_object.log.error "NonFatalError: #{host_object.hostname} - #{err_object} -- skipping"
         
       end # if klass.is_a? Host::NonFatalError
       
       if err_object.is_a? SNMP::RequestTimeout
         
-        CR.log.error "SNMP timeout: #{host_object.hostname} -- skipping"
+        host_object.log.error "SNMP timeout: #{host_object.hostname} -- skipping"
         
       end # if klass.is_a? SNMP::RequestTimeout
       
