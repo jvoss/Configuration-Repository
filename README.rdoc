@@ -16,7 +16,6 @@ desired information from the host.
 * Repository file structure determined by custom Regex
 * Detect device type (Cisco, etc) via SNMP
 * Extendable with additional host type classes
-* Planned support for multiple version control systems (currently using Git)
 
 == Requirements
 
@@ -28,7 +27,6 @@ The following gems are required to use Configuration Repository:
 * net-ssh >= 2.0.23
 * rake
 * saikuro_treemap (for ccn metrics)
-* shoulda (for testing)
 * snmp
 
 Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
@@ -78,17 +76,22 @@ with varying credentials.
 
 	<host string>,<snmp community>,<snmp version>,<snmp port>,<snmp timeout>,<snmp retries>
 
-===Host Strings:
+===Host Strings (URI):
 
+Supports URIs beginning with convene:// or left omitted.
+
+====Examples:
+	convene://user:pass@device.domain.tld?driver=cisco
+  
 	<username>:<password>@<hostname or domain>
 	
 Username and password are optional. Omit '@' when listing only host or domain:
 
 	user:password@host.domain.tld or host.domain.tld
 
-Specify a driver with '=' and skip SNMP finger printing in any host string:
+Specify a driver in query notation and skip SNMP finger printing in any host string:
 
-	host.domain.tld=Cisco
+	host.domain.tld?driver=Cisco
 
 == Copyright
 
