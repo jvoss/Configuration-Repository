@@ -23,6 +23,7 @@ require 'test/test_helpers'
 require 'cr/host'
 require 'test/mocks/host'
 require 'test/mocks/observer'
+require 'test/mocks/snmp'
 
 module CRTest
   
@@ -108,6 +109,14 @@ module CRTest
       assert @host.respond_to?(:username)
       assert_equal @test_options[:username], @host.username
     end # def test_username
+    
+    def test__snmp_fingerprint
+      assert_nothing_raised do
+        @host.send(:_snmp_fingerprint)
+      end # assert_nothing_raised
+      
+      assert_equal ::CR::Host::Cisco, @host.driver
+    end # def test__snmp_fingerprint
         
   end # class Test_host
   
