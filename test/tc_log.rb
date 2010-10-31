@@ -27,11 +27,7 @@ module CRTest
   class Test_log < Test::Unit::TestCase
     
     def setup
-      @cr = ::CR.new( :repository => TEST_OPTIONS[:repository],
-                      :log        => Logger.new(nil),
-                      :username   => 'username',
-                      :password   => 'password'
-                  )
+      @cr = ::CR.new(:repository => TEST_OPTIONS[:repository])
     end # def setup
     
     def teardown
@@ -42,6 +38,12 @@ module CRTest
     
     def test_initialize_log
       assert @cr.respond_to?(:log)
+    
+      # Logging is set to STDOUT by default, filename == nil
+      assert_equal nil, @cr.log.instance_variable_get(:@filename)
+      assert_equal Logger::DEBUG, @cr.log.level
+      assert_equal "%Y-%m-%d %H:%M:%S", @cr.log.datetime_format
+      
     end # def test_initialize_log
     
   end # class Test_log
