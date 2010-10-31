@@ -136,10 +136,39 @@ module CRTest
     def test_invalid_snmp_version
       @argv = ['--snmp-version', 'INVALID']
       
-      assert_raises ArgumentError do
+      assert_raises SystemExit do
         ::CR.parse_cmdline(@argv)
       end # assert_raises
     end # def test_invalid_snmp_version
+    
+    def test_help
+      argv = ['--help']
+      
+      # Prints out usage and exits
+      assert_raises SystemExit do
+        ::CR.parse_cmdline(argv)
+      end # assert_raises
+    end # def test_help
+    
+    def test_log_verbosity
+      argv = [ '--repository',  TEST_OPTIONS[:repository],
+               '--verbosity',  'debug'
+             ]
+             
+      assert_nothing_raised do
+        cr = ::CR.parse_cmdline(argv)
+        assert_equal nil, cr.log.instance_variable_get(:@filename)
+      end # assert_nothing_raised
+    end # def test_log_verbosity
+    
+    def test_version
+      argv = ['--version']
+      
+      # Prints out version and exits
+      assert_raises SystemExit do
+        ::CR.parse_cmdline(argv)
+      end # assert_raises
+    end # def test_version
     
   end # class Test_options
 

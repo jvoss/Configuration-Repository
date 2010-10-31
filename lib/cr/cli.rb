@@ -17,7 +17,7 @@
 #
 
 require 'optparse'
-#require 'cr/rescue'
+require 'cr/rescue'
 
 class CR
   
@@ -231,9 +231,9 @@ class CR
         # Catch errors when dealing with command line options so that clean
         # error reporting can be done
         # 
-#        rescue => e
-#        
-#          CR::Rescue.catch_fatal(e)
+        rescue => e
+        
+          CR::Rescue.catch_fatal(e)
         
       end # begin
       
