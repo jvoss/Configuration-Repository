@@ -116,8 +116,24 @@ module CRTest
       end # assert_nothing_raised
       
       assert_equal ::CR::Host::Cisco, @host.driver
+      
+      # A log message is generated when a driver cannot be loaded.
+      # It should not terminate the script.
+      #
+      saved_const = ::CR::Host::Cisco
+      
+      assert ::CR::Host.send(:remove_const, :Cisco)
+      
+      assert_nothing_raised do
+        @host.send(:_snmp_fingerprint)
+      end # assert_nothing_raised
+      
+      # Reset the removed constant
+      #
+      assert ::CR::Host.const_set(:Cisco, saved_const)
+      
     end # def test__snmp_fingerprint
-        
+    
   end # class Test_host
   
 end # module CRTest
