@@ -32,8 +32,10 @@ module CRTest
     def setup
       @argv = ['--blacklist',      "#{File.dirname(__FILE__)}/files/test_blacklist.txt",
                '--domain',         "example.com",
+               '--domain-file',    "#{File.dirname(__FILE__)}/files/test_domain.txt",
                '--logfile',        "#{Dir.tmpdir}/crtestlogfile.log",
                '--hostname',       "host.domain.tld",
+               '--hostname-file',  "#{File.dirname(__FILE__)}/files/test_txt.txt",
                '--repository',     TEST_OPTIONS[:repository],
                '--regex',          '/.*/',
                '--username',       'testuser',
@@ -76,11 +78,23 @@ module CRTest
       assert object.hosts.include?('host2.example.com')
       assert object.hosts.include?('host3.example.com')
       
+      # domain file
+      assert object.hosts.include?('foo.domain-test.tld1')
+      assert object.hosts.include?('host1.domain-test.tld1')
+      assert object.hosts.include?('host2.domain-test.tld1')
+      assert object.hosts.include?('host3.domain-test.tld1')
+      
       # log
       assert object.instance_variable_get(:@log).is_a?(Logger)
       
       # hostname
       assert object.hosts.include?('host.domain.tld')
+      
+      # hostname file
+      assert object.hosts.include?('host1.domain1.tld1')
+      assert object.hosts.include?('host2.domain2.tld2')
+      assert object.hosts.include?('host3.domain3.tld3')
+      assert object.hosts.include?('host4.domain4.tld4')
       
       # repository
       assert_equal TEST_OPTIONS[:repository], object.repository.directory

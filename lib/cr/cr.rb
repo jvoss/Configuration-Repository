@@ -79,8 +79,6 @@ class CR
   #
   def add_host_string(host_string, type = :host, snmp_options = {})
     
-    return import_file($1, type) if host_string.match(/file:(.*)/)
-    
     host_options = @default_host_options.dup
     
     host_options[:snmp_options] = snmp_options unless snmp_options.empty?

@@ -27,27 +27,30 @@ class CR
     # host objects and an options hash used throughout CR.
     #
     # ===Command line options:
-    #   Usage: cr.rb -r REPOSITORY [OPTIONS]
-    #     -b, --blacklist FILENAME         
-    #     -d, --domain DOMAIN              Domain or file:<filename> (can be multiple)
-    #     -l, --logfile FILENAME           Log output file
-    #     -n, --hostname HOSTNAME          Hostname or file:<filename> (can be multiple)
-    #     -r, --repository REPOSITORY      Repository directory
-    #     -x, --regex REGEX                Regular expression
-    #     -u, --username USERNAME          Default device username
-    #     -p, --password PASSWORD          Default device password
-    #         --verbosity LEVEL            Verbose level [fatal|error|warn|info|debug]
+    #  Usage: cr.rb -r REPOSITORY [OPTIONS]
+    #    -b, --blacklist FILENAME         File containing blacklisted hosts
+    #    -d, --domain DOMAIN              Domain name (can be multiple)
+    #    -D, --domain-file FILENAME       Filename of domain URIs
+    #    -l, --logfile FILENAME           Log output file
+    #    -n, --hostname HOSTNAME          Hostname (can be multiple)
+    #    -N, --hostname-file FILENAME     Filename of hostname URIs
+    #    -r, --repository REPOSITORY      Repository directory
+    #    -x, --regex REGEX                Regular expression
+    #    -u, --username USERNAME          Default device username
+    #    -p, --password PASSWORD          Default device password
+    #        --verbosity LEVEL            Verbose level [fatal|error|warn|info|debug]
     #
-    #     SNMP Options:
-    #         --snmp-community COMMUNITY   Community string (default: public)
-    #         --snmp-port PORT             Port (default: 161)
-    #         --snmp-retries VALUE         Retries (default: 2)
-    #         --snmp-timeout VALUE         Timeout in seconds (default: 3)
-    #         --snmp-version VERSION       Version (default: 2c)
     #
-    #     Other:
-    #     -h, --help                       Show this message
-    #     -v, --version                    Show version
+    #    SNMP Options:
+    #            --snmp-community COMMUNITY   Community string (default: public)
+    #            --snmp-port PORT             Port (default: 161)
+    #            --snmp-retries VALUE         Retries (default: 2)
+    #            --snmp-timeout VALUE         Timeout in seconds (default: 3)
+    #            --snmp-version VERSION       Version (default: 2c)
+    #
+    #    Other:
+    #    -h, --help                       Show this message
+    #    -v, --version                    Show version
     #
     # ===Examples
     #
@@ -63,10 +66,10 @@ class CR
     #       -d user2:pass2@domain2.tld
     # 
     # Run against a txt file of host strings containing hosts:
-    #     cr.rb -r /path/to/repository -n file:hostfile.txt -u user -p pass
+    #     cr.rb -r /path/to/repository -N hostfile.txt -u user -p pass
     #
     # Run against a CSV file of host strings containing domains:
-    #     cr.rb -r /path/to/repository -d file:domainfile.csv -u user -p pass
+    #     cr.rb -r /path/to/repository -D domainfile.csv -u user -p pass
     #
     # Usernames and passwords can also be specified as part of the host string
     # within either file type allowing for greater flexiblility in environments
@@ -77,7 +80,9 @@ class CR
       options = {}
       options[:blacklist]    = []
       options[:domain]       = []
+      options[:domain_files] = []
       options[:host]         = []
+      options[:host_files]   = []
       options[:log]          = nil
       options[:regex]        = //
       options[:username]     = nil
@@ -94,8 +99,12 @@ class CR
             options[:blacklist] = b
           end # opts.on
           
-          opts.on('-d', '--domain DOMAIN', 'Domain or file:<filename> (can be multiple)') do |d|
+          opts.on('-d', '--domain DOMAIN', 'Domain name (can be multiple)') do |d|
             options[:domain].push(d)
+          end # opts.on
+          
+          opts.on('-D', '--domain-file FILENAME', String, 'Filename of domain URIs') do |file|
+            options[:domain_files].push(file)
           end # opts.on
           
           opts.on("-l", '--logfile FILENAME', "Log output file") do |l|
@@ -103,8 +112,12 @@ class CR
             options[:log].datetime_format = "%Y-%m-%d %H:%M:%S"
           end # opts.on
           
-          opts.on('-n', '--hostname HOSTNAME', "Hostname or file:<filename> (can be multiple)") do |h|
+          opts.on('-n', '--hostname HOSTNAME', "Hostname (can be multiple)") do |h|
             options[:host].push(h)
+          end # opts.on
+          
+          opts.on('-N', '--hostname-file FILENAME', String, 'Filename of hostname URIs') do |file|
+            options[:host_files].push(file)  
           end # opts.on
           
           opts.on('-r', '--repository REPOSITORY', 'Repository directory') do |r|
@@ -201,11 +214,19 @@ class CR
         
         options[:host].each do |host_string|
           cr.add_host_string(host_string)
-        end
+        end # options[:host].each
+        
+        options[:host_files].each do |filename|
+          cr.import_file(filename, :host)
+        end # options[:host_files].each
         
         options[:domain].each do |host_string|
           cr.add_host_string(host_string, :domain)
-        end
+        end # options[:domain].each
+        
+        options[:domain_files].each do |filename|
+          cr.import_file(filename, :domain)
+        end # options[:domain_files]
         
         # Catch errors when dealing with command line options so that clean
         # error reporting can be done
