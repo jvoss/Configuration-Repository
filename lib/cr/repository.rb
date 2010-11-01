@@ -146,7 +146,7 @@ class CR
       begin
         File.open("#{@directory}/#{directory}/#{filename}", 'r') do |file|
           file.each_line do |line|
-            contents.push(line)
+            contents.push(line.chomp)
           end
         end # File.open
       rescue Errno::ENOENT # Catch missing files
@@ -249,7 +249,7 @@ class CR
       file = File.open("#{@directory}/#{sub_dir}/#{filename}", 'w')
       
       contents.each do |line|
-        file.syswrite line
+        file.syswrite line.chomp << "\n"
       end # contents.each
     
       file.close
