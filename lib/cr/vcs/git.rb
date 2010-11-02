@@ -57,11 +57,8 @@ class CR
         # Installing Git-1.7.1-preview20100612.exe fixes this issue.  
         rescue ::Git::GitExecuteError
         
-          # TODO provide some useful information about why commit was not needed
-          # stub - catches when a commit is not necessary (need to confirm that
-          # it will still catch other errors
-#          CR.log.debug "no commit needed -- skipped"
-          
+          # Useful information about why commit was not needed is provided by
+          # the git library Logger when verbosity for Convene is set to DEBUG
           false # Return false due to no commit made
           
         end # begin
