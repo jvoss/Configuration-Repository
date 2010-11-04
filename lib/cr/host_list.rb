@@ -26,7 +26,7 @@ class CR
     end # def initialize
     
     def [](*idx)
-      @position = idx[1].nil? ? (idx[0].kind_of?(Range) ? idx[0].last : idx[0]) \
+      @position = idx[1].nil? ? ( idx[0].kind_of?(Range) ? idx[0].last : idx[0] ) \
                               : idx.sum
       super *idx
     end # def [](idx)
@@ -44,12 +44,12 @@ class CR
     end # def each
     
     def last(n = nil)
-      @position = n.nil? ? self.index(super()) : self.size - n
+      @position = n.nil? ? self.index(super()) : self.index(super(n).first)
       n.nil? ? super() : super(n)
     end # def last
     
     def next
-      @position += 1 unless @position > self.size
+      @position += 1 unless @position >= self.size
       self[@position]
     end # def next
     
