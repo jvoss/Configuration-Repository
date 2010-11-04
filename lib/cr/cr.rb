@@ -173,7 +173,7 @@ class CR
   
     while @host_idx < @hosts.size
       @hosts[@host_idx].process
-      @host_idx = @host_idx + 1
+      @host_idx += 1
     end # while
     
     @log.info "Committing changes..."
