@@ -19,6 +19,7 @@
 require 'cr/cli'
 require 'cr/dns'
 require 'cr/host'
+require 'cr/host_list'
 require 'cr/log'
 require 'cr/parse'
 require 'cr/repository'
@@ -34,7 +35,8 @@ class CR
   def initialize(options = {}) 
     
     @blacklist = options[:blacklist] || [] # array of blacklisted hostnames
-    @hosts     = []
+    @hosts     = HostList.new
+    @host_idx  = 0
     @log       = options[:log]       || _initialize_log
     @regex     = options[:regex]     || //
     
@@ -168,13 +170,13 @@ class CR
   def process_all(commit_msg = nil)
     
     commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
-    
-    @host_idx ||= 0
   
-    while @host_idx < @hosts.size
-      @hosts[@host_idx].process
-      @host_idx += 1
-    end # while
+#    while @host_idx < @hosts.size
+#      @hosts[@host_idx].process
+#      @host_idx += 1
+#    end # while
+
+    @hosts.each{|host| host.process}
     
     @log.info "Committing changes..."
     

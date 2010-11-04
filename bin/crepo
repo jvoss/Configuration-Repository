@@ -27,6 +27,6 @@ begin
   cr.process_all
 rescue CR::HostError => e
   cr.log.warn "Error processing host: #{e.message}"
-  cr.host_idx += 1
+  cr.hosts.next
   retry
 end
