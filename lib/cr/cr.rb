@@ -49,6 +49,9 @@ class CR
     
   end # def initialize
   
+  # Adds a host object to the host list. A host is checked to match regex,
+  # not included in the blacklist, and not a duplicate.
+  #
   def add_host(hostobj)
     
     raise "Argument not CR::Host object" unless hostobj.is_a?(CR::Host)
@@ -76,7 +79,7 @@ class CR
   end # def add_host
   
   # Adds a host or domain specified in host string format.
-  # type = :host or type = :domain
+  # type = :host or type = :domain. See parse_host_string.
   #
   def add_host_string(host_string, type = :host, snmp_options = {})
     
