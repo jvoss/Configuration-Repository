@@ -165,9 +165,6 @@ class CR
     def save_host(hostobj, contents={})
       
       raise RepositoryError, "Repository not initialized" unless self.exist?
-#      raise RepositoryError, "Contents hash blank" if contents.nil?
-      # FIXME Fix above raise statement to raise an exception that will not
-      # cause the script to terminate but log through rescue.rb
       
       path = _directory(hostobj)
       
