@@ -28,7 +28,8 @@ class CR
   extend  Cli
   include Parsing
   
-  attr_reader :blacklist, :hosts, :log, :repository
+  attr_accessor :host_idx
+  attr_reader   :blacklist, :hosts, :log, :repository
   
   def initialize(options = {}) 
     
@@ -168,7 +169,12 @@ class CR
     
     commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
     
-    @hosts.each{ |host| host.process }
+    @host_idx ||= 0
+  
+    while @host_idx < @hosts.size
+      @hosts[@host_idx].process
+      @host_idx = @host_idx + 1
+    end # while
     
     @log.info "Committing changes..."
     
