@@ -50,7 +50,7 @@ module CRTest
       assert_nothing_raised do
       
         begin
-          raise ::CR::Host::NonFatalError, 'NonFatal'
+          raise ::CR::HostError, 'NonFatal'
         rescue => error_object
           
           ::CR::Rescue.catch_host(error_object, host)
@@ -59,7 +59,7 @@ module CRTest
       
       end # assert_nothing_raised
       
-      assert error_object.is_a?(::CR::Host::NonFatalError)
+      assert error_object.is_a?(::CR::HostError)
       
       error_object = nil
       

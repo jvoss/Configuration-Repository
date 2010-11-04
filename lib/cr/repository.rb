@@ -18,6 +18,7 @@
 
 require 'ftools'
 require 'logger'
+require 'cr/errors'
 require 'cr/rescue'
 require 'cr/vcs/git'
 
@@ -114,7 +115,7 @@ class CR
     #
     def init
       
-      raise "Repository already initialized -- #{@directory}" if self.exist?
+      raise RepositoryError, "Repository already initialized -- #{@directory}" if self.exist?
       
       @repo = @vcs.init(@directory)
       
@@ -161,10 +162,10 @@ class CR
     # hostname. #config should return a hash with key being a filename and 
     # value being an array containing the configuration.
     #
-    def save_host(hostobj, contents)
+    def save_host(hostobj, contents={})
       
-      raise "Repository not initialized" unless self.exist?
-      raise "Contents hash blank" if contents.nil?
+      raise RepositoryError, "Repository not initialized" unless self.exist?
+#      raise RepositoryError, "Contents hash blank" if contents.nil?
       # FIXME Fix above raise statement to raise an exception that will not
       # cause the script to terminate but log through rescue.rb
       
@@ -225,7 +226,7 @@ class CR
       case @type
         when :git then @vcs = Git
         else
-          raise ArgumentError, "VCS unsupported -- #{@type}"
+          raise RepositoryError, "VCS unsupported -- #{@type}"
       end # case
       
       # Open the repository if it exists or initialize a new one
@@ -263,7 +264,7 @@ class CR
     def _validate_repository(repository)
     
       if repository.nil?
-        raise ArgumentError, 'missing repository directory'
+        raise RepositoryError, 'missing repository directory'
       end
     
     end # _validate_repository

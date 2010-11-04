@@ -16,39 +16,20 @@
 # along with CR. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'snmp'
-require 'cr/constants'
-require 'cr/host'
-require 'cr/errors'
-require 'cr/log'
-
 class CR
+    
+  # CR Errors
+  #
+  # Generic CR exception class.
+  class CRError < StandardError
+  end
   
-  module Rescue
-    
-    def self.catch_fatal(err_object)
-        
-      puts "#{err_object}"
-      exit ARGUMENT_ERROR
-      
-    end # def self.catch_fatal
-    
-    def self.catch_host(err_object, host_object)
-      
-      if err_object.is_a? CR::HostError
-          
-        host_object.log.error "HostError: #{host_object.hostname} - #{err_object} -- skipping"
-        
-      end # if klass.is_a? Host::NonFatalError
-      
-      if err_object.is_a? SNMP::RequestTimeout
-        
-        host_object.log.error "SNMP timeout: #{host_object.hostname} -- skipping"
-        
-      end # if klass.is_a? SNMP::RequestTimeout
-      
-    end # def self.catch_host
-    
-  end # module Recsue
+  # Generic Host exception class.
+  class HostError < CRError
+  end
+  
+  # Generic Repository exception class.
+  class RepositoryError < CRError
+  end
   
 end # class CR

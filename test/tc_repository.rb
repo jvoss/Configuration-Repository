@@ -21,6 +21,7 @@ require 'fileutils'
 require 'test/unit'
 require 'test/mocks/host'
 require 'test/test_helpers'
+require 'cr/errors'
 require 'cr/repository'
 
 module CRTest
@@ -116,7 +117,7 @@ module CRTest
     def test_init
       @repositories.each_value do |repo|
         # Repo already initialized
-        assert_raises RuntimeError do
+        assert_raises ::CR::RepositoryError do
           repo.init
         end # assert_raises
       end # @repositories.each_value
@@ -172,7 +173,7 @@ module CRTest
     # Test private methods
     
     def test_initialize_vcs
-      assert_raises ArgumentError do
+      assert_raises ::CR::RepositoryError do
         invalid_options = @options.dup.merge(:type => :invalid)
         
         ::CR::Repository.new(invalid_options)
@@ -181,7 +182,7 @@ module CRTest
     
     def test_validate_repository
       # Assert that an exception is raised when no repository directory is given
-      assert_raises ArgumentError do
+      assert_raises ::CR::RepositoryError do
         ::CR::Repository.new()
       end # assert_raises ArgumentError
     end # def test_validate_repository

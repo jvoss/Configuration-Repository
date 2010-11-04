@@ -21,6 +21,7 @@ require 'logger'
 require 'observer'
 require 'snmp'
 require 'cr/constants'
+require 'cr/errors'
 
 class CR
   
@@ -28,9 +29,6 @@ class CR
     
     include Comparable
     include Observable
-    
-    # TODO consider renaming the error handling for Host
-    class NonFatalError < StandardError; end
     
     SNMP_DEFAULT_COMMUNITY = 'public'
     SNMP_DEFAULT_PORT      = 161
@@ -84,12 +82,12 @@ class CR
     end # def ==
     
     # This method gets overwritten from loaded drivers by extend.
-    # Defaults to nil in the event the driver is not loaded properly
+    # Defaults to empty hash in the event the driver is not loaded properly
     # and a call is made to retrieve a configuration.
     #
     def config
       
-      nil
+      return {}
       
     end # def config
     
@@ -100,6 +98,8 @@ class CR
       @log.info "Processing host: #{@hostname}"
       
       _snmp_fingerprint if @driver.nil?
+      
+      raise HostError, "No driver loaded" if @driver.nil?
       
       changed # indicate a change has occurred 
       notify_observers(self, config)
@@ -137,8 +137,7 @@ class CR
         filename = location if File.exist?(location)
       end # locations.each
       
-      # TODO Name an error class with raising this exception?
-      raise "Unable to locate driver #{driver}.rb" if filename.nil?
+      raise HostError, "Unable to locate driver #{driver}.rb" if filename.nil?
       
       @log.debug "Opening driver: #{filename}"
       require filename
