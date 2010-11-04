@@ -29,14 +29,12 @@ class CR
   extend  Cli
   include Parsing
   
-  attr_accessor :host_idx
   attr_reader   :blacklist, :hosts, :log, :repository
   
   def initialize(options = {}) 
     
     @blacklist = options[:blacklist] || [] # array of blacklisted hostnames
     @hosts     = HostList.new
-    @host_idx  = 0
     @log       = options[:log]       || _initialize_log
     @regex     = options[:regex]     || //
     
@@ -170,11 +168,6 @@ class CR
   def process_all(commit_msg = nil)
     
     commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
-  
-#    while @host_idx < @hosts.size
-#      @hosts[@host_idx].process
-#      @host_idx += 1
-#    end # while
 
     @hosts.each{|host| host.process}
     
