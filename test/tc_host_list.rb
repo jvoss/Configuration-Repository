@@ -48,8 +48,8 @@ module CRTest
       
       next_index = @array.index(@array.first) + 1
       
-      assert_equal @array[next_index], @host_list.next
       assert_equal nil, @host_list.prev
+      assert_equal @array[next_index], @host_list.next
     end # def test_first
     
     def test_each

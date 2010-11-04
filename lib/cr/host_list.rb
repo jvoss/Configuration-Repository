@@ -49,15 +49,17 @@ class CR
     end # def last
     
     def next
-      @position += 1 unless @position >= self.size
+      @position += 1 unless @position > self.size
       self[@position]
     end # def next
     
     def prev
       object = nil
       
+      previous_position = @position
+      
       @position -= 1 if @position > 0
-      object = self.fetch(@position) unless self.to_a[@position] == self.to_a[0]
+      object = self.fetch(@position) unless previous_position == 0
       
       return object
     end # def last
