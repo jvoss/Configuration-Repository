@@ -31,6 +31,22 @@ class CR
   
   attr_reader   :blacklist, :hosts, :log, :repository
   
+  # Creates a new CR object.
+  #
+  #===Options
+  # :blacklist    <- An array of blacklisted hostnames.
+  # :log          <- Logger object or nil for default logging.
+  # :regex        <- A Regexp that defines hosts to match and repository structure
+  #                  or nil. Overall match permits host, each submatch determines
+  #                  file hierarchy.
+  # :repository   <- A string containing the directory a repository exists, or 
+  #                  where to create one. This argument is required.                     
+  # :username     <- A string containing the default username to use with each 
+  #                  host object or nil.
+  # :password     <- A string containing the default password to use with each 
+  #                  host object or nil.
+  # :snmp_options <- Ruby SNMP library options hash.
+  #
   def initialize(options = {}) 
     
     @blacklist = options[:blacklist] || [] # array of blacklisted hostnames
