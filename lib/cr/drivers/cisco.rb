@@ -17,6 +17,7 @@
 #
 
 require 'rubygems'
+require 'cr/errors'
 require 'cr/host'
 require 'cr/transport/ssh'
 
@@ -43,13 +44,13 @@ class CR
           case
           
             when e.to_s.include?('could not execute command:')
-              raise Host::NonFatalError, e.to_s
+              raise HostError, e.to_s
           
             when e.is_a?(Net::SSH::AuthenticationFailed)
-              raise Host::NonFatalError, "Authentication Failed"
+              raise HostError, "Authentication Failed"
               
             when e.is_a?(Errno::ECONNREFUSED)
-              raise Host::NonFatalError, e.to_s
+              raise HostError, e.to_s
               
             else
               raise e

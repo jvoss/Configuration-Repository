@@ -17,6 +17,7 @@
 #
 
 require 'cr/host'
+require 'cr/errors'
 require 'cr/transport/telnet'
 
 class CR
@@ -47,7 +48,7 @@ class CR
        
        rescue => e
        
-          raise Host::NonFatalError, e.to_s
+          raise HostError, e.to_s
        
        end # begin
        

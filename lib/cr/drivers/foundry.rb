@@ -17,6 +17,7 @@
 #
 
 require 'cr/host'
+require 'cr/errors'
 require 'cr/transport/ssh'
 
 class CR
@@ -66,10 +67,10 @@ class CR
           case
           
             when e.to_s.include?('could not execute command:')
-              raise Host::NonFatalError, e.to_s
+              raise HostError, e.to_s
               
             when e.is_a?(Errno::ECONNREFUSED)
-              raise Host::NonFatalError, e.to_s
+              raise HostError, e.to_s
               
             else
               raise e
@@ -89,7 +90,7 @@ class CR
         # Raise if running_config.empty? this would indicate there was a terrible
         # failure stepping through the session.
         if running_config.empty?
-          raise Host::NonFatalError, "running-config came back empty!"
+          raise HostError, "running-config came back empty!"
         end
         
         return {'running_config' => running_config}
