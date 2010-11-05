@@ -92,12 +92,12 @@ module CRTest
       assert_equal @array[index - 1], @host_list.prev
     end # def test_prev
     
-    def test_reset
+    def test_rewind
       @host_list[4]
-      @host_list.reset
+      @host_list.rewind
       
       assert_equal 0, @host_list.instance_variable_get(:@position)
-    end # def test_reset
+    end # def test_rewind
     
   end # class Test_host_list
   
