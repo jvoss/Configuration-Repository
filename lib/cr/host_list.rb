@@ -21,55 +21,81 @@ class CR
   class HostList < Array
 
     def initialize(*args)
+
       @position = 0
+
       super(*args)
+
     end # def initialize
-    
-    def [](*idx)
-      @position = idx[1].nil? ? ( idx[0].kind_of?(Range) ? idx[0].last : idx[0] ) \
-                              : idx.sum
-      super *idx
-    end # def [](idx)
-    
+
+    def [](*args)
+
+      p1 = args[0] # index, start, or range 
+      p2 = args[1] # length
+
+      @position = p2.nil? ? ( p1.kind_of?(Range) ? p1.last   \
+                                                 : p1      ) \
+                          : args.sum
+
+      super(*args)
+
+    end # def []
+
     def first(n = nil)
-      @position = n.nil? ? 0 : self.index(self[n - 1])
-      n.nil? ? super() : super(n)
+
+      @position = n.nil? ? 0     \
+                         : n - 1 
+
+      n.nil? ? super()  \
+             : super(n)
+
     end # def first
        
     def each
-      while @position < self.size
+
+      for @position in @position...self.size do
+
         yield self[@position]
-        @position += 1
-      end
+
+      end # for
+
     end # def each
-    
+
     def last(n = nil)
-      @position = n.nil? ? self.index(super()) : self.index(super(n).first)
-      n.nil? ? super() : super(n)
+
+      @position = n.nil? ? self.index( super() )        \
+                         : self.index( super(n).first )
+
+      n.nil? ? super()  \
+             : super(n)
+
     end # def last
-    
+
     def next
+
       @position += 1 unless @position >= self.size
+
       self[@position]
+
     end # def next
-    
+
     def prev
-      object = nil
-      
-      previous_position = @position
-      
+
       @position -= 1 if @position > 0
-      object = self.fetch(@position) unless previous_position == 0
-      
-      return object
+
+      @position != 0 ? self.fetch(@position) \
+                     : nil
+
     end # def last
-    
+
     # Resets the host list position to 0, the beginning of the list.
     #
-    def reset
+    def rewind
+
       @position = 0
-    end # def resets
-    
+
+    end # def rewind
+
   end # class HostList
-  
+
 end # class CR
