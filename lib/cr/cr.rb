@@ -132,7 +132,7 @@ class CR
   #
   def default_password=(password)
     @default_host_options[:password] = password
-  end # def default_password
+  end # def default_password=
   
   # Returns the default username for new hosts
   #
@@ -144,7 +144,7 @@ class CR
   #
   def default_username=(username)
     @default_host_options[:username] = username
-  end # def default_username
+  end # def default_username=
 
   # Deletes a host from consideration. Argument can be any CR::Host comparable. 
   # I.e. hostname or Host object.
@@ -153,7 +153,7 @@ class CR
     
     @log.info "Removed host: #{host}" if @hosts.delete(host)
     
-  end # delete_host!
+  end # delete_host
   
   # Imports a blacklist txt file with a hostname per line
   #
