@@ -167,8 +167,11 @@ class CR
         
       rescue => e
 
-        @log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
-        @log.debug e
+        if e.is_a?(SNMP::RequestTimeout)
+          @log.warn "Host #{@hostname} is not responding via SNMP"
+        else 
+          @log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
+        end # e.is_a?
 
       end # begin
       
