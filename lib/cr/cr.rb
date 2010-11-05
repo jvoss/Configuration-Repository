@@ -26,7 +26,7 @@ require 'cr/repository'
 
 class CR
   
-  extend  Cli
+  extend  CLI
   include Parsing
   
   attr_reader   :blacklist, :hosts, :log, :repository

@@ -21,7 +21,7 @@ require 'cr/rescue'
 
 class CR
   
-  module Cli
+  module CLI
   
     # Parses command-line options using OptionParser and returns an array of
     # host objects and an options hash used throughout CR.
@@ -241,6 +241,6 @@ class CR
       
     end # def self.parse_cmdline
   
-  end # module Cli
+  end # module CLI
   
 end # class CR
