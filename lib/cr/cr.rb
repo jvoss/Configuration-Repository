@@ -47,6 +47,9 @@ class CR
   #                  host object or nil.
   # :snmp_options <- Ruby SNMP library options hash.
   #
+  #===Example
+  # CR.new(:regex => '/path/to/repository')
+  #
   def initialize(options = {}) 
     
     @blacklist = options[:blacklist] || [] # array of blacklisted hostnames
