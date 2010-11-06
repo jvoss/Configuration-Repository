@@ -130,7 +130,7 @@ class CR
       driver   = driver.downcase
       filename = nil
       
-      locations = [ driver,
+      locations = [ driver + '.rb',
                     HOME_DIR + "/drivers/#{driver}.rb",
                     BASE_DIR + "/drivers/#{driver}.rb"
                   ]
