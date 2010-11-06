@@ -84,7 +84,7 @@ module CRTest
         assert_equal expected_hash, response
       end # TEST_HOST_STRINGS.each_key
       
-      assert_raises RuntimeError do
+      assert_raises ::CR::CRError do
         parse_host_string('blah://host.domain.tld', TEST_OPTIONS)
       end # assert_raise
       
