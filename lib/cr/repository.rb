@@ -74,31 +74,39 @@ class CR
     # committed.
     #
     def changed?
+      
       @changed
+      
     end # def changed?
     
     # Commits all files in the repository with the commit message applied
     # to the log.
     #
     def commit_all(message)
+      
       msg = nil
       
       msg = @repo.commit_all(message.to_s)
       @changed = false if msg
       
       return msg
+      
     end # def commit_all
     
     # Sets the repository's 'user.mail' attribute to the string supplied.
     #
     def config_user_email(newemail)
+      
       @repo.config('user.email', newemail.to_s)
+      
     end # def config_user_email
     
     # Sets the repository's 'user.name' attribute to the string supplied.
     #
     def config_user_name(newname)
+      
       @repo.config('user.name', newname.to_s)
+      
     end # def config_user_name
     
     # Checks to see if a repository exists at the directory specified 
@@ -145,14 +153,18 @@ class CR
       directory = _directory(hostobj)
       
       begin
+        
         File.open("#{@directory}/#{directory}/#{filename}", 'r') do |file|
           file.each_line do |line|
             contents.push(line.chomp)
           end
         end # File.open
+        
       rescue Errno::ENOENT # Catch missing files
+        
         contents = []
-      end
+        
+      end # begin
       
       return contents
       
@@ -197,8 +209,10 @@ class CR
     # pulled from hosts.
     #
     def update(hostobj, config)
+      
       save_host(hostobj, config)
       add_host(hostobj)
+      
     end # def update
     
     private
@@ -221,9 +235,13 @@ class CR
     def _initialize_vcs
       
       case @type
-        when :git then @vcs = Git
+        
+        when :git 
+          @vcs = Git
+          
         else
           raise RepositoryError, "VCS unsupported -- #{@type}"
+          
       end # case
       
       # Open the repository if it exists or initialize a new one
@@ -260,9 +278,7 @@ class CR
     
     def _validate_repository(repository)
     
-      if repository.nil?
-        raise RepositoryError, 'missing repository directory'
-      end
+      raise RepositoryError, 'missing repository directory' if repository.nil?
     
     end # _validate_repository
     

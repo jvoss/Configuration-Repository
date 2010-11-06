@@ -113,8 +113,10 @@ class CR
       DNS.instance_variable_set(:@log, @log)
       
       DNS.axfr(host_options[:hostname]).each do |hostname|
+        
         host_options = host_options.merge(:hostname => hostname)
         add_host CR::Host.new(host_options)
+        
       end # DNS.axfr
       
     else
@@ -128,25 +130,33 @@ class CR
   # Returns the default password for new hosts
   #
   def default_password
+    
     @default_host_options[:password]
+    
   end # def default_password
   
   # Sets the default password for new hosts
   #
   def default_password=(password)
+    
     @default_host_options[:password] = password
+    
   end # def default_password=
   
   # Returns the default username for new hosts
   #
   def default_username
+    
     @default_host_options[:username]
+    
   end # def default_username
   
   # Sets the default username for new hosts
   #
   def default_username=(username)
+    
     @default_host_options[:username] = username
+    
   end # def default_username=
 
   # Deletes a host from consideration. Argument can be any CR::Host comparable. 
@@ -165,8 +175,10 @@ class CR
     @blacklist = [] unless @blacklist.is_a?(Array)
     
     parse_txt_file(filename).each do |host_string|
+      
       @blacklist.push(host_string[0]) unless @blacklist.include?(host_string)
-    end
+      
+    end # parse_txt_file
     
   end # def import_blacklist
   
@@ -174,6 +186,7 @@ class CR
   # :domain or :host
   #
   def import_file(filename, type)
+    
     snmp_options = @default_host_options[:snmp_options]
    
     parse_file(filename, snmp_options).each do |host_string, options|
@@ -193,11 +206,11 @@ class CR
 
     @hosts.each{|host| host.process}
     
-    @log.info "Committing changes..."
+    @log.info "Committing changes to repository"
     
     @repository.commit_all(commit_msg) if @repository.changed?
     
-    @log.info "Complete"
+    @log.info "Completed processing all hosts"
     
   end # def process_all
   

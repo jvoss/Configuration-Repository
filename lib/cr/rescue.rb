@@ -39,7 +39,7 @@ class CR
           
         host_object.log.error "HostError: #{host_object.hostname} - #{err_object} -- skipping"
         
-      end # if klass.is_a? Host::NonFatalError
+      end # if err_object.is_a? CR::HostError
       
       if err_object.is_a? SNMP::RequestTimeout
         

@@ -109,9 +109,8 @@ class CR
       
       host_string, username, password = _validate_host_string(host_string, options)
       
-      # Prepend convene:// if needed
       if host_string.match(/^((\w+):\/\/)/)
-        raise "Unknown scheme #{$2}" unless $2 == 'convene'
+        raise CRError, "Unknown scheme #{$2}" unless $2 == 'convene'
       else
         host_string = "convene://#{host_string}"
       end # unless host_string.match

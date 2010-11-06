@@ -22,14 +22,16 @@ class CR
   #
   # Generic CR exception class.
   class CRError < StandardError
-  end
+  end # class CRError
   
   # Generic Host exception class.
+  #
   class HostError < CRError
-  end
+  end # class HostError
   
   # Generic Repository exception class.
+  #
   class RepositoryError < CRError
-  end
+  end # class RepositoryError
   
 end # class CR
