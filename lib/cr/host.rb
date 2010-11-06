@@ -69,16 +69,14 @@ class CR
       @password     = options[:password]
       @snmp_options = options[:snmp_options] || {}
       
-      if options[:driver].nil?
-        _snmp_initialize
-      else
-        _load_driver(options[:driver])
-      end # driver.nil?
+      options[:driver].nil? ? _snmp_initialize : _load_driver(options[:driver])
       
     end # def initialize
     
     def ==(host)
+      
       @hostname == host.to_s
+      
     end # def ==
     
     # This method gets overwritten from loaded drivers by extend.
@@ -95,6 +93,7 @@ class CR
     # config method as extended by finger printing or driver loading.
     #
     def process
+      
       @log.info "Processing host: #{@hostname}"
       
       _snmp_fingerprint if @driver.nil?
@@ -102,6 +101,7 @@ class CR
       raise HostError, "No driver loaded" if @driver.nil?
       
       changed # indicate a change has occurred 
+      
       notify_observers(self, config)
       
     end # def process
@@ -109,7 +109,9 @@ class CR
     # Returns the hostname of the object. Used for comparisons
     #
     def to_s
+      
       @hostname
+      
     end # def to_s
     
     private
@@ -166,12 +168,12 @@ class CR
         _load_driver(manufacturer)
         
       rescue => e
-
-        if e.is_a?(SNMP::RequestTimeout)
-          @log.warn "Host #{@hostname} is not responding via SNMP"
-        else 
-          @log.warn "No driver \"CR::Host::#{manufacturer}\" for #{@hostname}"
-        end # e.is_a?
+        
+        true_log_str  = "#{@hostname}: SNMP timeout"
+        false_log_str = "#{@hostname}: No driver #{manufacturer}"
+        
+        e.is_a?(SNMP::RequestTimeout) ? @log.warn(true_log_str) \
+                                      : @log.warn(false_log_str)
 
       end # begin
       
