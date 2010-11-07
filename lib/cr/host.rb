@@ -125,35 +125,40 @@ class CR
     # Driver filenames should be all lowercased. Driver class definitions
     # should have the first letter of the driver capitalized only.
     #
+    # FIXME - Cleanup and simplify _load_driver
+    #
     def _load_driver(driver)
-
+      
       driver   = driver.downcase
       filename = nil
       
-      locations = [ driver + '.rb',
+      locations = [ driver   + '.rb',
                     HOME_DIR + "/drivers/#{driver}.rb",
-                    BASE_DIR + "/drivers/#{driver}.rb"
-                  ]
+                    BASE_DIR + "/drivers/#{driver}.rb"  ]
       
       locations.each do |location|
-        filename = location if File.exist?(location)
+        if File.exist?(location)
+          filename = location
+          break # locations.each
+        end # File.exist?
       end # locations.each
       
       raise HostError, "Unable to locate driver #{driver}.rb" if filename.nil?
       
-      @log.debug "Opening driver: #{filename}"
+      @log.debug "Requiring driver source: #{filename}"
       require filename
-
+      
       # Fixup constant name when driver is a direct filename
       driver = driver.match(/(\w*)(\.rb)?/)[1]
-
+      
       @driver = eval(driver.to_s.capitalize)
-      @log.info "Loading \"#{@driver}\" driver"
+
+      @log.info "Extending driver class: #{@driver}"
       extend @driver
       
     end # def _load_driver
     
-    # Detects which type of host to load based on the SNMP repsponce of 
+    # Detects which type of host to load based on the SNMP response of 
     # 'sysDescr'. Extends the proper module from lib/hosts.
     #
     def _snmp_fingerprint
@@ -172,7 +177,7 @@ class CR
         true_log_str  = "#{@hostname}: SNMP timeout"
         false_log_str = "#{@hostname}: No driver #{manufacturer}"
         
-        e.is_a?(SNMP::RequestTimeout) ? @log.warn(true_log_str) \
+        e.is_a?(SNMP::RequestTimeout) ? @log.warn(true_log_str)  \
                                       : @log.warn(false_log_str)
 
       end # begin
