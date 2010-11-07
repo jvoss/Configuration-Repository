@@ -109,6 +109,9 @@ class CR
       
       host_string, username, password = _validate_host_string(host_string, options)
       
+      # Replace any '\' with '/' to match URI spec
+      host_string = host_string.gsub('\\', '/')
+      
       if host_string.match(/^((\w+):\/\/)/)
         raise CRError, "Unknown scheme #{$2}" unless $2 == 'convene'
       else
