@@ -149,7 +149,7 @@ class CR
       require filename
       
       # Fixup constant name when driver is a direct filename
-      driver = driver.match(/(\w*)(\.rb)?/)[1]
+      driver = driver.match(/\/?(\w*)(\.rb)?$/)[1]
       
       @driver = eval(driver.to_s.capitalize)
 
