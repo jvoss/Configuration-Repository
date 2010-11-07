@@ -126,7 +126,7 @@ This would add all hosts that match *.somedomain.tld and store the contents of
 the files under the root repository directory in directories named after the
 hostname of the device.
 
-	-x /.*\.(somedomain.tld)/
+    -x /.*\.(somedomain.tld)/
 
 Will add all hosts in the example above, however the contents would be stored in
 the root repository directory in a directory named "somedomain.tld" then in a 
