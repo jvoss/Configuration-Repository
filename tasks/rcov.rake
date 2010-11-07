@@ -25,7 +25,14 @@ namespace :test do
 
     rcov = 'rcov -Ilib --exclude /gems/,/Library/,/usr/,spec --html'
 
-    system("#{rcov} test/tc_*.rb test/vcs/tc_*.rb")
+    result = system("#{rcov} test/tc_*.rb test/vcs/tc_*.rb")
+
+    if result == false
+
+      puts 'rcov, or one of its dependencies, is not available.'
+      puts 'Install it with: gem install rcov'
+
+    end # if
 
   end # task :coverage
 

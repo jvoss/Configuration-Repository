@@ -21,9 +21,18 @@ namespace :metrics do
   desc 'Generate CCN treemap'
   task :ccn_treemap do
 
-    require 'saikuro_treemap'
+    begin
 
-    SaikuroTreemap.generate_treemap :code_dirs => ['lib']
+      require 'saikuro_treemap'
+
+      SaikuroTreemap.generate_treemap :code_dirs => ['lib']
+
+    rescue LoadError
+
+      puts 'Saikuro treemap, or one of its dependencies, is not available.'
+      puts 'Install it with: gem install saikuro_treemap'
+
+    end # begin
 
   end # task :ccn_treemap
 
