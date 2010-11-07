@@ -27,7 +27,8 @@ class CR
     
     module Cisco
       
-      # Retrieve a device's startup configuration as an array via SSH
+      # Retrieve a device's startup configuration via SSH.
+      # Returns a hash of arrays with the keys being a filename.
       #
       def config
       

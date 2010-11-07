@@ -58,7 +58,8 @@ class CR
         
       end # def self.exec!
       
-      # Opens an interactive shell on the remote device and yeilds
+      # Opens an interactive shell on the remote device and yeilds the channel
+      # and success.
       #
       def open_channel_shell
         

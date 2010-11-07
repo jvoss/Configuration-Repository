@@ -26,7 +26,8 @@ class CR
     
     module Ssg # ScreenOS
       
-      # Retrieve a device's startup configuration as an array via Telnet
+      # Retrieve a device's startup configuration via Telnet.
+      # Returns a hash of arrays with the keys being a filename.
       #
       def config
       
