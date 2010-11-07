@@ -2,11 +2,16 @@
 
 == Description
 
-Configuration Repository is a utility designed to help automate
-backing up device configurations. A driver is used to customize what
-is being archived off the device. However the sysDescr 
-string can be queried via SNMP to determine which type of host the device
-is. This is the default method for determining a driver when none is specified.
+Configuration Repository is a utility that leverages Git to help manage backing 
+up remote or local text, usually in the form of configuration files. A driver 
+is used to customize what is being archived. When a driver is not specified, 
+SNMP is used to attempt to choose which driver is loaded based off the sysDescr.
+
+Hosts can be added via a variety of methods such as CSV files, TXT files, zone
+transfers via DNS, or individually specified on the command-line.
+
+To ease locating files in the repository and to dictate the file structure of
+the repository, Regular Expressions can be used.
 
 == Features
 
@@ -102,6 +107,10 @@ The preference in which drivers are loaded is:
  * Drivers included with CR
  
 .rb and lowercase naming is assumed when specifying a driver.
+
+Drivers overload the #config method of the Host class and are expected to return
+a hash with the key being a filename and the value being an array containing
+the text of that file.
 
 == Copyright
 
