@@ -112,6 +112,26 @@ Drivers overload the #config method of the Host class and are expected to return
 a hash with the key being a filename and the value being an array containing
 the text of that file.
 
+==Regular Expressions
+
+Regular experessions can be specified on the command-line with the -x <regex> 
+flag. The overall match of the expression determines whether the host will be
+added whereas sub-matches determine the file structure of the repository.
+
+====Examples:
+
+    -x /.*\.somedomain.tld/
+    
+This would add all hosts that match *.somedomain.tld and store the contents of
+the files under the root repository directory in directories named after the
+hostname of the device.
+
+	-x /.*\.(somedomain.tld)/
+
+Will add all hosts in the example above, however the contents would be stored in
+the root repository directory in a directory named "somedomain.tld" then in a 
+directory named after the hostname of the device. 
+
 == Copyright
 
 Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
