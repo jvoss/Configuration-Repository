@@ -105,8 +105,6 @@ The preference in which drivers are loaded is:
  * Direct filename specifed in the URI.
  * User's '.convene/drivers/(filename).rb' in home directory
  * Drivers included with CR
- 
-.rb and lowercase naming is assumed when specifying a driver.
 
 Drivers overload the #config method of the Host class and are expected to return
 a hash with the key being a filename and the value being an array containing

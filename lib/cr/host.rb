@@ -132,7 +132,7 @@ class CR
       driver   = driver.downcase
       filename = nil
       
-      locations = [ driver   + '.rb',
+      locations = [ driver,
                     HOME_DIR + "/drivers/#{driver}.rb",
                     BASE_DIR + "/drivers/#{driver}.rb"  ]
       
@@ -143,7 +143,7 @@ class CR
         end # File.exist?
       end # locations.each
       
-      raise HostError, "Unable to locate driver #{driver}.rb" if filename.nil?
+      raise HostError, "Unable to locate driver #{driver}" if filename.nil?
       
       @log.debug "Requiring driver source: #{filename}"
       require filename
