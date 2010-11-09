@@ -55,9 +55,9 @@ class Convene
       
     end # def parse_csv_file
     
-    # Parses filename and returns an array of Convene::Host objects. Files accepted
-    # are text files with each line containing a valid host string or a CSV
-    # in the following format:
+    # Parses filename and returns an array of Convene::Host objects. Files 
+    # accepted are text files with each line containing a valid host string 
+    # or a CSV in the following format:
     #
     # host_string,snmp_community,snmp_version,snmp_port,snmp_timeout,snmp_retries
     #

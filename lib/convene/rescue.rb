@@ -26,26 +26,26 @@ class Convene
   
   module Rescue
     
-    def self.catch_fatal(err_object)
+    def self.catch_fatal(err_obj)
         
-      puts "#{err_object}"
+      puts "#{err_obj}"
       exit ARGUMENT_ERROR
       
     end # def self.catch_fatal
     
-    def self.catch_host(err_object, host_object)
+    def self.catch_host(err_obj, host_obj)
       
-      if err_object.is_a? Convene::HostError
+      if err_obj.is_a? Convene::HostError
           
-        host_object.log.error "HostError: #{host_object.hostname} - #{err_object} -- skipping"
+        host_obj.log.error "HostError: #{host_obj.hostname} - #{err_obj} -- skipping"
         
-      end # if err_object.is_a? Convene::HostError
+      end # if err_obj.is_a? Convene::HostError
       
-      if err_object.is_a? SNMP::RequestTimeout
+      if err_obj.is_a? SNMP::RequestTimeout
         
-        host_object.log.error "SNMP timeout: #{host_object.hostname} -- skipping"
+        host_obj.log.error "SNMP timeout: #{host_obj.hostname} -- skipping"
         
-      end # if klass.is_a? SNMP::RequestTimeout
+      end # if err_obj.is_a? SNMP::RequestTimeout
       
     end # def self.catch_host
     

@@ -46,7 +46,7 @@ class Convene
       @log       = options[:log]       || Logger.new(STDOUT)
       @regex     = options[:regex]
       @type      = options[:type]
-      @username  = options[:username]  || 'Configuration Repository'
+      @username  = options[:username]  || 'Convene'
       @email     = options[:email]     || 'nobody@nowhere.com'
       
       _validate_repository(@directory)
@@ -217,8 +217,8 @@ class Convene
     
     private
     
-    # Determins directory within repository for Convene:Host object to save files.
-    # Return a string: 'host/path/host.domain.tld/'
+    # Determins directory within repository for Convene:Host object to save 
+    # files. Returns a string: 'host/path/host.domain.tld/'
     #
     def _directory(hostobj)
       

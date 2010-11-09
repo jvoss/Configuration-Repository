@@ -36,9 +36,9 @@ class Convene
   #===Options
   # :blacklist    <- An array of blacklisted hostnames.
   # :log          <- Logger object or nil for default logging.
-  # :regex        <- A Regexp that defines hosts to match and repository structure
-  #                  or nil. Overall match permits host, each submatch determines
-  #                  file hierarchy.
+  # :regex        <- A Regexp that defines hosts to match and repository 
+  #                  structure or nil. Overall match permits host, each submatch
+  #                  determines file hierarchy.
   # :repository   <- A string containing the directory a repository exists, or 
   #                  where to create one. This argument is required.                     
   # :username     <- A string containing the default username to use with each 
@@ -159,8 +159,8 @@ class Convene
     
   end # def default_username=
 
-  # Deletes a host from consideration. Argument can be any Convene::Host comparable. 
-  # I.e. hostname or Host object.
+  # Deletes a host from consideration. Argument can be any Convene::Host 
+  # comparable. i.e. hostname or Host object.
   #
   def delete_host(host)
     
