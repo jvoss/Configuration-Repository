@@ -1,19 +1,19 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
@@ -22,10 +22,10 @@ require 'logger'
 require 'test/unit'
 require 'test/mocks/dns'
 require 'test/test_helpers'
-require 'cr/cli'
-require 'cr/cr'
+require 'convene/cli'
+require 'convene/convene'
 
-module CRTest
+module ConveneTest
   
   class Test_options < Test::Unit::TestCase
     
@@ -62,7 +62,7 @@ module CRTest
 
     def test_parse_cmdline
       
-      object = ::CR.parse_cmdline(@argv)
+      object = ::Convene.parse_cmdline(@argv)
       
       host_options = object.instance_variable_get(:@default_host_options)
       
@@ -137,7 +137,7 @@ module CRTest
       @argv = ['--snmp-version', 'INVALID']
       
       assert_raises SystemExit do
-        ::CR.parse_cmdline(@argv)
+        ::Convene.parse_cmdline(@argv)
       end # assert_raises
     end # def test_invalid_snmp_version
     
@@ -146,7 +146,7 @@ module CRTest
       
       # Prints out usage and exits
       assert_raises SystemExit do
-        ::CR.parse_cmdline(argv)
+        ::Convene.parse_cmdline(argv)
       end # assert_raises
     end # def test_help
     
@@ -156,7 +156,7 @@ module CRTest
              ]
              
       assert_nothing_raised do
-        cr = ::CR.parse_cmdline(argv)
+        cr = ::Convene.parse_cmdline(argv)
         assert_equal nil, cr.log.instance_variable_get(:@filename)
       end # assert_nothing_raised
     end # def test_log_verbosity
@@ -166,10 +166,10 @@ module CRTest
       
       # Prints out version and exits
       assert_raises SystemExit do
-        ::CR.parse_cmdline(argv)
+        ::Convene.parse_cmdline(argv)
       end # assert_raises
     end # def test_version
     
   end # class Test_options
 
-end # module CRTest
+end # module ConveneTest

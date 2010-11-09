@@ -1,28 +1,28 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'ftools'
 require 'logger'
-require 'cr/errors'
-require 'cr/rescue'
-require 'cr/vcs/git'
+require 'convene/errors'
+require 'convene/rescue'
+require 'convene/vcs/git'
 
-class CR
+class Convene
   
   class Repository
     
@@ -119,7 +119,7 @@ class CR
     end # def exist?
     
     # Initializes a new empty repository in the directory specified during
-    # CR::Repository initialization.
+    # Convene::Repository initialization.
     #
     def init
       
@@ -170,7 +170,7 @@ class CR
       
     end # def read
     
-    # Saves contents of CR::Host.config to directory named by the object's
+    # Saves contents of Convene::Host.config to directory named by the object's
     # hostname. #config should return a hash with key being a filename and 
     # value being an array containing the configuration.
     #
@@ -217,7 +217,7 @@ class CR
     
     private
     
-    # Determins directory within repository for CR:Host object to save files.
+    # Determins directory within repository for Convene:Host object to save files.
     # Return a string: 'host/path/host.domain.tld/'
     #
     def _directory(hostobj)
@@ -284,4 +284,4 @@ class CR
     
   end # class Repository
 
-end # class CR
+end # class Convene

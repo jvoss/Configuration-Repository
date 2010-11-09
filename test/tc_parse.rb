@@ -1,31 +1,31 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
 require 'test/unit'
 require 'test/test_helpers'
-require 'cr/parse'
+require 'convene/parse'
 
-module CRTest
+module ConveneTest
   
   class Test_parse < Test::Unit::TestCase
     
-    include ::CR::Parsing
+    include ::Convene::Parsing
     
     def setup
       @snmp_options = { :Community => 'community',
@@ -65,7 +65,7 @@ module CRTest
       parse_file(filename, @snmp_options).each do |host_string|
           hostname = hostnames.shift
           assert_equal hostname, host_string[0]
-      end # CR.parse_file
+      end # Convene.parse_file
     end # def test_parse_txt_file
     
     def test_parse_host_string
@@ -84,7 +84,7 @@ module CRTest
         assert_equal expected_hash, response
       end # TEST_HOST_STRINGS.each_key
       
-      assert_raises ::CR::CRError do
+      assert_raises ::Convene::ConveneError do
         parse_host_string('blah://host.domain.tld', TEST_OPTIONS)
       end # assert_raise
       
@@ -92,4 +92,4 @@ module CRTest
 
   end # class Test_parse
 
-end # module CRTest
+end # module ConveneTest

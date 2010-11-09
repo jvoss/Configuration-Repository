@@ -1,26 +1,26 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'csv'
 require 'uri'
-require 'cr/constants'
+require 'convene/constants'
 
-class CR
+class Convene
   
   module Parsing
   
@@ -55,7 +55,7 @@ class CR
       
     end # def parse_csv_file
     
-    # Parses filename and returns an array of CR::Host objects. Files accepted
+    # Parses filename and returns an array of Convene::Host objects. Files accepted
     # are text files with each line containing a valid host string or a CSV
     # in the following format:
     #
@@ -113,7 +113,7 @@ class CR
       host_string = host_string.gsub('\\', '/')
       
       if host_string.match(/^((\w+):\/\/)/)
-        raise CRError, "Unknown scheme #{$2}" unless $2 == 'convene'
+        raise ConveneError, "Unknown scheme #{$2}" unless $2 == 'convene'
       else
         host_string = "convene://#{host_string}"
       end # unless host_string.match
@@ -136,7 +136,7 @@ class CR
       
     end # def parse_host_string  
     
-    # Parses a txt file and returns an array of CR::Host objects.
+    # Parses a txt file and returns an array of Convene::Host objects.
     # This method is called from parse_file when a txt file is supplied.
     #
     def parse_txt_file(filename)
@@ -183,4 +183,4 @@ class CR
   
   end # module Parsing
   
-end # class CR
+end # class Convene

@@ -1,38 +1,38 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'cr/host'
+require 'convene/host'
 require 'tmpdir'
 
-module CRTest
+module ConveneTest
   
   TEST_OPTIONS = { :blacklist    => [],
                    :log          => nil,
                    :regex        => //,
-                   :repository   => "#{Dir.tmpdir}/CRtestrepo",
+                   :repository   => "#{Dir.tmpdir}/ConveneTest",
                    :username     => 'testuser',
                    :password     => 'testpass',
-                   :snmp_options => { :Port      => CR::Host::SNMP_DEFAULT_PORT,
-                                      :Community => CR::Host::SNMP_DEFAULT_COMMUNITY,
-                                      :Version   => CR::Host::SNMP_DEFAULT_VERSION,
-                                      :Timeout   => CR::Host::SNMP_DEFAULT_TIMEOUT,
-                                      :Retries   => CR::Host::SNMP_DEFAULT_RETRIES }   
-                  }
+                   :snmp_options => { :Port      => Convene::Host::SNMP_DEFAULT_PORT,
+                                      :Community => Convene::Host::SNMP_DEFAULT_COMMUNITY,
+                                      :Version   => Convene::Host::SNMP_DEFAULT_VERSION,
+                                      :Timeout   => Convene::Host::SNMP_DEFAULT_TIMEOUT,
+                                      :Retries   => Convene::Host::SNMP_DEFAULT_RETRIES }   
+                 }
   
   TEST_HOST_STRINGS = { 
     # hostname
@@ -72,4 +72,4 @@ module CRTest
       }
   }
   
-end # module CRTest
+end # module ConveneTest

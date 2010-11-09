@@ -16,31 +16,22 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'convene/host'
+require 'logger'
 
-module ConveneTest
-
-  class Convene
+class Convene
+  
+  attr_reader :log
+  
+  private
+  
+  def _initialize_log
     
-    class Host < ::Convene::Host
-      
-      def config
-        super # ensure super method is executed
-        return { 'testfile' => ['test contents\r\n'] }
-      end # def config
-      
-      # Overwrite process method to bypass attempts to connect to a real device.
-      #
-      def process
-        # set the driver instance variable so that snmp fingerprinting will not
-        # occur.
-        @driver = 'TESTING'
-        super
-        return { 'testfile' => ['test contents\r\n'] }
-      end # def process
-      
-    end # class Host
+    log                 = Logger.new(STDOUT)
+    log.level           = Logger::DEBUG
+    log.datetime_format = "%Y-%m-%d %H:%M:%S"
     
-  end # class Convene
-
-end # module ConveneTest
+    return log
+    
+  end # def _initialize_log
+  
+end # class Convene

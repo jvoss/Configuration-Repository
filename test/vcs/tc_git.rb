@@ -1,36 +1,36 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
 require 'test/unit'
 require 'fileutils'
 require 'test/test_helpers'
-require 'cr/vcs/git'
+require 'convene/vcs/git'
 
-module CRTest
+module ConveneTest
   
   class Test_vcs_git < Test::Unit::TestCase
     
     def setup
       @directory = TEST_OPTIONS[:repository]
       
-      assert ::CR::Repository::Git.init(@directory)
-      @git = ::CR::Repository::Git.open(@directory, :log => Logger.new(nil))
+      assert ::Convene::Repository::Git.init(@directory)
+      @git = ::Convene::Repository::Git.open(@directory, :log => Logger.new(nil))
     end # def setup
     
     def teardown
@@ -42,7 +42,7 @@ module CRTest
     def test_init
       # Assert it raises because the repository was already initialized
       assert_raises RuntimeError do
-        assert ::CR::Repository::Git.init(@directory)
+        assert ::Convene::Repository::Git.init(@directory)
       end # assert_raises
     end # def test_init
     
@@ -64,10 +64,10 @@ module CRTest
     end # def test_commit_all
     
     def test_exist?
-      assert  ::CR::Repository::Git.exist?(@directory)
-      assert !::CR::Repository::Git.exist?("#{@directory}2")
+      assert  ::Convene::Repository::Git.exist?(@directory)
+      assert !::Convene::Repository::Git.exist?("#{@directory}2")
     end # def test_exist?
     
   end # class Test_vcs_git
   
-end # module CRTest
+end # module ConveneTest

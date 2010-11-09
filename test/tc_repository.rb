@@ -1,19 +1,19 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
@@ -21,10 +21,10 @@ require 'fileutils'
 require 'test/unit'
 require 'test/mocks/host'
 require 'test/test_helpers'
-require 'cr/errors'
-require 'cr/repository'
+require 'convene/errors'
+require 'convene/repository'
 
-module CRTest
+module ConveneTest
   
   class Test_repository < Test::Unit::TestCase
     
@@ -33,7 +33,9 @@ module CRTest
     def setup
       @repositories = {}
       
-      @host = CR::Host.new(:hostname => 'test.domain.tld', :log => Logger.new(nil))
+      @host = Convene::Host.new( :hostname => 'test.domain.tld', 
+                                 :log => Logger.new(nil)
+                               )
       
       @options = { :directory => TEST_REPO,
                    :log       => Logger.new(nil),
@@ -42,7 +44,7 @@ module CRTest
       
       git_options = @options.dup.merge(:type => :git)
       
-      @repositories[:git] = ::CR::Repository.new(git_options)
+      @repositories[:git] = ::Convene::Repository.new(git_options)
     end # def setup
     
     def teardown
@@ -117,7 +119,7 @@ module CRTest
     def test_init
       @repositories.each_value do |repo|
         # Repo already initialized
-        assert_raises ::CR::RepositoryError do
+        assert_raises ::Convene::RepositoryError do
           repo.init
         end # assert_raises
       end # @repositories.each_value
@@ -125,7 +127,7 @@ module CRTest
     
     def test_open
       @repositories.each_pair do |type, repo| 
-        assert_kind_of(::CR::Repository::Git, repo.open) if type == :git
+        assert_kind_of(::Convene::Repository::Git, repo.open) if type == :git
       end # @repositories.each_pair
     end # def test_open
     
@@ -173,20 +175,20 @@ module CRTest
     # Test private methods
     
     def test_initialize_vcs
-      assert_raises ::CR::RepositoryError do
+      assert_raises ::Convene::RepositoryError do
         invalid_options = @options.dup.merge(:type => :invalid)
         
-        ::CR::Repository.new(invalid_options)
+        ::Convene::Repository.new(invalid_options)
       end # assert_raises ArgumentError
     end # def test_initialize_vcs
     
     def test_validate_repository
       # Assert that an exception is raised when no repository directory is given
-      assert_raises ::CR::RepositoryError do
-        ::CR::Repository.new()
+      assert_raises ::Convene::RepositoryError do
+        ::Convene::Repository.new()
       end # assert_raises ArgumentError
     end # def test_validate_repository
     
   end # class Test_repository
   
-end # module
+end # module ConveneTest

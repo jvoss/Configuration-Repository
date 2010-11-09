@@ -1,30 +1,30 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'cr/cli'
-require 'cr/dns'
-require 'cr/host'
-require 'cr/host_list'
-require 'cr/log'
-require 'cr/parse'
-require 'cr/repository'
+require 'convene/cli'
+require 'convene/dns'
+require 'convene/host'
+require 'convene/host_list'
+require 'convene/log'
+require 'convene/parse'
+require 'convene/repository'
 
-class CR
+class Convene
   
   extend  CLI
   include Parsing
@@ -73,7 +73,7 @@ class CR
   #
   def add_host(hostobj)
     
-    raise "Argument not CR::Host object" unless hostobj.is_a?(CR::Host)
+    raise "Argument not Convene::Host object" unless hostobj.is_a?(Convene::Host)
     
     case 
     
@@ -115,13 +115,13 @@ class CR
       DNS.axfr(host_options[:hostname]).each do |hostname|
         
         host_options = host_options.merge(:hostname => hostname)
-        add_host CR::Host.new(host_options)
+        add_host Convene::Host.new(host_options)
         
       end # DNS.axfr
       
     else
       
-      add_host CR::Host.new(host_options)
+      add_host Convene::Host.new(host_options)
       
     end # if type == :domain
     
@@ -159,7 +159,7 @@ class CR
     
   end # def default_username=
 
-  # Deletes a host from consideration. Argument can be any CR::Host comparable. 
+  # Deletes a host from consideration. Argument can be any Convene::Host comparable. 
   # I.e. hostname or Host object.
   #
   def delete_host(host)
@@ -202,7 +202,7 @@ class CR
   #
   def process_all(commit_msg = nil)
     
-    commit_msg = "CR Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
+    commit_msg = "Convene Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
 
     @hosts.each{|host| host.process}
     
@@ -216,7 +216,7 @@ class CR
   
   private
   
-  # Initializes CR::Repository object
+  # Initializes Convene::Repository object
   #
   def _initialize_repository(directory, regex, type)
     
@@ -239,4 +239,4 @@ class CR
     
   end # def _validate_blacklist
   
-end # class CR
+end # class Convene

@@ -1,31 +1,31 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
 require 'logger'
 require 'test/unit'
 require 'test/test_helpers'
-require 'cr/host'
+require 'convene/host'
 require 'test/mocks/host'
 require 'test/mocks/observer'
 require 'test/mocks/snmp'
 
-module CRTest
+module ConveneTest
   
   class Test_host < Test::Unit::TestCase
     
@@ -43,11 +43,11 @@ module CRTest
                         :snmp_options => @snmp_options
                       }
 
-      @host = CR::Host.new(@test_options)
+      @host = Convene::Host.new(@test_options)
     end # def setup
     
     def test_comparable
-      other_host = CR::Host.new(@test_options)
+      other_host = Convene::Host.new(@test_options)
       
       assert @host == 'host.domain.tld'
       assert_equal @host, other_host
@@ -67,8 +67,8 @@ module CRTest
       test_options = @test_options.dup
       test_options[:driver] = 'cisco'
       
-      host = CR::Host.new(test_options)
-      assert_equal CR::Host::Cisco, host.driver
+      host = Convene::Host.new(test_options)
+      assert_equal Convene::Host::Cisco, host.driver
     end # def test_driver
     
     def test_hostname
@@ -115,14 +115,14 @@ module CRTest
         @host.send(:_snmp_fingerprint)
       end # assert_nothing_raised
       
-      assert_equal ::CR::Host::Cisco, @host.driver
+      assert_equal ::Convene::Host::Cisco, @host.driver
       
       # A log message is generated when a driver cannot be loaded.
       # It should not terminate the script.
       #
-      saved_const = ::CR::Host::Cisco
+      saved_const = ::Convene::Host::Cisco
       
-      assert ::CR::Host.send(:remove_const, :Cisco)
+      assert ::Convene::Host.send(:remove_const, :Cisco)
       
       assert_nothing_raised do
         @host.send(:_snmp_fingerprint)
@@ -130,10 +130,10 @@ module CRTest
       
       # Reset the removed constant
       #
-      assert ::CR::Host.const_set(:Cisco, saved_const)
+      assert ::Convene::Host.const_set(:Cisco, saved_const)
       
     end # def test__snmp_fingerprint
     
   end # class Test_host
   
-end # module CRTest
+end # module ConveneTest

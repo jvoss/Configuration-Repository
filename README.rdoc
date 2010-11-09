@@ -1,8 +1,8 @@
-= Configuration Repository (CR)
+= Convene
 
 == Description
 
-Configuration Repository is a utility that leverages Git to help manage backing 
+Convene is a utility that leverages Git to help manage backing 
 up remote or local text, usually in the form of configuration files. A driver 
 is used to customize what is being archived. When a driver is not specified, 
 SNMP is used to attempt to choose which driver is loaded based off the sysDescr.
@@ -22,7 +22,7 @@ the repository, Regular Expressions can be used.
 
 == Requirements
 
-The following gems are required to use Configuration Repository:
+The following gems are required to use Convene:
 
 * dnsruby
 * git
@@ -35,41 +35,41 @@ The following gems are required to use Configuration Repository:
 Note: The OpenSSL library for Ruby (libopenssl-ruby via apt for Ubuntu) must
 be installed in order for net-ssh to function properly.
 
-== Installing Configuration Repository
+== Installing Convene
 
-RubyGems is the preferred install method for Configuration Repository (CR). 
+RubyGems is the preferred install method for Convene. 
 It is intended to be installed via the RubyGems[http://rubyforge.org/projects/rubygems/] 
 system. To get the latest version, simply enter the following int your command 
 prompt:
 
-	$ sudo gem install CR-<version>.gem
+	$ sudo gem install convene-<version>.gem
 
-Prior to using CR, please make sure 'git' is available in your path and you
+Prior to using Convene, please make sure 'git' is available in your path and you
 have installed the required lib OpenSSL package (if required, see above).
 
 == Running from source
 
-If you are developing for Configuration Repository and would like to run from
+If you are developing for Convene and would like to run from
 the source tree, run executables with:
 
-	$ ruby -rubygems -I lib bin/crepo
+	$ ruby -rubygems -I lib bin/convene
 
 ==Examples
 
 Run against a single host:
-    crepo -r /path/to/repository -n host.domain.tld -u username -p password 
+    convene -r /path/to/repository -n host.domain.tld -u username -p password 
 
 Run against multiple hosts with the same credentials:
-    crepo -r /path/to/repository -n host.domain.tld -n host.domain.tld -u username -p password
+    convene -r /path/to/repository -n host.domain.tld -n host.domain.tld -u username -p password
 
 Run against domains with different credentials:
-    crepo -r /path/to/repository -d user1:pass1@domain1.tld -d user2:pass2@domain2.tld
+    convene -r /path/to/repository -d user1:pass1@domain1.tld -d user2:pass2@domain2.tld
  
 Run against a txt file of host strings containing hosts:
-    crepo -r /path/to/repository -N hostfile.txt -u user -p pass
+    convene -r /path/to/repository -N hostfile.txt -u user -p pass
 
 Run against a CSV file of host strings containing domains:
-    crepo -r /path/to/repository -D domainfile.csv -u user -p pass
+    convene -r /path/to/repository -D domainfile.csv -u user -p pass
 
 Usernames and passwords can also be specified as part of the host string
 within either file type allowing for greater flexiblility in environments
@@ -104,7 +104,7 @@ such as Cisco and Foundry. However, the real power lies in custom drivers.
 The preference in which drivers are loaded is:
  * Direct filename specifed in the URI.
  * User's '.convene/drivers/(filename).rb' in home directory
- * Drivers included with CR
+ * Drivers included with Convene
 
 Drivers overload the #config method of the Host class and are expected to return
 a hash with the key being a filename and the value being an array containing

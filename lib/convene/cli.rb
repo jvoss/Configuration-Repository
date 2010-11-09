@@ -1,25 +1,25 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'optparse'
-require 'cr/rescue'
+require 'convene/rescue'
 
-class CR
+class Convene
   
   module CLI
   
@@ -27,7 +27,7 @@ class CR
     # host objects and an options hash used throughout CR.
     #
     # ===Command line options:
-    #  Usage: cr.rb -r REPOSITORY [OPTIONS]
+    #  Usage: convene.rb -r REPOSITORY [OPTIONS]
     #    -b, --blacklist FILENAME         File containing blacklisted hosts
     #    -d, --domain DOMAIN              Domain name (can be multiple)
     #    -D, --domain-file FILENAME       Filename of domain URIs
@@ -55,21 +55,21 @@ class CR
     # ===Examples
     #
     # Run against a single host:
-    #     cr.rb -r /path/to/repository -n host.domain.tld -u username -p password 
+    #     convene.rb -r /path/to/repository -n host.domain.tld -u username -p password 
     #
     # Run against multiple hosts with the same credentials:
-    #     cr.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld
+    #     convene.rb -r /path/to/repository -n host.domain.tld -n host.domain.tld
     #       -u username -p password
     #
     # Run against domains with different credentials:
-    #     cr.rb -r /path/to/repository -d user1:pass1@domain1.tld
+    #     convene.rb -r /path/to/repository -d user1:pass1@domain1.tld
     #       -d user2:pass2@domain2.tld
     # 
     # Run against a txt file of host strings containing hosts:
-    #     cr.rb -r /path/to/repository -N hostfile.txt -u user -p pass
+    #     convene.rb -r /path/to/repository -N hostfile.txt -u user -p pass
     #
     # Run against a CSV file of host strings containing domains:
-    #     cr.rb -r /path/to/repository -D domainfile.csv -u user -p pass
+    #     convene.rb -r /path/to/repository -D domainfile.csv -u user -p pass
     #
     # Usernames and passwords can also be specified as part of the host string
     # within either file type allowing for greater flexiblility in environments
@@ -210,22 +210,22 @@ class CR
         
         opt.parse!(argv)
         
-        cr = CR.new(options)
+        convene = Convene.new(options)
         
         options[:host].each do |host_string|
-          cr.add_host_string(host_string)
+          convene.add_host_string(host_string)
         end # options[:host].each
         
         options[:host_files].each do |filename|
-          cr.import_file(filename, :host)
+          convene.import_file(filename, :host)
         end # options[:host_files].each
         
         options[:domain].each do |host_string|
-          cr.add_host_string(host_string, :domain)
+          convene.add_host_string(host_string, :domain)
         end # options[:domain].each
         
         options[:domain_files].each do |filename|
-          cr.import_file(filename, :domain)
+          convene.import_file(filename, :domain)
         end # options[:domain_files]
         
         # Catch errors when dealing with command line options so that clean
@@ -233,14 +233,14 @@ class CR
         # 
         rescue => e
         
-          CR::Rescue.catch_fatal(e)
+          Convene::Rescue.catch_fatal(e)
         
       end # begin
       
-      return cr
+      return convene
       
     end # def self.parse_cmdline
   
   end # module CLI
   
-end # class CR
+end # class Convene

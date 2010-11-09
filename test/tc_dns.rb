@@ -1,35 +1,35 @@
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
-# This file is part of Configuration Repository (CR)
+# This file is part of Convene
 #
-# Configuration Repository (CR) is free software: you can redistribute 
-# it and/or modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation, either version 3 of the 
-# License, or (at your option) any later version.
+# Convene is free software: you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free 
+# Software Foundation, either version 3 of the License, or (at your option) 
+# any later version.
 #
-# Configuration Repository (CR) is distributed in the hope that it will 
-# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-# General Public License for more details.
+# Convene is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+# for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with CR. If not, see <http://www.gnu.org/licenses/>.
+# along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
 require 'rubygems'
 require 'logger'
 require 'test/unit'
 require 'test/test_helpers'
-require 'cr/dns'
+require 'convene/dns'
 require 'test/mocks/dns'
 
-module CRTest
+module ConveneTest
   
   class Test_dns < Test::Unit::TestCase
     
     def setup
       # Set DNS logging to nil to avoid logging output
-      ::CR::DNS.instance_variable_set(:@log, Logger.new(nil))
+      ::Convene::DNS.instance_variable_set(:@log, Logger.new(nil))
       
       # Test Records
       @a     = Dnsruby::RR.create("foo.domain.tld. 86400 A     192.168.1.1")
@@ -48,31 +48,31 @@ module CRTest
                          'host3.example.com'
                         ]
                         
-      hosts = ::CR::DNS.axfr('example.com')
+      hosts = ::Convene::DNS.axfr('example.com')
       
       assert_equal expected_hosts, hosts
     end # def test_axfr
     
     def test_process_record
-      assert_equal "foo.domain.tld", ::CR::DNS.process_record(@a)
-      assert_equal "bar.domain.tld", ::CR::DNS.process_record(@aaaa)
-      assert_equal "foo.domain.tld", ::CR::DNS.process_record(@cname)
+      assert_equal "foo.domain.tld", ::Convene::DNS.process_record(@a)
+      assert_equal "bar.domain.tld", ::Convene::DNS.process_record(@aaaa)
+      assert_equal "foo.domain.tld", ::Convene::DNS.process_record(@cname)
       
-      assert_nil ::CR::DNS.process_record(@mx)
-      assert_nil ::CR::DNS.process_record(@soa)
-      assert_nil ::CR::DNS.process_record(@txt)
+      assert_nil ::Convene::DNS.process_record(@mx)
+      assert_nil ::Convene::DNS.process_record(@soa)
+      assert_nil ::Convene::DNS.process_record(@txt)
     end # def test_process_record
     
     def test_valid_record_type
-      assert ::CR::DNS.valid_record_type?(@a)
-      assert ::CR::DNS.valid_record_type?(@aaaa)
-      assert ::CR::DNS.valid_record_type?(@cname)
+      assert ::Convene::DNS.valid_record_type?(@a)
+      assert ::Convene::DNS.valid_record_type?(@aaaa)
+      assert ::Convene::DNS.valid_record_type?(@cname)
       
-      assert !::CR::DNS.valid_record_type?(@mx)
-      assert !::CR::DNS.valid_record_type?(@soa)
-      assert !::CR::DNS.valid_record_type?(@txt)
+      assert !::Convene::DNS.valid_record_type?(@mx)
+      assert !::Convene::DNS.valid_record_type?(@soa)
+      assert !::Convene::DNS.valid_record_type?(@txt)
     end # def test_valid_record_type
     
   end # class Test_dns
   
-end # module CRTest
+end # module ConveneTest

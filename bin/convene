@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+#
 # Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
 #
 # This file is part of Convene
@@ -16,31 +18,21 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'convene/host'
+require 'rubygems'
+require 'convene'
 
-module ConveneTest
+convene = Convene.parse_cmdline(ARGV)
 
-  class Convene
-    
-    class Host < ::Convene::Host
-      
-      def config
-        super # ensure super method is executed
-        return { 'testfile' => ['test contents\r\n'] }
-      end # def config
-      
-      # Overwrite process method to bypass attempts to connect to a real device.
-      #
-      def process
-        # set the driver instance variable so that snmp fingerprinting will not
-        # occur.
-        @driver = 'TESTING'
-        super
-        return { 'testfile' => ['test contents\r\n'] }
-      end # def process
-      
-    end # class Host
-    
-  end # class Convene
+begin
 
-end # module ConveneTest
+  convene.process_all
+  
+rescue Convene::HostError => e
+
+  convene.log.warn "Error processing host: #{e.message}"
+  
+  convene.hosts.next
+  
+  retry
+  
+end # begin
