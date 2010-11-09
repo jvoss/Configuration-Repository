@@ -15,4 +15,4 @@ coverage/
 .project
 
 # Ignore Gemspec (it can be generated with rake task)
-Convene.gemspec
+convene.gemspec
