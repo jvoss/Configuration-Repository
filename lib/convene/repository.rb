@@ -160,9 +160,11 @@ class Convene
           end
         end # File.open
         
-      rescue Errno::ENOENT # Catch missing files
+      rescue Errno::ENOENT  # Catch missing files
         
         contents = []
+      
+      rescue Errno::ENOTDIR # Catch missing directories
         
       end # begin
       
