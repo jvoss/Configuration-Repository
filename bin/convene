@@ -30,7 +30,7 @@ begin
 rescue Convene::HostError => e
 
   convene.log.warn "Error processing host: #{e.message}"
-  convene.log.debug "#{e.backtrace}"
+  convene.log.debug "#{e.class}: #{e.backtrace}"
   
   convene.hosts.next
   
