@@ -37,7 +37,7 @@ class Convene
       def login
       
         telnet = Net::Telnet::new("Host" => @hostname)
-        telnet.login
+        telnet.login(@username, @password)
         
         yield telnet
       
