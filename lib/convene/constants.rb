@@ -18,7 +18,7 @@
 
 require 'ftools'
 
-class Convene
+module Convene
   
   ARGUMENT_ERROR = 1
   NONFATAL_ERROR = 255
@@ -28,4 +28,4 @@ class Convene
   
   SNMP_VERSION_MAP = { :SNMPv1 => '1', :SNMPv2c => '2c' }
   
-end # class Convene
+end # module Convene

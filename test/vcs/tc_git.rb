@@ -22,15 +22,15 @@ require 'fileutils'
 require 'test/test_helpers'
 require 'convene/vcs/git'
 
-module ConveneTest
+module Convene
   
   class Test_vcs_git < Test::Unit::TestCase
     
     def setup
       @directory = TEST_OPTIONS[:repository]
       
-      assert ::Convene::Repository::Git.init(@directory)
-      @git = ::Convene::Repository::Git.open(@directory, :log => Logger.new(nil))
+      assert Repository::Git.init(@directory)
+      @git = Repository::Git.open(@directory, :log => Logger.new(nil))
     end # def setup
     
     def teardown
@@ -42,7 +42,7 @@ module ConveneTest
     def test_init
       # Assert it raises because the repository was already initialized
       assert_raises RuntimeError do
-        assert ::Convene::Repository::Git.init(@directory)
+        assert Repository::Git.init(@directory)
       end # assert_raises
     end # def test_init
     
@@ -64,10 +64,10 @@ module ConveneTest
     end # def test_commit_all
     
     def test_exist?
-      assert  ::Convene::Repository::Git.exist?(@directory)
-      assert !::Convene::Repository::Git.exist?("#{@directory}2")
+      assert  Repository::Git.exist?(@directory)
+      assert !Repository::Git.exist?("#{@directory}2")
     end # def test_exist?
     
   end # class Test_vcs_git
   
-end # module ConveneTest
+end # module Convene

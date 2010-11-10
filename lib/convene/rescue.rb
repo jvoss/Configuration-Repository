@@ -22,7 +22,7 @@ require 'convene/host'
 require 'convene/errors'
 require 'convene/log'
 
-class Convene
+module Convene
   
   module Rescue
     
@@ -51,4 +51,4 @@ class Convene
     
   end # module Recsue
   
-end # class Convene
+end # module Convene

@@ -21,11 +21,11 @@ require 'test/unit'
 require 'test/test_helpers'
 require 'convene/parse'
 
-module ConveneTest
+module Convene
   
   class Test_parse < Test::Unit::TestCase
     
-    include ::Convene::Parsing
+    include Parsing
     
     def setup
       @snmp_options = { :Community => 'community',
@@ -92,4 +92,4 @@ module ConveneTest
 
   end # class Test_parse
 
-end # module ConveneTest
+end # module Convene

@@ -18,7 +18,7 @@
 
 require 'net/scp'
 
-class Convene
+module Convene
   
   module Transport
     
@@ -50,4 +50,4 @@ class Convene
     
   end # module Transport
   
-end # class Convene
+end # module Convene

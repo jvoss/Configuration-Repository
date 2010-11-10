@@ -20,7 +20,7 @@ require 'csv'
 require 'uri'
 require 'convene/constants'
 
-class Convene
+module Convene
   
   module Parsing
   
@@ -183,4 +183,4 @@ class Convene
   
   end # module Parsing
   
-end # class Convene
+end # module Convene

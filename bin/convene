@@ -21,7 +21,7 @@
 require 'rubygems'
 require 'convene'
 
-convene = Convene.parse_cmdline(ARGV)
+convene = Convene::Manager.parse_cmdline(ARGV)
 
 begin
 

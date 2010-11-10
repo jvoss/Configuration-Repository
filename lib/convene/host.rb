@@ -23,7 +23,7 @@ require 'snmp'
 require 'convene/constants'
 require 'convene/errors'
 
-class Convene
+module Convene
   
   class Host
     
@@ -226,4 +226,4 @@ class Convene
     
   end # class Host
   
-end # class Convene
+end # module Convene

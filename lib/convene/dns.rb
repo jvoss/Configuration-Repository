@@ -18,7 +18,7 @@
 
 require 'dnsruby'
 
-class Convene
+module Convene
   
   module DNS
     
@@ -86,4 +86,4 @@ class Convene
     
   end # module DNS
   
-end # class Convene
+end # module Convene

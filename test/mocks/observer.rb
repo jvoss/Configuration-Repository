@@ -16,7 +16,7 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-module ConveneTest
+module Convene
 
   class Observer
     
@@ -34,4 +34,4 @@ module ConveneTest
     
   end # class Observer
   
-end # module ConveneTest
+end # module Convene

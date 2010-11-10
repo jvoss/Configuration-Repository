@@ -24,7 +24,7 @@ require 'test/test_helpers'
 require 'convene/errors'
 require 'convene/repository'
 
-module ConveneTest
+module Convene
   
   class Test_repository < Test::Unit::TestCase
     
@@ -33,9 +33,9 @@ module ConveneTest
     def setup
       @repositories = {}
       
-      @host = Convene::Host.new( :hostname => 'test.domain.tld', 
-                                 :log => Logger.new(nil)
-                               )
+      @host = Mocks::Host.new( :hostname => 'test.domain.tld', 
+                               :log      => Logger.new(nil)
+                             )
       
       @options = { :directory => TEST_REPO,
                    :log       => Logger.new(nil),
@@ -44,7 +44,7 @@ module ConveneTest
       
       git_options = @options.dup.merge(:type => :git)
       
-      @repositories[:git] = ::Convene::Repository.new(git_options)
+      @repositories[:git] = Repository.new(git_options)
     end # def setup
     
     def teardown
@@ -119,7 +119,7 @@ module ConveneTest
     def test_init
       @repositories.each_value do |repo|
         # Repo already initialized
-        assert_raises ::Convene::RepositoryError do
+        assert_raises RepositoryError do
           repo.init
         end # assert_raises
       end # @repositories.each_value
@@ -127,7 +127,7 @@ module ConveneTest
     
     def test_open
       @repositories.each_pair do |type, repo| 
-        assert_kind_of(::Convene::Repository::Git, repo.open) if type == :git
+        assert_kind_of(Repository::Git, repo.open) if type == :git
       end # @repositories.each_pair
     end # def test_open
     
@@ -175,17 +175,17 @@ module ConveneTest
     # Test private methods
     
     def test_initialize_vcs
-      assert_raises ::Convene::RepositoryError do
+      assert_raises RepositoryError do
         invalid_options = @options.dup.merge(:type => :invalid)
         
-        ::Convene::Repository.new(invalid_options)
+        Repository.new(invalid_options)
       end # assert_raises ArgumentError
     end # def test_initialize_vcs
     
     def test_validate_repository
       # Assert that an exception is raised when no repository directory is given
-      assert_raises ::Convene::RepositoryError do
-        ::Convene::Repository.new()
+      assert_raises RepositoryError do
+        Repository.new()
       end # assert_raises ArgumentError
     end # def test_validate_repository
     

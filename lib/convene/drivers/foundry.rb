@@ -20,7 +20,7 @@ require 'convene/host'
 require 'convene/errors'
 require 'convene/transport/ssh'
 
-class Convene
+module Convene
   
   class Host
     
@@ -102,4 +102,4 @@ class Convene
     
   end # class Host
   
-end # class Convene
+end # module Convene

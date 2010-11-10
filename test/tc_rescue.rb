@@ -22,7 +22,7 @@ require 'snmp'
 require 'convene/host'
 require 'convene/rescue'
 
-module ConveneTest 
+module Convene
   
   class Test_resuce < Test::Unit::TestCase
     
@@ -33,7 +33,7 @@ module ConveneTest
         begin
           raise 'Test Rescue'
         rescue => e
-          ::Convene::Rescue.catch_fatal(e)
+          Rescue.catch_fatal(e)
         end
         
       end # asser_raises SystemExit
@@ -42,7 +42,7 @@ module ConveneTest
     
     def test_catch_host
       
-      host = ::Convene::Host.new( :hostname => 'testhost', 
+      host = Host.new( :hostname => 'testhost', 
                                   :log => Logger.new(nil)
                                 )
       
@@ -52,16 +52,16 @@ module ConveneTest
       assert_nothing_raised do
       
         begin
-          raise ::Convene::HostError, 'NonFatal'
+          raise HostError, 'NonFatal'
         rescue => error_object
           
-          ::Convene::Rescue.catch_host(error_object, host)
+          Rescue.catch_host(error_object, host)
           
         end # begin
       
       end # assert_nothing_raised
       
-      assert error_object.is_a?(::Convene::HostError)
+      assert error_object.is_a?(HostError)
       
       error_object = nil
       
@@ -74,7 +74,7 @@ module ConveneTest
           
           assert error_object.is_a?(SNMP::RequestTimeout)
           
-          ::Convene::Rescue.catch_host(error_object, host)
+          Rescue.catch_host(error_object, host)
           
         end # begin
         
@@ -86,4 +86,4 @@ module ConveneTest
     
   end # class Test_rescue
   
-end # module ConveneTest
+end # module Convene

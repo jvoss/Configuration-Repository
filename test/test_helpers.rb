@@ -19,7 +19,7 @@
 require 'convene/host'
 require 'tmpdir'
 
-module ConveneTest
+module Convene
   
   TEST_OPTIONS = { :blacklist    => [],
                    :log          => nil,
@@ -72,4 +72,4 @@ module ConveneTest
       }
   }
   
-end # module ConveneTest
+end # module Convene

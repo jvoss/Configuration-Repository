@@ -16,10 +16,10 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'convene/convene'
+require 'convene/manager'
 
-class Convene
+module Convene
   
   VERSION = '0.1.0'
   
-end # class Convene
+end # module Convene

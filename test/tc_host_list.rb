@@ -20,7 +20,7 @@ require 'test/unit'
 require 'test/test_helpers'
 require 'convene/host_list'
 
-module ConveneTest
+module Convene
 
   class Test_host_list < Test::Unit::TestCase
     
@@ -101,4 +101,4 @@ module ConveneTest
     
   end # class Test_host_list
   
-end # module ConveneTest
+end # module Convene

@@ -18,20 +18,24 @@
 
 require 'logger'
 
-class Convene
+module Convene
   
-  attr_reader :log
+  class Manager
   
-  private
-  
-  def _initialize_log
+    attr_reader :log
     
-    log                 = Logger.new(STDOUT)
-    log.level           = Logger::INFO
-    log.datetime_format = "%Y-%m-%d %H:%M:%S"
+    private
     
-    return log
-    
-  end # def _initialize_log
+    def _initialize_log
+      
+      log                 = Logger.new(STDOUT)
+      log.level           = Logger::INFO
+      log.datetime_format = "%Y-%m-%d %H:%M:%S"
+      
+      return log
+      
+    end # def _initialize_log
   
-end # class Convene
+  end # class Manager
+  
+end # module Convene

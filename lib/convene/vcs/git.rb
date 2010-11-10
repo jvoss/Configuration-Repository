@@ -22,7 +22,7 @@ require 'git'
 require 'logger'
 require 'convene/log'
 
-class Convene
+module Convene
   
   class Repository
     
@@ -86,4 +86,4 @@ class Convene
     
   end # class Repository
   
-end # class Convene
+end # module Convene

@@ -23,9 +23,9 @@ require 'test/unit'
 require 'test/mocks/dns'
 require 'test/test_helpers'
 require 'convene/cli'
-require 'convene/convene'
+require 'convene/manager'
 
-module ConveneTest
+module Convene
   
   class Test_options < Test::Unit::TestCase
     
@@ -62,7 +62,7 @@ module ConveneTest
 
     def test_parse_cmdline
       
-      object = ::Convene.parse_cmdline(@argv)
+      object = Manager.parse_cmdline(@argv)
       
       host_options = object.instance_variable_get(:@default_host_options)
       
@@ -137,7 +137,7 @@ module ConveneTest
       @argv = ['--snmp-version', 'INVALID']
       
       assert_raises SystemExit do
-        ::Convene.parse_cmdline(@argv)
+        Manager.parse_cmdline(@argv)
       end # assert_raises
     end # def test_invalid_snmp_version
     
@@ -146,7 +146,7 @@ module ConveneTest
       
       # Prints out usage and exits
       assert_raises SystemExit do
-        ::Convene.parse_cmdline(argv)
+        Manager.parse_cmdline(argv)
       end # assert_raises
     end # def test_help
     
@@ -156,7 +156,7 @@ module ConveneTest
              ]
              
       assert_nothing_raised do
-        cr = ::Convene.parse_cmdline(argv)
+        cr = Manager.parse_cmdline(argv)
         assert_equal nil, cr.log.instance_variable_get(:@filename)
       end # assert_nothing_raised
     end # def test_log_verbosity
@@ -166,10 +166,10 @@ module ConveneTest
       
       # Prints out version and exits
       assert_raises SystemExit do
-        ::Convene.parse_cmdline(argv)
+        Manager.parse_cmdline(argv)
       end # assert_raises
     end # def test_version
     
   end # class Test_options
 
-end # module ConveneTest
+end # module Convene

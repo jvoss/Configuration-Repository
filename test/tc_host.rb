@@ -25,7 +25,7 @@ require 'test/mocks/host'
 require 'test/mocks/observer'
 require 'test/mocks/snmp'
 
-module ConveneTest
+module Convene
   
   class Test_host < Test::Unit::TestCase
     
@@ -43,7 +43,7 @@ module ConveneTest
                         :snmp_options => @snmp_options
                       }
 
-      @host = Convene::Host.new(@test_options)
+      @host = Convene::Mocks::Host.new(@test_options)
     end # def setup
     
     def test_comparable
@@ -67,7 +67,7 @@ module ConveneTest
       test_options = @test_options.dup
       test_options[:driver] = 'cisco'
       
-      host = Convene::Host.new(test_options)
+      host = Mocks::Host.new(test_options)
       assert_equal Convene::Host::Cisco, host.driver
     end # def test_driver
     
@@ -115,14 +115,14 @@ module ConveneTest
         @host.send(:_snmp_fingerprint)
       end # assert_nothing_raised
       
-      assert_equal ::Convene::Host::Cisco, @host.driver
+      assert_equal Host::Cisco, @host.driver
       
       # A log message is generated when a driver cannot be loaded.
       # It should not terminate the script.
       #
-      saved_const = ::Convene::Host::Cisco
+      saved_const = Host::Cisco
       
-      assert ::Convene::Host.send(:remove_const, :Cisco)
+      assert Host.send(:remove_const, :Cisco)
       
       assert_nothing_raised do
         @host.send(:_snmp_fingerprint)
@@ -130,10 +130,10 @@ module ConveneTest
       
       # Reset the removed constant
       #
-      assert ::Convene::Host.const_set(:Cisco, saved_const)
+      assert Host.const_set(:Cisco, saved_const)
       
     end # def test__snmp_fingerprint
     
   end # class Test_host
   
-end # module ConveneTest
+end # module Convene

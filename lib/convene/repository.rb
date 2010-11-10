@@ -22,7 +22,7 @@ require 'convene/errors'
 require 'convene/rescue'
 require 'convene/vcs/git'
 
-class Convene
+module Convene
   
   class Repository
     
@@ -286,4 +286,4 @@ class Convene
     
   end # class Repository
 
-end # class Convene
+end # module Convene

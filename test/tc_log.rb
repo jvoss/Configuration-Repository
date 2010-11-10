@@ -19,15 +19,15 @@
 require 'rubygems'
 require 'test/unit'
 require 'test/test_helpers'
-require 'convene/convene'
+require 'convene/manager'
 require 'convene/log'
 
-module ConveneTest
+module Convene
   
   class Test_log < Test::Unit::TestCase
     
     def setup
-      @convene = ::Convene.new(:repository => TEST_OPTIONS[:repository])
+      @convene = Manager.new(:repository => TEST_OPTIONS[:repository])
     end # def setup
     
     def teardown
@@ -41,11 +41,11 @@ module ConveneTest
     
       # Logging is set to STDOUT by default, filename == nil
       assert_equal nil, @convene.log.instance_variable_get(:@filename)
-      assert_equal Logger::DEBUG, @convene.log.level
+      assert_equal Logger::INFO, @convene.log.level
       assert_equal "%Y-%m-%d %H:%M:%S", @convene.log.datetime_format
       
     end # def test_initialize_log
     
   end # class Test_log
 
-end # module ConveneTest
+end # module Convene

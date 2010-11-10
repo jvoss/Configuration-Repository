@@ -16,7 +16,7 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-class Convene
+module Convene
     
   # Convene Errors
   #
@@ -34,4 +34,4 @@ class Convene
   class RepositoryError < ConveneError
   end # class RepositoryError
   
-end # class Convene
+end # module Convene

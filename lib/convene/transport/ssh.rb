@@ -20,7 +20,7 @@ require 'net/ssh'
 
 gem 'net-ssh', '>=2.0.23' # Require net-ssh version >=2.0.23
 
-class Convene
+module Convene
   
   module Transport
     
@@ -87,4 +87,4 @@ class Convene
     
   end # module Transport
   
-end # class Convene
+end # module Convene

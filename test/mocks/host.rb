@@ -18,9 +18,9 @@
 
 require 'convene/host'
 
-module ConveneTest
+module Convene
 
-  class Convene
+  module Mocks
     
     class Host < ::Convene::Host
       
@@ -41,6 +41,6 @@ module ConveneTest
       
     end # class Host
     
-  end # class Convene
+  end # module Mocks
 
-end # module ConveneTest
+end # module Convene

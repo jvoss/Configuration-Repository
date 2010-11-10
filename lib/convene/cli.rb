@@ -19,7 +19,7 @@
 require 'optparse'
 require 'convene/rescue'
 
-class Convene
+module Convene
   
   module CLI
   
@@ -210,7 +210,7 @@ class Convene
         
         opt.parse!(argv)
         
-        convene = Convene.new(options)
+        convene = Convene::Manager.new(options)
         
         options[:host].each do |host_string|
           convene.add_host_string(host_string)
@@ -243,4 +243,4 @@ class Convene
   
   end # module CLI
   
-end # class Convene
+end # module Convene

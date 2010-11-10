@@ -16,7 +16,7 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-class Convene
+module Convene
 
   class HostList < Array
 
@@ -98,4 +98,4 @@ class Convene
 
   end # class HostList
 
-end # class Convene
+end # module Convene

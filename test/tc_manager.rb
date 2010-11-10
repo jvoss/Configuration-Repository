@@ -22,14 +22,14 @@ require 'test/unit'
 require 'test/test_helpers'
 require 'test/mocks/dns'
 require 'test/mocks/host'
-require 'convene'
+require 'convene/manager'
 
-module ConveneTest
+module Convene
 
-  class Test_convene < Test::Unit::TestCase
+  class Test_manager < Test::Unit::TestCase
     
     def setup
-      @convene = ::Convene.new( :repository => TEST_OPTIONS[:repository],
+      @convene = Manager.new( :repository => TEST_OPTIONS[:repository],
                                 :log        => Logger.new(nil),
                                 :username   => 'username',
                                 :password   => 'password',
@@ -56,10 +56,10 @@ module ConveneTest
       assert_nothing_raised do
         assert @convene.add_host(host)        # duplicate
         
-        testhost = Convene::Host.new(:hostname => 'host.tld')
+        testhost = Mocks::Host.new(:hostname => 'host.tld')
         assert @convene.add_host(testhost)    # non-regex match
         
-        blacklisted = Convene::Host.new(:hostname => 'blacklisted.domain.tld')
+        blacklisted = Mocks::Host.new(:hostname => 'blacklisted.domain.tld')
         assert @convene.add_host(blacklisted) # blacklisted
       end # assert_nothing_raised
       
@@ -142,7 +142,7 @@ module ConveneTest
                        :snmp_options => snmp_options
                       }
       
-      host = Convene::Host.new(test_options)
+      host = Mocks::Host.new(test_options)
       @convene.add_host(host)
       
       assert @convene.process_all
@@ -150,9 +150,9 @@ module ConveneTest
     
     def test_repository
       assert @convene.respond_to?(:repository)
-      assert @convene.repository.kind_of?(::Convene::Repository)
+      assert @convene.repository.kind_of?(Repository)
     end # def test_repository
     
-  end # class Test_convene
+  end # class Test_manager
 
-end # module ConveneTest
+end # module Convene

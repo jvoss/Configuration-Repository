@@ -19,16 +19,16 @@
 require 'test/unit/testsuite'
 
 require 'test/tc_cli'
-require 'test/tc_convene'
 require 'test/tc_dns'
 require 'test/tc_host'
 require 'test/tc_log'
+require 'test/tc_manager'
 require 'test/tc_parse'
 require 'test/tc_repository'
 
 require 'test/vcs/tc_git'
 
-module ConveneTest
+module Convene
 
   class Test_all
 
@@ -37,10 +37,10 @@ module ConveneTest
       suite = Test::Unit::TestSuite.new
       
       suite << Test_cli.suite
-      suite << Test_convene.suite
       suite << Test_dns.suite
       suite << Test_host.suite
       suite << Test_log.suite
+      suite << Test_manager.suite
       suite << Test_parse.suite
       suite << Test_repository.suite
       
@@ -52,4 +52,4 @@ module ConveneTest
 
   end # class Test_all
 
-end # module ConveneTest
+end # module Convene
