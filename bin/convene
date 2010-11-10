@@ -20,8 +20,9 @@
 
 require 'rubygems'
 require 'convene'
+require 'convene/cli'
 
-convene = Convene::Manager.parse_cmdline(ARGV)
+convene = Convene::CLI.parse_cmdline(ARGV)
 
 begin
 

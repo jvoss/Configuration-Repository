@@ -16,7 +16,6 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'convene/cli'
 require 'convene/dns'
 require 'convene/host'
 require 'convene/host_list'
@@ -28,7 +27,6 @@ module Convene
   
   class Manager
   
-    extend  CLI
     include Parsing
     
     attr_reader   :blacklist, :hosts, :log, :repository

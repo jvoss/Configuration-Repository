@@ -62,7 +62,7 @@ module Convene
 
     def test_parse_cmdline
       
-      object = Manager.parse_cmdline(@argv)
+      object = CLI.parse_cmdline(@argv)
       
       host_options = object.instance_variable_get(:@default_host_options)
       
@@ -137,7 +137,7 @@ module Convene
       @argv = ['--snmp-version', 'INVALID']
       
       assert_raises SystemExit do
-        Manager.parse_cmdline(@argv)
+        CLI.parse_cmdline(@argv)
       end # assert_raises
     end # def test_invalid_snmp_version
     
@@ -146,7 +146,7 @@ module Convene
       
       # Prints out usage and exits
       assert_raises SystemExit do
-        Manager.parse_cmdline(argv)
+        CLI.parse_cmdline(argv)
       end # assert_raises
     end # def test_help
     
@@ -156,8 +156,8 @@ module Convene
              ]
              
       assert_nothing_raised do
-        cr = Manager.parse_cmdline(argv)
-        assert_equal nil, cr.log.instance_variable_get(:@filename)
+        convene = CLI.parse_cmdline(argv)
+        assert_equal nil, convene.log.instance_variable_get(:@filename)
       end # assert_nothing_raised
     end # def test_log_verbosity
     
@@ -166,7 +166,7 @@ module Convene
       
       # Prints out version and exits
       assert_raises SystemExit do
-        Manager.parse_cmdline(argv)
+        CLI.parse_cmdline(argv)
       end # assert_raises
     end # def test_version
     

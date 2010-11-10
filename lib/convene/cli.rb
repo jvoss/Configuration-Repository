@@ -75,7 +75,7 @@ module Convene
     # within either file type allowing for greater flexiblility in environments
     # with varying credentials.
     #
-    def parse_cmdline(argv)
+    def self.parse_cmdline(argv)
       
       options = {}
       options[:blacklist]    = []
