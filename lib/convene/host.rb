@@ -20,8 +20,10 @@ require 'ftools'
 require 'logger'
 require 'observer'
 require 'snmp'
+require 'yaml'
 require 'convene/constants'
 require 'convene/errors'
+require 'convene/task'
 
 module Convene
   
@@ -68,6 +70,7 @@ module Convene
       @username     = options[:username]
       @password     = options[:password]
       @snmp_options = options[:snmp_options] || {}
+      @tasks        = []
       
       options[:driver].nil? ? _snmp_initialize : _load_driver(options[:driver])
       
@@ -157,6 +160,38 @@ module Convene
       extend @driver
       
     end # def _load_driver
+#################    
+    public
+    def _load_task(filename)
+      
+      task = YAML.load_file(filename)
+      
+      @tasks.push task
+      
+    end # def _load_task
+    
+    def run_task(task)
+      
+      @log.debug "Running task: #{task.name}"
+      
+      files = task.run(@hostname, @username, @password)
+      
+      changed
+      notify_observers(self, files)
+      
+    end # def run_task
+    
+    def run_tasks()
+      
+      @tasks.each do |task|
+        
+        puts run_task(task)
+        
+      end # @tasks.each
+      
+    end # run_tasks
+#################   
+    private
     
     # Detects which type of host to load based on the SNMP response of 
     # 'sysDescr'. Extends the proper module from lib/hosts.
