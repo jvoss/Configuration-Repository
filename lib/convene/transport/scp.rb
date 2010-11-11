@@ -16,6 +16,8 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
+# FIXME Add method that can download multiple files in the same session and update Task
+
 require 'net/scp'
 
 module Convene

@@ -25,6 +25,8 @@ module Convene
 
   class Task
     
+    include Comparable
+    
     attr_reader :name, :snmp, :objectives
     
     def initialize(name, snmp, objectives)
@@ -33,13 +35,19 @@ module Convene
       @snmp       = snmp
     end # def initialize
     
+    def ==(task)
+      
+      @name == task.to_s
+      
+    end # def ==
+    
     def run(hostname, username, password, log = Logger.new(nil))
       
       file_output = {}
       
       @objectives.each_pair do |name, attrib|
         
-        log.debug = "Performing: #{name}"
+        log.debug "Performing: #{name}"
         
         case attrib['transport']
           
@@ -63,6 +71,12 @@ module Convene
       return file_output
       
     end # def run
+
+    def to_s
+      
+      @name
+      
+    end # def to_s
     
     private
     
