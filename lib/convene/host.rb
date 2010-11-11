@@ -38,7 +38,7 @@ module Convene
     SNMP_DEFAULT_RETRIES   = 2
     SNMP_DEFAULT_VERSION   = :SNMPv2c
     
-    attr_reader :driver, :hostname, :log, :username, :password
+    attr_reader :hostname, :log, :username, :password, :tasks
     
     # Initializes a new host object:
     #
@@ -48,23 +48,15 @@ module Convene
     #                  :password     => 'pass',
     #                  :log          => Logger.new(STDOUT),
     #                  :snmp_options => {},
-    #                  :driver       => '' )
+    #                  :taskfile     => '' )
     # 
     # snmp_options can contain any options available from the 'snmp' gem.
     #
-    # Force a particular driver by supplying a filename of the driver.
-    #  
-    # Drivers are found in the order:
-    #  driver = a filename itself
-    #  driver = User's <home directory>/.convene/drivers/<driver>.rb
-    #  driver = Pre-packaged drivers <driver>.rb
-    #
-    # Driver filenames should be all lowercased. Driver class definitions
-    # should have the first letter of the driver capitalized only.
+    # Force a particular task by supplying a filename of the task. See
+    # load_task_file for more information.
     #
     def initialize(options = {}) 
     
-      @driver       = nil
       @hostname     = options[:hostname]
       @log          = options[:log]          || Logger.new(STDOUT)
       @username     = options[:username]
@@ -72,7 +64,7 @@ module Convene
       @snmp_options = options[:snmp_options] || {}
       @tasks        = []
       
-      options[:driver].nil? ? _snmp_initialize : _load_driver(options[:driver])
+      options[:taskfile].nil? ? _snmp_initialize : load_task_file(options[:taskfile])
       
     end # def initialize
     
@@ -82,62 +74,20 @@ module Convene
       
     end # def ==
     
-    # This method gets overwritten from loaded drivers by extend.
-    # Defaults to empty hash in the event the driver is not loaded properly
-    # and a call is made to retrieve a configuration.
+    # Loads the specified task YAML. Tasks are found in the order:
+    #  taskfile = a filename itself
+    #  taskfile = User's <home directory>/.convene/tasks/<taskfile>.yaml
+    #  taskfile = Pre-packaged drivers <taskfile>.rb
     #
-    def config
-      
-      return {}
-      
-    end # def config
-    
-    # Returns the devices configuration in an array as specified in 
-    # config method as extended by finger printing or driver loading.
+    # Task filenames should be all lowercased. 
     #
-    def process
+    def load_task_file(taskfile)
       
-      @log.info "Processing host: #{@hostname}"
-      
-      _snmp_fingerprint if @driver.nil?
-      
-      raise HostError, "No driver loaded" if @driver.nil?
-      
-      changed # indicate a change has occurred 
-      
-      notify_observers(self, config)
-      
-    end # def process
-    
-    # Returns the hostname of the object. Used for comparisons
-    #
-    def to_s
-      
-      @hostname
-      
-    end # def to_s
-    
-    private
-    
-    # Loads the specified driver by extending its functionality into self.
-    # Drivers are found in the order:
-    #  driver = a filename itself
-    #  driver = User's <home directory>/.convene/drivers/<driver>.rb
-    #  driver = Pre-packaged drivers <driver>.rb
-    #
-    # Driver filenames should be all lowercased. Driver class definitions
-    # should have the first letter of the driver capitalized only.
-    #
-    # FIXME - Cleanup and simplify _load_driver
-    #
-    def _load_driver(driver)
-      
-      driver   = driver.downcase
       filename = nil
       
-      locations = [ driver,
-                    HOME_DIR + "/drivers/#{driver}.rb",
-                    BASE_DIR + "/drivers/#{driver}.rb"  ]
+      locations = [ taskfile,
+                    HOME_DIR + "/tasks/#{taskfile}.yaml",
+                    BASE_DIR + "/tasks/#{taskfile}.yaml"  ]
       
       locations.each do |location|
         if File.exist?(location)
@@ -146,30 +96,31 @@ module Convene
         end # File.exist?
       end # locations.each
       
-      raise HostError, "Unable to locate driver #{driver}" if filename.nil?
+      raise HostError, "Unable to locate task file #{taskfile}" if filename.nil?
       
-      @log.debug "Requiring driver source: #{filename}"
-      require filename
-      
-      # Fixup constant name when driver is a direct filename
-      driver = driver.match(/\/?(\w*)(\.rb)?$/)[1]
-      
-      @driver = eval(driver.to_s.capitalize)
-
-      @log.info "Extending driver class: #{@driver}"
-      extend @driver
-      
-    end # def _load_driver
-#################    
-    public
-    def _load_task(filename)
-      
+      @log.debug "Loading taskfile: #{filename}"
       task = YAML.load_file(filename)
       
       @tasks.push task
       
-    end # def _load_task
+    end # def load_task_file 
     
+    # Runs all tasks
+    #
+    def process
+      
+      @log.info "Processing host: #{@hostname}"
+      
+      _snmp_fingerprint if @tasks.empty?
+      
+      raise HostError, "No tasks are loaded" if @tasks.empty?
+      
+      run_tasks
+      
+    end # def process
+    
+    # Runs a specified task object
+    #
     def run_task(task)
       
       @log.debug "Running task: #{task.name}"
@@ -181,6 +132,8 @@ module Convene
       
     end # def run_task
     
+    # Runs all load tasks
+    #
     def run_tasks()
       
       @tasks.each do |task|
@@ -190,7 +143,15 @@ module Convene
       end # @tasks.each
       
     end # run_tasks
-#################   
+    
+    # Returns the hostname of the object. Used for comparisons
+    #
+    def to_s
+      
+      @hostname
+      
+    end # def to_s
+    
     private
     
     # Detects which type of host to load based on the SNMP response of 
@@ -205,12 +166,12 @@ module Convene
         manufacturer = _snmp_sysdescr.match(/^(\w+)/).to_s
         
         # Example: manufacturer = 'Cisco'
-        _load_driver(manufacturer)
+        load_task_file(manufacturer)
         
       rescue => e
         
         true_log_str  = "#{@hostname}: SNMP timeout"
-        false_log_str = "#{@hostname}: No driver #{manufacturer}"
+        false_log_str = "#{@hostname}: #{e}"
         
         e.is_a?(SNMP::RequestTimeout) ? @log.warn(true_log_str)  \
                                       : @log.warn(false_log_str)
@@ -236,6 +197,9 @@ module Convene
       
       # Use any specific settings the user supplied for SNMP
       @snmp_options = snmp_defaults.merge(@snmp_options.dup)
+      
+      # Fingerprint the device using SNMP sysDescr
+      _snmp_fingerprint
       
     end # def _snmp_initialize
     

@@ -30,17 +30,17 @@
         - 'contents.shift until contents[0] =~ /^version/'
         - 'contents.unshift("!\r\n")'
         
-   'gather running-config':
-     transport: 'ssh'
-     filename: 'running-config'
-     commands:
-        - 'terminal length 0'
-        - 'show running-config'
-        - 'exit'
-     format:
-        - 'contents.shift until contents[0] =~ /^version/'
-        - 'contents.unshift("!\r\n")'
-        - 'contents.pop until contents.last =~ /end/'
+#   'gather running-config':
+#     transport: 'ssh'
+#     filename: 'running-config'
+#     commands:
+#        - 'terminal length 0'
+#        - 'show running-config'
+#        - 'exit'
+#     format:
+#        - 'contents.shift until contents[0] =~ /^version/'
+#        - 'contents.unshift("!\r\n")'
+#        - 'contents.pop until contents.last =~ /end/'
         
 #    'download files':
 #      transport: 'scp'

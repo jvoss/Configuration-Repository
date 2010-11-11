@@ -102,7 +102,7 @@ module Convene
     #
     def parse_host_string(host_string, options)
       
-      driver   = nil
+      taskfile = nil
       hostname = nil
       username = options[:username]
       password = options[:password]
@@ -124,12 +124,12 @@ module Convene
       username = uri.user     unless uri.user.nil?
       password = uri.password unless uri.password.nil?
       
-      driver = $1 if uri.query.to_s.match(/[d|D]river=(.*)/)
+      taskfile = $1 if uri.query.to_s.match(/[t|T]ask=(.*)/)
       
       attributes = { :hostname => hostname, 
                      :username => username, 
                      :password => password, 
-                     :driver   => driver 
+                     :taskfile => taskfile 
                    }
                    
       return attributes
