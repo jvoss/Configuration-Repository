@@ -138,7 +138,7 @@ module Convene
       
       @tasks.each do |task|
         
-        puts run_task(task)
+        run_task(task)
         
       end # @tasks.each
       
