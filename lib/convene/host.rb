@@ -52,9 +52,6 @@ module Convene
     # 
     # snmp_options can contain any options available from the 'snmp' gem.
     #
-    # Force a particular task by supplying a filename of the task. See
-    # load_task_file for more information.
-    #
     def initialize(options = {}) 
     
       @hostname     = options[:hostname]
@@ -64,7 +61,13 @@ module Convene
       @snmp_options = options[:snmp_options] || {}
       @tasks        = []
       
-      options[:taskfile].nil? ? _snmp_initialize : load_task_file(options[:taskfile])
+#      options[:taskfile].nil? ? _snmp_initialize : load_task_file(options[:taskfile])
+      
+      raise HostError, "Hostname undefined", caller if @hostname.nil?
+      raise HostError, "Hostname cannot be empty", caller if @hostname.empty?
+      
+      _snmp_initialize
+      load_task_file(options[:taskfile]) unless options[:taskfile].nil?
       
     end # def initialize
     
@@ -74,34 +77,38 @@ module Convene
       
     end # def ==
     
-    # Loads the specified task YAML. Tasks are found in the order:
+    # Loads the YAML task files. Tasks are found in the order:
     #  taskfile = a filename itself
     #  taskfile = User's <home directory>/.convene/tasks/<taskfile>.yaml
     #  taskfile = Pre-packaged drivers <taskfile>.rb
     #
     # Task filenames should be all lowercased. 
     #
-    def load_task_file(taskfile)
+    def load_task_file(*taskfiles)
       
-      filename = nil
+      taskfiles.each do |taskfile|
       
-      locations = [ taskfile,
-                    HOME_DIR + "/tasks/#{taskfile}.yaml",
-                    BASE_DIR + "/tasks/#{taskfile}.yaml"  ]
-      
-      locations.each do |location|
-        if File.exist?(location)
-          filename = location
-          break # locations.each
-        end # File.exist?
-      end # locations.each
-      
-      raise HostError, "Unable to locate task file #{taskfile}" if filename.nil?
-      
-      @log.debug "Loading taskfile: #{filename}"
-      task = YAML.load_file(filename)
-      
-      @tasks.push task
+        filename = nil
+        
+        locations = [ taskfile,
+                      HOME_DIR + "/tasks/#{taskfile}.yaml",
+                      BASE_DIR + "/tasks/#{taskfile}.yaml"  ]
+        
+        locations.each do |location|
+          if File.exist?(location)
+            filename = location
+            break # locations.each
+          end # File.exist?
+        end # locations.each
+        
+        raise HostError, "Unable to locate task #{taskfile}", caller if filename.nil?
+        
+        @log.debug "Loading task: #{filename}"
+        task = YAML.load_file(filename)
+        
+        @tasks.push task
+        
+      end # taskfiles.each
       
     end # def load_task_file 
     
@@ -125,22 +132,33 @@ module Convene
       
       @log.debug "Running task: #{task.name}"
       
-      files = task.run(@hostname, @username, @password)
+      files = task.run(@hostname, @username, @password, @log)
       
       changed
       notify_observers(self, files)
+      
+      return files
       
     end # def run_task
     
     # Runs all load tasks
     #
-    def run_tasks()
+    def run_tasks
+      
+      files = {}
+      
+      # attempt to load tasks if there are none
+      _snmp_fingerprint if @tasks.empty? 
+      
+      @log.warn "#{@hostname}: No tasks" if @tasks.empty?
       
       @tasks.each do |task|
         
-        run_task(task)
+        files.merge! run_task(task)
         
       end # @tasks.each
+      
+      return files
       
     end # run_tasks
     
@@ -197,9 +215,6 @@ module Convene
       
       # Use any specific settings the user supplied for SNMP
       @snmp_options = snmp_defaults.merge(@snmp_options.dup)
-      
-      # Fingerprint the device using SNMP sysDescr
-      _snmp_fingerprint
       
     end # def _snmp_initialize
     

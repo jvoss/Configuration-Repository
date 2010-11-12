@@ -43,11 +43,13 @@ module Convene
     
     def run(hostname, username, password, log = Logger.new(nil))
       
+      @log = log
+      
       file_output = {}
       
       @objectives.each_pair do |name, attrib|
         
-        log.debug "Performing: #{name}"
+        @log.debug "Running objective: #{name}"
         
         case attrib['transport']
           
@@ -102,6 +104,8 @@ module Convene
       
       filelist.each do |filename|
       
+        @log.debug "SCP Download: #{filename}"
+      
         output[filename] = scp.download!(filename)
       
       end # filelist.each
@@ -118,6 +122,8 @@ module Convene
       
       if commands.size == 1
         
+        @log.debug "SSH: #{commands[0]}"
+                
         output = ssh.exec!(commands[0])
         
       else
@@ -138,7 +144,10 @@ module Convene
           
           end # ch.on_data
         
-          commands.each{|command| ch.send_data(command + "\n") }
+          commands.each do |command|
+            @log.debug "SSH: #{command}"
+            ch.send_data(command + "\n")
+          end # commands.each
         
         end # ssh.open_channel_shell
       

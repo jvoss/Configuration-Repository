@@ -53,24 +53,6 @@ module Convene
       assert_equal @host, other_host
     end # def test_comparable
     
-    def test_config
-      # Assert mock config is returned because a driver has not been loaded 
-      # and therefor, overwritten.
-      assert !@host.config.nil?
-      assert @host.config.kind_of?(Hash)
-    end # def test_config
-    
-    def test_driver
-      assert @host.respond_to?(:driver)
-      assert_equal nil, @host.driver
-      
-      test_options = @test_options.dup
-      test_options[:driver] = 'cisco'
-      
-      host = Mocks::Host.new(test_options)
-      assert_equal Convene::Host::Cisco, host.driver
-    end # def test_driver
-    
     def test_hostname
       assert @host.respond_to?(:hostname)
       assert_equal @test_options[:hostname], @host.hostname
@@ -115,22 +97,14 @@ module Convene
         @host.send(:_snmp_fingerprint)
       end # assert_nothing_raised
       
-      assert_equal Host::Cisco, @host.driver
+      assert_equal 'Cisco Backup Task', @host.tasks[0].name
       
-      # A log message is generated when a driver cannot be loaded.
+      # A log message is generated when a task cannot be loaded.
       # It should not terminate the script.
       #
-      saved_const = Host::Cisco
-      
-      assert Host.send(:remove_const, :Cisco)
-      
       assert_nothing_raised do
         @host.send(:_snmp_fingerprint)
       end # assert_nothing_raised
-      
-      # Reset the removed constant
-      #
-      assert Host.const_set(:Cisco, saved_const)
       
     end # def test__snmp_fingerprint
     

@@ -30,7 +30,7 @@ module Convene
       
       log                 = Logger.new(STDOUT)
       log.level           = Logger::INFO
-      log.datetime_format = "%Y-%m-%d %H:%M:%S"
+      log.datetime_format = "Convene>"
       
       return log
       

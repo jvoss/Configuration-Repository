@@ -77,7 +77,7 @@ module Convene
         expected_hash[:hostname] = TEST_HOST_STRINGS[host_string][:hostname]
         expected_hash[:username] = TEST_HOST_STRINGS[host_string][:username]
         expected_hash[:password] = TEST_HOST_STRINGS[host_string][:password]
-        expected_hash[:driver]   = TEST_HOST_STRINGS[host_string][:driver]
+        expected_hash[:taskfile] = TEST_HOST_STRINGS[host_string][:taskfile]
         
         response = parse_host_string(host_string, TEST_OPTIONS)
        

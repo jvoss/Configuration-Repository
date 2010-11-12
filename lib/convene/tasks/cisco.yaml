@@ -17,11 +17,11 @@
 #
 
 --- !ruby/object:Convene::Task
-  name: 'cisco config task'
+  name: 'Cisco Backup Task'
   snmp: 'cisco'
 
   objectives:
-   'gather startup-config':
+   'save startup-config':
      transport: 'ssh'
      filename: 'startup-config'
      commands:

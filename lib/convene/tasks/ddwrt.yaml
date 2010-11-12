@@ -16,29 +16,13 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'convene/host'
+--- !ruby/object:Convene::Task
+  name: 'DD-WRT NVRAM Backup Task'
+  snmp: 'linux'
 
-module Convene
-
-  module Mocks
-    
-    class Host < ::Convene::Host
-      
-      # Overwrite process method to bypass attempts to connect to a real device.
-      #
-      def process
-#        super
-        testfiles = { 'testfile' => ['test contents\r\n'] }
-
-        @changed = true
-
-        changed
-        notify_observers(self, testfiles)
-        
-      end # def process
-      
-    end # class Host
-    
-  end # module Mocks
-
-end # module Convene
+  objectives:
+   'save "nvram show"':
+     transport: 'ssh'
+     filename: 'nvram'
+     commands:
+        - 'nvram show'

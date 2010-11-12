@@ -139,7 +139,7 @@ module Convene
           opts.on('--verbosity LEVEL', 'Verbose level [fatal|error|warn|info|debug]') do |verbose|
             unless options[:log]
               options[:log] = Logger.new(STDOUT)
-              options[:log].datetime_format = "%Y-%m-%d %H:%M:%S"
+              options[:log].datetime_format = "Convene>"
             end
                         
             case verbose
