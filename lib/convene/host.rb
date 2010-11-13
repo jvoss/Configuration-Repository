@@ -61,8 +61,6 @@ module Convene
       @snmp_options = options[:snmp_options] || {}
       @tasks        = []
       
-#      options[:taskfile].nil? ? _snmp_initialize : load_task_file(options[:taskfile])
-      
       raise HostError, "Hostname undefined", caller if @hostname.nil?
       raise HostError, "Hostname cannot be empty", caller if @hostname.empty?
       
@@ -126,13 +124,21 @@ module Convene
       
     end # def process
     
-    # Runs a specified task object
+    # Runs a specific task object by reference or loaded task name as string.
     #
     def run_task(task)
       
-      @log.debug "Running task: #{task.name}"
+      if task.kind_of?(Convene::Task)
+        obj = task
+      elsif task.kind_of?(String)
+        obj = @tasks.select{|t| t.name == task}.first
+      end # task.kind_of?
       
-      files = task.run(@hostname, @username, @password, @log)
+      raise HostError, "Unable to run task: #{task}", caller if obj.nil?
+      
+      @log.debug "Running task: #{obj.name}"
+      
+      files = obj.run(@hostname, @username, @password, @log)
       
       changed
       notify_observers(self, files)
@@ -141,7 +147,7 @@ module Convene
       
     end # def run_task
     
-    # Runs all load tasks
+    # Runs all load tasks.
     #
     def run_tasks
       
