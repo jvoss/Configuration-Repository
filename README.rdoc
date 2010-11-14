@@ -3,9 +3,9 @@
 == Description
 
 Convene is a utility that leverages Git to help manage backing 
-up remote or local text, usually in the form of configuration files. A driver 
-is used to customize what is being archived. When a driver is not specified, 
-SNMP is used to attempt to choose which driver is loaded based off the sysDescr.
+up remote or local text, usually in the form of configuration files. A task 
+is used to customize what is being archived. When a task is not specified, 
+SNMP is used to attempt to choose which task is loaded based off the sysDescr.
 
 Hosts can be added via a variety of methods such as CSV files, TXT files, zone
 transfers via DNS, or individually specified on the command-line.
@@ -18,7 +18,7 @@ the repository, Regular Expressions can be used.
 * Host list support via DNS, CSV, TXT, or command line
 * Repository file structure determined by Regex
 * Device detection (Cisco, etc) via SNMP or by direct specification
-* Extendable with additional host drivers
+* Customizable with tasks
 
 == Requirements
 
@@ -84,7 +84,7 @@ with varying credentials.
 Supports URIs beginning with convene:// or left omitted.
 
 ====Examples:
-	convene://user:pass@device.domain.tld?driver=cisco
+	convene://user:pass@device.domain.tld?task=cisco
   
 	<username>:<password>@<hostname or domain>
 	
@@ -92,23 +92,19 @@ Username and password are optional. Omit '@' when listing only host or domain:
 
 	user:password@host.domain.tld or host.domain.tld
 
-Specify a driver in query notation and skip SNMP finger printing in any host string:
+Specify a task in query notation and skip SNMP finger printing in any host string:
 
-	host.domain.tld?driver=Cisco
+	host.domain.tld?task=Cisco
 
-==Drivers
+==Tasks
 
-There are generic drivers available for a small variety of networking devices
-such as Cisco and Foundry. However, the real power lies in custom drivers. 
+Task examples are available for a small variety of networking devices
+such as Cisco and Foundry.
 
-The preference in which drivers are loaded is:
+The preference in which tasks are loaded is:
  * Direct filename specifed in the URI.
- * User's '.convene/drivers/(filename).rb' in home directory
- * Drivers included with Convene
-
-Drivers overload the #config method of the Host class and are expected to return
-a hash with the key being a filename and the value being an array containing
-the text of that file.
+ * User's '.convene/tasks/(filename).rb' in home directory
+ * Tasks included with Convene
 
 ==Regular Expressions
 
