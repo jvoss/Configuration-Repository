@@ -35,6 +35,8 @@ module Convene
         changed
         notify_observers(self, testfiles)
         
+        return testfiles
+        
       end # def process
       
     end # class Host

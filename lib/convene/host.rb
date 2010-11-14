@@ -128,6 +128,8 @@ module Convene
     #
     def run_task(task)
       
+      files = {}
+      
       if task.kind_of?(Convene::Task)
         obj = task
       elsif task.kind_of?(String)
