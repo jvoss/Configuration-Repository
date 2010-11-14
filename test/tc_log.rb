@@ -42,7 +42,10 @@ module Convene
       # Logging is set to STDOUT by default, filename == nil
       assert_equal nil, @convene.log.instance_variable_get(:@filename)
       assert_equal Logger::INFO, @convene.log.level
-      assert_equal "%Y-%m-%d %H:%M:%S", @convene.log.datetime_format
+      
+      # Logging to STDOUT now states 'Convene>' for readability
+      # Logging to files still use "%Y-%m-%d %H:%M:%S"
+      assert_equal "Convene>", @convene.log.datetime_format
       
     end # def test_initialize_log
     

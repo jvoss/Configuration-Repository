@@ -17,7 +17,7 @@
 #
 
 require 'optparse'
-require 'convene/rescue'
+require 'convene'
 
 module Convene
   
