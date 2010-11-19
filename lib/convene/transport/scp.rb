@@ -16,8 +16,6 @@
 # along with Convene. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# FIXME Add method that can download multiple files in the same session and update Task
-
 require 'net/scp'
 
 module Convene
@@ -36,12 +34,14 @@ module Convene
       
       # Downloads filename from the remote device
       #
-      def download!(filename)
+      def download!(*filenames)
         
-        response = nil
+        response = {}
         
         Net::SCP.start(@hostname, @username, :password => @password) do |scp|
-          response = scp.download!(filename)
+          
+          filenames.each {|f| response[f] = scp.download!(f)}
+          
         end # Net::SCP.start
         
         return response

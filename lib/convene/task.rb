@@ -102,13 +102,8 @@ module Convene
       
       scp = Transport::SCP.new(host, user, pass)
       
-      filelist.each do |filename|
-      
-        @log.debug "SCP Download: #{filename}"
-      
-        output[filename] = scp.download!(filename)
-      
-      end # filelist.each
+      @log.debug "SCP Download: #{filelist.inspect}"
+      output = scp.download!(filelist)
       
       return output
       
