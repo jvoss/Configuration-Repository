@@ -197,14 +197,14 @@ module Convene
       
     end # def import_file
     
-    # Processes all hosts and commits changes to the database. A commit
-    # message can be given or left nil to use the default.
+    # Runs all loaded tasks on hosts and commits changes to the database. A 
+    # commit message can be given or left nil to use the default.
     #
-    def process_all(commit_msg = nil)
+    def run_tasks(commit_msg = nil)
       
       commit_msg = "Convene Commit: Processed #{@hosts.size} hosts" if commit_msg.nil?
   
-      @hosts.each{|host| host.process}
+      @hosts.each{|host| host.run_tasks}
       
       @log.info "Committing changes to repository"
       
@@ -212,7 +212,7 @@ module Convene
       
       @log.info "Completed processing all hosts"
       
-    end # def process_all
+    end # def run_tasks
     
     private
     

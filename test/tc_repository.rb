@@ -60,7 +60,7 @@ module Convene
     end # def test_add_all
     
     def test_add_host
-      config = @host.process
+      config = @host.run_tasks
       
       @repositories.each_value do |repo|
         repo.save_host(@host, config)
@@ -69,7 +69,7 @@ module Convene
     end # def test_add_host
     
     def test_changed?
-      config = @host.process
+      config = @host.run_tasks
       
       @repositories.each_value do |repo|
         repo.save_host(@host, config)
@@ -84,7 +84,7 @@ module Convene
     end # def test_changed?
     
     def test_commit_all
-      config = @host.process
+      config = @host.run_tasks
       
       @repositories.each_value do |repo|
         repo.save_host(@host, config)
@@ -132,7 +132,7 @@ module Convene
     end # def test_open
     
     def test_read
-      config   = @host.process
+      config   = @host.run_tasks
       filename = config.keys[0]
       contents = config.values[0]
       
@@ -144,7 +144,7 @@ module Convene
     end # def test_read
     
     def test_save_host
-      config = @host.process
+      config = @host.run_tasks
       
       @repositories.each_value do |repo|
         assert repo.save_host(@host, config)
@@ -165,7 +165,7 @@ module Convene
     end # def test_save_host
     
     def test_update
-      config = @host.process
+      config = @host.run_tasks
       
       @repositories.each_value do |repo|
         assert repo.update(@host, config)

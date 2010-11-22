@@ -26,7 +26,7 @@ module Convene
       
       # Overwrite process method to bypass attempts to connect to a real device.
       #
-      def process
+      def run_tasks
 #        super
         testfiles = { 'testfile' => ['test contents\r\n'] }
 
@@ -37,7 +37,7 @@ module Convene
         
         return testfiles
         
-      end # def process
+      end # def run_tasks
       
     end # class Host
     
