@@ -26,7 +26,7 @@ convene = Convene::CLI.parse_cmdline(ARGV)
 
 begin
 
-  convene.process_all
+  convene.run_tasks
   
 rescue Convene::HostError => e
 
