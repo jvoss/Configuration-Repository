@@ -58,13 +58,16 @@ module Convene
             file_output.merge!(contents)
           
           when 'ssh'
-            filename = attrib['filename']
+            waitfor = //
             
-            contents = _ssh(hostname, username, password, attrib['commands'], Regexp.new(attrib['waitfor']))
+            filename = attrib['filename']
+            waitfor  = Regexp.new(attrib['waitfor']) unless attrib['waitfor'].nil?
+            
+            contents = _ssh(hostname, username, password, attrib['commands'], waitfor)
             file_output[filename] = _format(attrib['format'], contents)
         
           when 'telnet'
-            raise ConveneError, "SCP not implimented with Tasks system yet"
+            raise ConveneError, "Telnet not implimented with Tasks system yet"
           
         end # case attrib['transport']
         
