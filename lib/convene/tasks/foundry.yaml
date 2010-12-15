@@ -28,7 +28,7 @@
         - 'terminal length 0'
         - 'show running-config'
         - 'exit'
-#     format:
-#        - 'contents.shift until contents[0] =~ /^!/ or contents.empty?'
-#        - 'contents.pop until contents.last =~ /^end\r\n$/ or contents.empty?'
-
+     waitfor: '^end'
+     format:
+        - 'contents.shift until contents[0] =~ /^!/'
+        - 'contents.pop until contents.last =~ /^end/'

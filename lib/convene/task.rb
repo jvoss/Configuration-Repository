@@ -60,7 +60,7 @@ module Convene
           when 'ssh'
             filename = attrib['filename']
             
-            contents = _ssh(hostname, username, password, attrib['commands'])
+            contents = _ssh(hostname, username, password, attrib['commands'], Regexp.new(attrib['waitfor']))
             file_output[filename] = _format(attrib['format'], contents)
         
           when 'telnet'
@@ -109,7 +109,7 @@ module Convene
       
     end # def _scp
     
-    def _ssh(host, user, pass, commands)
+    def _ssh(host, user, pass, commands, waitregex = //)
       
       output = nil
       
@@ -135,7 +135,7 @@ module Convene
               output.push(line)      
             end # lines.each
           
-            ch.close # if exit_sent == true 
+            ch.close if data.to_s.match(waitregex) 
           
           end # ch.on_data
         
