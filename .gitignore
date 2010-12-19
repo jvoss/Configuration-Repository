@@ -14,5 +14,8 @@ coverage/
 .loadpath
 .project
 
+# Ignore JetBrains RubyMine project files
+.idea
+
 # Ignore Gemspec (it can be generated with rake task)
 convene.gemspec
