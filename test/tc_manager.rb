@@ -128,7 +128,7 @@ module Convene
       assert       @convene.hosts.include?('host.domain.tld')
     end # def test_import_file
     
-    def test_process_all
+    def test_run_tasks
       snmp_options = { :Port      => 10161,
                        :Community => 'ppuuubllicc',
                        :Version   => :SNMPv1,
@@ -145,8 +145,8 @@ module Convene
       host = Mocks::Host.new(test_options)
       @convene.add_host(host)
       
-      assert @convene.process_all
-    end # def test_process_all
+      assert @convene.run_tasks
+    end # def test_run_tasks
     
     def test_repository
       assert @convene.respond_to?(:repository)

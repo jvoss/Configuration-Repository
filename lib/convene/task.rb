@@ -58,13 +58,16 @@ module Convene
             file_output.merge!(contents)
           
           when 'ssh'
-            filename = attrib['filename']
+            waitfor = //
             
-            contents = _ssh(hostname, username, password, attrib['commands'])
+            filename = attrib['filename']
+            waitfor  = Regexp.new(attrib['waitfor']) unless attrib['waitfor'].nil?
+            
+            contents = _ssh(hostname, username, password, attrib['commands'], waitfor)
             file_output[filename] = _format(attrib['format'], contents)
         
           when 'telnet'
-            raise ConveneError, "SCP not implimented with Tasks system yet"
+            raise ConveneError, "Telnet not implimented with Tasks system yet"
           
         end # case attrib['transport']
         
@@ -102,19 +105,14 @@ module Convene
       
       scp = Transport::SCP.new(host, user, pass)
       
-      filelist.each do |filename|
-      
-        @log.debug "SCP Download: #{filename}"
-      
-        output[filename] = scp.download!(filename)
-      
-      end # filelist.each
+      @log.debug "SCP Download: #{filelist.inspect}"
+      output = scp.download!(filelist)
       
       return output
       
     end # def _scp
     
-    def _ssh(host, user, pass, commands)
+    def _ssh(host, user, pass, commands, waitregex = //)
       
       output = nil
       
@@ -140,7 +138,7 @@ module Convene
               output.push(line)      
             end # lines.each
           
-            ch.close # if exit_sent == true 
+            ch.close if data.to_s.match(waitregex) 
           
           end # ch.on_data
         

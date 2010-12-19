@@ -1,4 +1,4 @@
-# Copyright 2010 Andrew R. Greenwood and Jonathan P. Voss
+# Copyright 2010 Matthew J. Kosmoski
 #
 # This file is part of Convene
 #
@@ -17,18 +17,11 @@
 #
 
 --- !ruby/object:Convene::Task
-  name: 'Foundry Backup Task'
-  snmp: 'foundry'
+  name: 'Juniper SSG Backup Task'
 
-  objectives:       
-   'gather running-config':
-     transport: 'ssh'
-     filename: 'running-config'
-     commands:
-        - 'terminal length 0'
-        - 'show running-config'
-        - 'exit'
-     waitfor: '^end'
-     format:
-        - 'contents.shift until contents[0] =~ /^!/'
-        - 'contents.pop until contents.last =~ /^end/'
+  objectives:
+   'download configuration file':
+     transport: 'scp'
+     file-list:
+        - 'ns_sys_config'
+   

@@ -108,23 +108,9 @@ module Convene
         
       end # taskfiles.each
       
-    end # def load_task_file 
+    end # def load_task_file
     
-    # Runs all tasks
-    #
-    def process
-      
-      @log.info "Processing host: #{@hostname}"
-      
-      _snmp_fingerprint if @tasks.empty?
-      
-      raise HostError, "No tasks are loaded" if @tasks.empty?
-      
-      run_tasks
-      
-    end # def process
-    
-    # Runs a specific task object by reference or loaded task name as string.
+    # Runs a specific task object by reference or by task name as string.
     #
     def run_task(task)
       
@@ -149,16 +135,18 @@ module Convene
       
     end # def run_task
     
-    # Runs all load tasks.
+    # Runs all loaded tasks.
     #
     def run_tasks
       
       files = {}
       
+      @log.info "Running tasks for: #{@hostname}"
+      
       # attempt to load tasks if there are none
       _snmp_fingerprint if @tasks.empty? 
       
-      @log.warn "#{@hostname}: No tasks" if @tasks.empty?
+      raise HostError, "No tasks are loaded", caller if @tasks.empty?
       
       @tasks.each do |task|
         

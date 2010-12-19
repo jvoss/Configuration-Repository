@@ -63,15 +63,15 @@ module Convene
       assert_equal @test_options[:password], @host.password
     end # def test_password
     
-    def test_process
+    def test_run_tasks
       observer = Observer.new
       
       @host.add_observer(observer)
-      @host.process
+      @host.run_tasks
       
       assert       !observer.config.nil?
       assert_equal @host, observer.hostobj
-    end # def test_process
+    end # def test_run_tasks
     
     def test_snmp_options
       obj_snmp_options = @host.instance_variable_get(:@snmp_options)
